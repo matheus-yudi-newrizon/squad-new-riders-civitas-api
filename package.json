@@ -1,7 +1,7 @@
 {
-  "name": "orion-api",
+  "name": "civitas-api",
   "version": "1.0.0",
-  "description": "Boilerplate para as APIs do Orion Bootcamp",
+  "description": "Boilerplate para as APIs do Civitas Bootcamp",
   "author": "",
   "license": "ISC",
   "scripts": {
