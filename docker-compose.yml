@@ -1,9 +1,9 @@
 version: '3.7'
 
 services:
-  orion-api:
-    container_name: orion-api
-    image: orion-api:dev
+  civitas-api:
+    container_name: civitas-api
+    image: civitas-api:dev
     build:
       context: .
       target: development
@@ -16,45 +16,28 @@ services:
     environment:
       NODE_ENV: development
       SERVER_PORT: 4444
-      DB_DATABASE: orion
-      DB_CONNECTION_STRING: mongodb://orion_root:j5m966qp7jiypfda@orion-mongo:27017
-      # DB_CONNECTION_STRING: mysql://orion_root:j5m966qp7jiypfda@orion-mysql:3306
+      DB_DATABASE: civitas
+      DB_CONNECTION_STRING: mysql://civitas_root:j5m966qp7jiypfda@civitas-mysql:3306
     networks:
-      - orion-connect
-  
-  orion-mongo:
-    container_name: orion-mongo
-    image: mongo
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: orion_root
-      MONGO_INITDB_ROOT_PASSWORD: j5m966qp7jiypfda
-      MONGO_INITDB_DATABASE: orion
-    ports:
-      - 27017:27017
-    volumes:
-      - ~/docker/volumes/OrionApi_MongoDB:/data/db
-    networks:
-      - orion-connect
-    logging:
-      driver: none
-  
-  orion-mysql:
-    container_name: orion-mysql
+      - civitas-connect
+
+  civitas-mysql:
+    container_name: civitas-mysql
     image: mysql
     environment:
-      MYSQL_USER: orion_root
+      MYSQL_USER: civitas_root
       MYSQL_PASSWORD: j5m966qp7jiypfda
       MYSQL_ROOT_PASSWORD: m45ug42qkr5pdzbb
-      MYSQL_DATABASE: orion
+      MYSQL_DATABASE: civitas
     ports:
       - 3306:3306
     volumes:
-      - ~/docker/volumes/OrionApi_MySQL:/var/lib/mysql
+      - ~/docker/volumes/CivitasApi_MySQL:/var/lib/mysql
     networks:
-      - orion-connect
+      - civitas-connect
     logging:
       driver: none
 
 networks:
-  orion-connect:
+  civitas-connect:
     driver: bridge

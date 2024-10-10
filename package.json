@@ -1,7 +1,7 @@
 {
-  "name": "orion-api",
+  "name": "civitas-api",
   "version": "1.0.0",
-  "description": "Boilerplate para as APIs do Orion Bootcamp",
+  "description": "Boilerplate para as APIs do Civitas",
   "author": "",
   "license": "ISC",
   "scripts": {
@@ -26,9 +26,9 @@
     "typescript": "5.2.2"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "cors": "2.8.5",
     "express": "4.21.0",
-    "mongodb": "5.9.0",
     "mysql2": "3.11.3",
     "reflect-metadata": "0.1.13",
     "swagger-jsdoc": "6.2.8",

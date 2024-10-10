@@ -4,8 +4,8 @@ export const swaggerConfig: swaggerJSDoc.OAS3Options = {
   swaggerDefinition: {
     openapi: '3.0.0',
     info: {
-      title: 'Orion API',
-      description: 'Documentação da API do projeto Orion.',
+      title: 'Civitas API',
+      description: 'Documentação da API do projeto Civitas.',
       version: '1.0.0'
     },
     host: 'localhost:4444',
