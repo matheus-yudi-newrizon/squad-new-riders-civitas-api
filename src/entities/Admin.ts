@@ -14,14 +14,14 @@ export class Admin {
 
   @Column({
     type: 'enum',
-    enum: ['admin', 'free'],
-    default: 'free'
+    enum: ['admin'],
+    default: 'admin'
   })
-  acessLevel: string;
+  accessLevel: string;
 
   @Column({
     type: 'enum',
-    enum: ['free'],
+    enum: ['free', 'premium'],
     default: 'free'
   })
   accountType: string;
