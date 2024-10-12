@@ -4,11 +4,11 @@ import swaggerUI from 'swagger-ui-express';
 import swaggerJSDoc from 'swagger-jsdoc';
 import { MysqlDataSource } from './config/database';
 import { swaggerConfig } from './config/swagger';
-import routes from './routes';
+import routes from './routes/routes';
 
 MysqlDataSource.initialize()
   .then(() => {
-    console.log('Database initialized!');
+    console.log('MySQL Database initialized!');
   })
   .catch((err) => {
     console.error('Database Error: ', err);

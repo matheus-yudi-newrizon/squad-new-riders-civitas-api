@@ -6,15 +6,23 @@ export class Admin {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column()
   email: string;
 
   @Column()
   password: string;
 
-  @Column({ enum: ['admin', 'free'], default: 'free' })
-  acessLevel: string;
+  @Column({
+    type: 'enum',
+    enum: ['admin'],
+    default: 'admin'
+  })
+  accessLevel: string;
 
-  @Column({ enum: ['free'] })
+  @Column({
+    type: 'enum',
+    enum: ['free', 'premium'],
+    default: 'free'
+  })
   accountType: string;
 }
