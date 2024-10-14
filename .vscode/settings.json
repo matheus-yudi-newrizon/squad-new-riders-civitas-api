@@ -28,6 +28,5 @@
     "source.organizeImports": "explicit"
   },
   "eslint.validate": ["javascript", "typescript"],
-  "cSpell.language": "en,pt,pt_BR",
-  "cSpell.words": ["openapi"]
+  "cSpell.language": "en,pt,pt_BR"
 }
