@@ -10,7 +10,7 @@ MysqlDataSource.initialize()
   .then(() => {
     console.log('MySQL Database initialized!');
   })
-  .catch((err) => {
+  .catch(err => {
     console.error('Database Error: ', err);
   });
 

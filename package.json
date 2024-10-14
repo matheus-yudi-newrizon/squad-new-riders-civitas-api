@@ -8,9 +8,11 @@
     "start:dev": "npx nodemon -L",
     "build": "npm run lint && npx tsc",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs": "typedoc src"
   },
   "devDependencies": {
+    "@types/bcryptjs": "2.4.6",
     "@types/cors": "2.8.14",
     "@types/express": "4.17.19",
     "@types/node": "20.8.6",
@@ -23,10 +25,11 @@
     "eslint-plugin-prettier": "5.0.1",
     "nodemon": "3.0.1",
     "ts-node": "10.9.1",
+    "typedoc": "0.26.9",
     "typescript": "5.2.2"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
+    "bcryptjs": "2.4.3",
     "cors": "2.8.5",
     "express": "4.21.0",
     "mysql2": "3.11.3",
