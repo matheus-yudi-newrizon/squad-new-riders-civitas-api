@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, Unique, BeforeInsert } from 'typeorm';
 import { generateAndHashPassword } from '../utils/generateAndHashPassword';
 
-@Entity('user')
+@Entity()
 @Unique(['email'])
 export class User {
   @PrimaryGeneratedColumn()
