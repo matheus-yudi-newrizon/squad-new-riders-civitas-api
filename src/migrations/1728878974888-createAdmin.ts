@@ -6,15 +6,18 @@ export class CreateAdmin1728878974888 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const { rawPassword, hashedPassword } = await generateAndHashPassword();
 
-    const admin = new Admin();
-    admin.email = 'exemploo@exemplo.com';
+    const admin: Admin = new Admin();
+    admin.email = 'exemplo@exemplo.com';
     admin.password = hashedPassword;
     admin.accessLevel = 'admin';
     admin.accountType = 'free';
 
-    const existingAdmin = await queryRunner.manager.findOne(Admin, {
-      where: { email: admin.email }
-    });
+    const existingAdmin: Admin | null = await queryRunner.manager.findOne(
+      Admin,
+      {
+        where: { email: admin.email }
+      }
+    );
     if (existingAdmin) {
       console.log('Já existe um administrador vinculado à este email.');
       return;
