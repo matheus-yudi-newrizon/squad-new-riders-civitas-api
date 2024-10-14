@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner } from 'typeorm';
 import { Admin } from '../entities/Admin';
 import { generateAndHashPassword } from '../services/AdminPasswordService';
 
-export class CreateAdmin1728790156765 implements MigrationInterface {
+export class CreateAdmin1728878974888 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const { rawPassword, hashedPassword } = await generateAndHashPassword();
 
