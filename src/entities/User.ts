@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, Unique, BeforeInsert } from 'typeorm';
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
 import { generateAndHashPassword } from '../utils/generateAndHashPassword';
 
 @Entity()
@@ -27,9 +27,12 @@ export class User {
   })
   accountType: string;
 
+  public rawPassword: string;
+
   @BeforeInsert()
   public async encryptPassword(): Promise<void> {
-    const { hashedPassword } = await generateAndHashPassword();
+    const { hashedPassword, rawPassword } = await generateAndHashPassword();
     this.password = hashedPassword;
+    this.rawPassword = rawPassword;
   }
 }
