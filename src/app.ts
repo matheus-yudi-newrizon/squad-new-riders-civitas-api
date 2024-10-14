@@ -4,7 +4,7 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express';
 import { MysqlDataSource } from './config/database';
 import { swaggerConfig } from './config/swagger';
-import AdminRoutes from './routes/routes';
+import routes from './routes/routes';
 
 MysqlDataSource.initialize()
   .then(() => {
@@ -18,7 +18,7 @@ const app = express();
 
 app.use(express.json());
 app.use(cors({ origin: true }));
-app.use(AdminRoutes);
+app.use(routes);
 
 const swaggerSpec = swaggerJSDoc(swaggerConfig);
 
