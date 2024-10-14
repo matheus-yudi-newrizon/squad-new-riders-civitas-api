@@ -5,12 +5,6 @@ export class CreateAdmin1728878974888 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     const email: string = 'admin@exemplo.com';
 
-    const admin: User = new User();
-    admin.email = email;
-    admin.password = '';
-    admin.accessLevel = 'admin';
-    admin.accountType = 'free';
-
     /**
      * Recupera um usuário administrador existente do banco de dados com base no e-mail fornecido.
      *
@@ -20,12 +14,17 @@ export class CreateAdmin1728878974888 implements MigrationInterface {
      * @returns Uma promessa que se resolve com o usuário administrador existente, se encontrado, ou null, se não for encontrado.
      */
     const existingAdmin: User | null = await queryRunner.manager.findOne(User, {
-      where: { email: admin.email }
+      where: { email }
     });
     if (existingAdmin) {
       console.log('Já existe um administrador vinculado à este email.');
       return;
     }
+
+    const admin: User = new User();
+    admin.email = email;
+    admin.accessLevel = 'admin';
+    admin.accountType = 'free';
 
     await queryRunner.manager.save(admin);
 
