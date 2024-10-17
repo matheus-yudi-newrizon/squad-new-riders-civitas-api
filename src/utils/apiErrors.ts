@@ -64,3 +64,25 @@ export class UnauthorizedError extends ApiError {
     super(message, 401);
   }
 }
+
+export class MissingRequiredFields extends ApiError {
+  /**
+   * Constrói uma nova instância de `MissingRequiredFieldError`.
+   *
+   * @param message - A mensagem de erro associada.
+   */
+  constructor(message: string) {
+    super(message, 400);
+  }
+}
+
+export class InvalidJWTTokenError extends ApiError {
+  /**
+   * Constrói uma nova instância de `InvalidJWTTokenError`.
+   *
+   * @param message - A mensagem de erro associada.
+   */
+  constructor(message: string) {
+    super(message, 401);
+  }
+}
