@@ -54,7 +54,7 @@ export class ClassController {
    * }
    * ```
    */
-  async cadastrarTurma(req: Request, res: Response): Promise<Response> {
+  async createClass(req: Request, res: Response): Promise<Response> {
     const { nome, anoLetivo, periodoLetivo, ensino } = req.body;
 
     if (!nome || !anoLetivo || !periodoLetivo || !ensino) {
