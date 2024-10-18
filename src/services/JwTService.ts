@@ -5,7 +5,7 @@ import { InvalidJWTTokenError } from '../utils/apiErrors';
 @Service()
 export class JwtService {
   private static readonly secretPass: string = process.env.JWT_PASS;
-  private static readonly tokenExpiration: string = '2h';
+  private static readonly tokenExpiration: string = '1h';
   /**
    * Gera um token JWT com os dados do payload.
    *
