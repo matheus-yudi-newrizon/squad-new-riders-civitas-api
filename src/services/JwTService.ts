@@ -1,11 +1,11 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt, { JwtPayload, VerifyErrors } from 'jsonwebtoken';
 import { Service } from 'typedi';
-import { InvalidJWTTokenError } from '../utils/apiErrors';
 
 @Service()
 export class JwtService {
   private static readonly secretPass: string = process.env.JWT_PASS;
   private static readonly tokenExpiration: string = '1h';
+
   /**
    * Gera um token JWT com os dados do payload.
    *
@@ -17,17 +17,17 @@ export class JwtService {
   }
 
   /**
-   * Verifica se o token JWT fornecido é válido.
+   * Verifica se o token JWT fornecido é válido de forma assíncrona.
    *
    * @param token - O token JWT que precisa ser verificado.
-   * @returns O payload decodificado se o token for válido.
-   * @throws {InvalidJWTTokenError} Se o token for inválido ou expirado.
+   * @param callback - Função de callback para lidar com o resultado da verificação (erro ou payload).
    */
-  public verifyToken(token: string): string | JwtPayload {
-    const decoded: string | JwtPayload = jwt.verify(token, JwtService.secretPass);
-    if (!decoded) {
-      throw new InvalidJWTTokenError('Token inválido ou expirado');
-    }
-    return decoded;
+  public verifyToken(token: string, callback: (err: VerifyErrors | null, decoded: string | JwtPayload | undefined) => void): void {
+    jwt.verify(token, JwtService.secretPass, (err, decoded) => {
+      if (err) {
+        return callback(err, undefined);
+      }
+      return callback(null, decoded);
+    });
   }
 }

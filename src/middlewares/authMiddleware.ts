@@ -1,6 +1,6 @@
 import { NextFunction, Response } from 'express';
 import { IAuthJWTRequest } from 'interfaces/IAuthJWTRequest';
-import { JwtPayload } from 'jsonwebtoken';
+import { VerifyErrors } from 'jsonwebtoken';
 import { JwtService } from '../services/JwtService';
 import { InvalidJWTTokenError, UnauthorizedError } from '../utils/apiErrors';
 
@@ -10,27 +10,32 @@ const jwtService = new JwtService();
  * Middleware para proteger rotas que precisam de autenticação.
  *
  * Verifica o token JWT presente no cabeçalho Authorization.
- * Se o token for válido, adiciona as informações do usuário ao `req.user`.
+ * Se o token for válido, adiciona as informações do usuário ao `req.token`.
  *
  * @param req - A requisição HTTP
  * @param res - A resposta HTTP
  * @param next - Função que passa o controle para o próximo middleware ou rota
  */
 export const authMiddleware = (req: IAuthJWTRequest, res: Response, next: NextFunction) => {
-  const authHeader: string | undefined = req.headers.authorization;
+  const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    throw new UnauthorizedError('Token não consta na requisição');
+    throw new UnauthorizedError('Token não consta na requisição.');
   }
 
-  const token: string = authHeader.split(' ')[1];
-  const decoded: string | JwtPayload = jwtService.verifyToken(token);
+  const token = authHeader.split(' ')[1];
 
-  if (typeof decoded === 'string') {
-    throw new InvalidJWTTokenError('Token inválido ou expirado');
-  }
+  jwtService.verifyToken(token, (err: VerifyErrors | null, decoded) => {
+    if (err) {
+      return next(new InvalidJWTTokenError('Token inválido ou expirado.'));
+    }
 
-  req.token = decoded;
+    if (typeof decoded !== 'string') {
+      req.token = decoded;
+    } else {
+      return next(new InvalidJWTTokenError('Token inválido.'));
+    }
 
-  next();
+    next();
+  });
 };
