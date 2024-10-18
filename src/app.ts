@@ -6,7 +6,7 @@ import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express';
 import { MysqlDataSource } from './config/database';
 import { swaggerConfig } from './config/swagger';
-import { errorMiddleware } from './middlewares/error';
+import { errorMiddleware } from './middlewares/errorMiddleware';
 import routes from './routes/routes';
 
 MysqlDataSource.initialize()
