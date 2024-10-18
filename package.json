@@ -9,7 +9,8 @@
     "build": "npm run lint && npx tsc",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "docs": "typedoc src"
+    "docs": "typedoc src",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@types/bcryptjs": "2.4.6",
@@ -24,6 +25,7 @@
     "eslint": "8.51.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-prettier": "5.0.1",
+    "husky": "^9.1.6",
     "nodemon": "3.0.1",
     "ts-node": "10.9.1",
     "tsconfig-paths": "4.2.0",
