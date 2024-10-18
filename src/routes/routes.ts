@@ -1,10 +1,10 @@
 import { Router } from 'express';
-import { HomeController } from '../controller/HomeController';
+import adminRouter from './AdminRoutes';
 import classRoutes from './ClassRoutes';
 
 const router = Router();
 
-router.get('/', new HomeController().hello);
+router.use('/admin', adminRouter);
 router.use('/turmas', classRoutes);
 
 export default router;
