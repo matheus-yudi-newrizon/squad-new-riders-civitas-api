@@ -1,13 +1,14 @@
+/*
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-/**
+/*
  * Migração responsável pela criação da tabela `class` no banco de dados.
  *
  * Esta migração cria a tabela `class` e define as colunas nome, anoLetivo,
  * periodoLetivo e ensino como enums.
- */
+ * /
 export class CreateClassTable1729194762590 implements MigrationInterface {
-  /**
+  /*
    * Executa a migração criando a tabela `class`.
    *
    * A tabela contém as seguintes colunas:
@@ -18,7 +19,7 @@ export class CreateClassTable1729194762590 implements MigrationInterface {
    * - `ensino`: Enum representando o tipo de ensino.
    *
    * @param queryRunner - QueryRunner para executar comandos SQL.
-   */
+   * /
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
             CREATE TABLE class (
@@ -32,12 +33,13 @@ export class CreateClassTable1729194762590 implements MigrationInterface {
         `);
   }
 
-  /**
+  /*
    * Reverte a criação da tabela `class`, removendo-a do banco de dados.
    *
    * @param queryRunner - QueryRunner para executar comandos SQL.
-   */
+   * /
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`DROP TABLE class;`);
   }
 }
+*/

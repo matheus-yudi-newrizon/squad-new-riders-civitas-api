@@ -4,6 +4,6 @@ import { ClassController } from '../controller/ClassController';
 const router = Router();
 const classController = new ClassController();
 
-router.post('/cadastro', classController.createClass);
+router.post('/create', classController.createClass);
 
 export default router;

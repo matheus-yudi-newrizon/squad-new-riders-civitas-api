@@ -5,6 +5,6 @@ import classRoutes from './ClassRoutes';
 const router = Router();
 
 router.get('/', new HomeController().hello);
-router.use('/turmas', classRoutes);
+router.use('/classes', classRoutes);
 
 export default router;

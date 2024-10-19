@@ -1,4 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { SchoolYear } from '../enums/SchoolYear';
+import { SchoolShift } from '../enums/SchoolShift';
+import { EducationType } from '../enums/EducationType';
 
 @Entity()
 export class Class {
@@ -6,26 +9,26 @@ export class Class {
   id: number;
 
   @Column({ nullable: false })
-  nome: string;
+  name: string;
 
   @Column({
     type: 'enum',
-    enum: ['1st year', '2nd year', '3rd year', '4th year', '5th year', '6th year'],
+    enum: SchoolYear,
     nullable: false
   })
-  anoLetivo: string;
+  schoolYear: SchoolYear;
 
   @Column({
     type: 'enum',
-    enum: ['Morning', 'Afternoon', 'Night'],
+    enum: SchoolShift,
     nullable: false
   })
-  periodoLetivo: string;
+  schoolShift: SchoolShift;
 
   @Column({
     type: 'enum',
-    enum: ['Nursery', 'Preschool', 'Elementary school 1'],
+    enum: EducationType,
     nullable: false
   })
-  ensino: string;
+  educationType: EducationType;
 }

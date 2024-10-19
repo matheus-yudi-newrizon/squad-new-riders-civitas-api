@@ -1,14 +1,18 @@
 import { Request, Response } from 'express';
 import { Class } from '../entities/Class';
 import { MysqlDataSource } from '../config/database';
+import { CreateClassDTO } from '../interfaces/CreateClassDTO';
+import { ICreateClassResponse } from '../interfaces/CreateClassResponse';
+import { validate } from 'class-validator';
 
 export class ClassController {
   /**
    * @swagger
-   * /turmas/cadastro:
+   * /classes/create:
    *   post:
    *     summary: Cadastrar uma nova turma
-   *     tags: [Turmas]
+   *     description: "Este endpoint permite criar uma nova turma com os campos `name`, `schoolYear`, `schoolShift`, e `educationType`."
+   *     tags: [Classes]
    *     requestBody:
    *       required: true
    *       content:
@@ -16,55 +20,45 @@ export class ClassController {
    *           schema:
    *             type: object
    *             properties:
-   *               nome:
+   *               name:
    *                 type: string
-   *               anoLetivo:
+   *                 description: "O nome da turma."
+   *               schoolYear:
    *                 type: string
-   *               periodoLetivo:
+   *                 description: "O ano letivo (ex: 1st year, 2nd year)."
+   *               schoolShift:
    *                 type: string
-   *               ensino:
+   *                 description: "O turno da turma (Morning, Afternoon, Night)."
+   *               educationType:
    *                 type: string
+   *                 description: "O tipo de ensino (Nursery, Preschool, etc.)."
    *     responses:
    *       200:
-   *         description: Cadastro realizado com sucesso
+   *         description: "Cadastro realizado com sucesso."
    *       400:
-   *         description: Erro de validação
+   *         description: "Erro de validação."
    *       500:
-   *         description: Erro interno no servidor
+   *         description: "Erro interno no servidor."
    */
+  public async createClass(req: Request, res: Response): Promise<Response<ICreateClassResponse>> {
+    const createClassDTO = new CreateClassDTO();
+    createClassDTO.name = req.body.name;
+    createClassDTO.schoolYear = req.body.schoolYear;
+    createClassDTO.schoolShift = req.body.schoolShift;
+    createClassDTO.educationType = req.body.educationType;
 
-  /**
-   * Cadastra uma nova turma no banco de dados.
-   *
-   * @param req - Objeto da requisição contendo o corpo com os dados da turma.
-   * @param res - Objeto da resposta para retornar o status do cadastro.
-   * @returns Um objeto JSON com a mensagem de sucesso ou erro.
-   *
-   * Valida os campos 'nome', 'anoLetivo', 'periodoLetivo' e 'ensino'. Caso algum
-   * dos campos esteja ausente, retorna um erro 400. Em caso de erro no banco,
-   * retorna um erro 500.
-   *
-   * Exemplo de corpo de requisição esperado:
-   * ```json
-   * {
-   *   "nome": "Turma A",
-   *   "anoLetivo": "1st year",
-   *   "periodoLetivo": "Morning",
-   *   "ensino": "Nursery"
-   * }
-   * ```
-   */
-  async createClass(req: Request, res: Response): Promise<Response> {
-    const { nome, anoLetivo, periodoLetivo, ensino } = req.body;
-
-    if (!nome || !anoLetivo || !periodoLetivo || !ensino) {
-      return res.status(400).json({ message: 'Todos os campos são obrigatórios.' });
+    const errors = await validate(createClassDTO);
+    if (errors.length > 0) {
+      return res.status(400).json({
+        message: 'Erro de validação',
+        errors: errors.map(err => err.constraints)
+      });
     }
 
     const classRepository = MysqlDataSource.getRepository(Class);
 
     try {
-      const newClass = classRepository.create({ nome, anoLetivo, periodoLetivo, ensino });
+      const newClass = classRepository.create(createClassDTO);
       await classRepository.save(newClass);
 
       return res.status(200).json({ message: 'Cadastro realizado com sucesso.' });
