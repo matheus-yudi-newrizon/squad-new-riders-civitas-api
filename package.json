@@ -25,11 +25,14 @@
     "eslint-plugin-prettier": "5.0.1",
     "nodemon": "3.0.1",
     "ts-node": "10.9.1",
+    "tsconfig-paths": "4.2.0",
     "typedoc": "0.26.9",
     "typescript": "5.2.2"
   },
   "dependencies": {
     "bcryptjs": "2.4.3",
+    "class-transformer": "0.5.1",
+    "class-validator": "0.14.1",
     "cors": "2.8.5",
     "express": "4.21.0",
     "mysql2": "3.11.3",
