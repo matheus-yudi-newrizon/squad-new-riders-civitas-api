@@ -14,6 +14,7 @@ export class AdminController {
    * /admin/login:
    *   post:
    *     summary: Login de administrador
+   *     description: "Este endpoint faz a intermediação do login do administrador, fornecendo um token de autenticação JWT"
    *     tags: [Admin]
    *     consumes:
    *       - application/json
@@ -57,24 +58,14 @@ export class AdminController {
    *               properties:
    *                 message:
    *                   type: string
-   *                   example: "Por favor, preencha todos os campos obrigatórios."
-   */
-  /**
-   * Método de login de administrador.
+   *                   example: "Por favor, preencha todos os campos obrigatórios"
    *
-   * @param req - A requisição contendo o email e a senha.
-   * @param res - A resposta HTTP a ser enviada de volta.
-   * @returns Retorna uma mensagem de sucesso e um token se o login for bem-sucedido.
    */
   public async login(req: Request, res: Response): Promise<Response<ILoginAdminResponse>> {
     const { email, password } = req.body;
     const loginRequestDTO: ILoginAdminRequest = { email, password };
 
-    if (!email || !password) {
-      throw new BadRequestError('Por favor, preencha os campos corretamente');
-    }
-
-    if (!validator.isEmail(email)) {
+    if (!email || !password || !validator.isEmail(email)) {
       throw new BadRequestError('Por favor, preencha os campos corretamente');
     }
 

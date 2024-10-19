@@ -2,7 +2,7 @@ import { User } from 'entities/User';
 import { ILoginAdminResponse } from 'interfaces/ILoginAdminResponse';
 import { Service } from 'typedi';
 import { v4 as uuidv4 } from 'uuid';
-import { ILoginAdminRequest } from '../interfaces/ILoginAdminRequest'; // Ajuste para as interfaces
+import { ILoginAdminRequest } from '../interfaces/ILoginAdminRequest';
 import { AdminRepository } from '../repositories/AdminRepository';
 import { JwtService } from '../services/JwtService';
 import { UnauthorizedError } from '../utils/apiErrors';

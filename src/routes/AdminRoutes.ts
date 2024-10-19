@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { Container } from 'typedi';
 import { AdminController } from '../controller/AdminController';
-//import { authMiddleware } from '../middlewares/authMiddleware';
 
 const adminRouter = Router();
 const adminController: AdminController = Container.get(AdminController);

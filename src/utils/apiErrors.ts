@@ -65,6 +65,10 @@ export class UnauthorizedError extends ApiError {
   }
 }
 
+/**
+ * Classe que representa um erro de requisição inválida por campos não preenchidos (400).
+ * Extende a classe `ApiError` e define o statusCode como 400.
+ */
 export class MissingRequiredFields extends ApiError {
   /**
    * Constrói uma nova instância de `MissingRequiredFieldError`.
@@ -76,6 +80,10 @@ export class MissingRequiredFields extends ApiError {
   }
 }
 
+/**
+ * Classe que representa um erro de requisição não autorizada associado ao Token JWT (401).
+ * Extende a classe `ApiError` e define o statusCode como 401.
+ */
 export class InvalidJWTTokenError extends ApiError {
   /**
    * Constrói uma nova instância de `InvalidJWTTokenError`.
@@ -84,5 +92,20 @@ export class InvalidJWTTokenError extends ApiError {
    */
   constructor(message: string) {
     super(message, 401);
+  }
+}
+
+/**
+ * Classe que representa um erro no servidor (500).
+ * Extende a classe `ApiError` e define o statusCode como 500.
+ */
+export class InternalServerError extends ApiError {
+  /**
+   * Constrói uma nova instância de `InternalServerError`.
+   *
+   * @param message - A mensagem de erro associada.
+   */
+  constructor(message: string) {
+    super(message, 500);
   }
 }
