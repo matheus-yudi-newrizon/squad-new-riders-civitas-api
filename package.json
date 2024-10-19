@@ -9,12 +9,14 @@
     "build": "npm run lint && npx tsc",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "docs": "typedoc src"
+    "docs": "typedoc src",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@types/bcryptjs": "2.4.6",
     "@types/cors": "2.8.14",
     "@types/express": "4.17.19",
+    "@types/jsonwebtoken": "9.0.7",
     "@types/node": "20.8.6",
     "@types/swagger-jsdoc": "6.0.1",
     "@types/swagger-ui-express": "4.1.4",
@@ -23,6 +25,7 @@
     "eslint": "8.51.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-prettier": "5.0.1",
+    "husky": "9.1.6",
     "nodemon": "3.0.1",
     "ts-node": "10.9.1",
     "tsconfig-paths": "4.2.0",
@@ -35,10 +38,13 @@
     "class-validator": "0.14.1",
     "cors": "2.8.5",
     "express": "4.21.0",
+    "express-async-errors": "3.1.1",
+    "jsonwebtoken": "9.0.2",
     "mysql2": "3.11.3",
     "reflect-metadata": "0.1.13",
     "swagger-jsdoc": "6.2.8",
     "swagger-ui-express": "5.0.1",
+    "typedi": "0.10.0",
     "typeorm": "0.3.20"
   }
 }

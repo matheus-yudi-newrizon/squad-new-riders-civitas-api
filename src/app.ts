@@ -1,9 +1,12 @@
 import cors from 'cors';
+import 'dotenv/config';
 import express from 'express';
+import 'express-async-errors';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUI from 'swagger-ui-express';
 import { MysqlDataSource } from './config/database';
 import { swaggerConfig } from './config/swagger';
+import { errorMiddleware } from './middlewares/errorMiddleware';
 import routes from './routes/routes';
 
 MysqlDataSource.initialize()
@@ -27,6 +30,7 @@ app.get('/swagger.json', (_req, res) => res.send(swaggerSpec));
 
 console.log(`Add swagger on /swagger`);
 
+app.use(errorMiddleware);
 app.listen(process.env.SERVER_PORT, () => {
   console.log(`Server listening on port ${process.env.SERVER_PORT}`);
 });
