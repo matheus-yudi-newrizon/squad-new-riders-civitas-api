@@ -1,7 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { SchoolYear } from '../enums/SchoolYear';
-import { SchoolShift } from '../enums/SchoolShift';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { EducationType } from '../enums/EducationType';
+import { SchoolShift } from '../enums/SchoolShift';
+import { SchoolYear } from '../enums/SchoolYear';
+import { Student } from './Student';
 
 @Entity()
 export class Class {
@@ -31,4 +32,7 @@ export class Class {
     nullable: false
   })
   educationType: EducationType;
+
+  @OneToMany(() => Student, student => student.class)
+  students: Student[];
 }
