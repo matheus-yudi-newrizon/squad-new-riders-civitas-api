@@ -1,9 +1,10 @@
+import { validate } from 'class-validator';
 import { Request, Response } from 'express';
-import { Class } from '../entities/Class';
 import { MysqlDataSource } from '../config/database';
+import { Class } from '../entities/Class';
+import { BadRequestError } from '../errors/BadRequestError';
 import { CreateClassDTO } from '../interfaces/CreateClassDTO';
 import { ICreateClassResponse } from '../interfaces/CreateClassResponse';
-import { validate } from 'class-validator';
 
 export class ClassController {
   /**
@@ -49,22 +50,15 @@ export class ClassController {
 
     const errors = await validate(createClassDTO);
     if (errors.length > 0) {
-      return res.status(400).json({
-        message: 'Erro de validação',
-        errors: errors.map(err => err.constraints)
-      });
+      const validationErrors = errors.map(err => Object.values(err.constraints)).flat();
+      throw new BadRequestError(`Erro de validação: ${validationErrors.join('; ')}`);
     }
 
     const classRepository = MysqlDataSource.getRepository(Class);
 
-    try {
-      const newClass = classRepository.create(createClassDTO);
-      await classRepository.save(newClass);
+    const newClass = classRepository.create(createClassDTO);
+    await classRepository.save(newClass);
 
-      return res.status(200).json({ message: 'Cadastro realizado com sucesso.' });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ message: 'Erro ao cadastrar a turma.' });
-    }
+    return res.status(200).json({ message: 'Cadastro realizado com sucesso.' });
   }
 }
