@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import validator from 'validator';
+import { BadRequestError } from '../errors/BadRequestError';
 import { ILoginAdminRequest } from '../interfaces/ILoginAdminRequest';
 import { ILoginAdminResponse } from '../interfaces/ILoginAdminResponse';
 import { AdminService } from '../services/AdminService';
-import { BadRequestError } from '../utils/apiErrors';
 
 @Controller()
 export class AdminController {
