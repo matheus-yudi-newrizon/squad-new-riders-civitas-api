@@ -1,5 +1,6 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn, Unique, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { generateAndHashPassword } from '../utils/generateAndHashPassword';
+import { School } from './School';
 
 @Entity()
 @Unique(['email'])
@@ -26,6 +27,15 @@ export class User {
     default: 'free'
   })
   accountType: string;
+
+  @ManyToOne(() => School, { nullable: true })
+  school: School | null;
+
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
 
   public rawPassword: string;
 
