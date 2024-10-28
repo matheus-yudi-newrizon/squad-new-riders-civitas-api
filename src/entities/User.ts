@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn, Unique, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn, Unique, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { generateAndHashPassword } from '../utils/generateAndHashPassword';
 import { School } from './School';
 
@@ -14,22 +14,9 @@ export class User {
   @Column()
   password: string;
 
-  @Column({
-    type: 'enum',
-    enum: ['admin', 'user'],
-    default: 'user'
-  })
-  accessLevel: string;
-
-  @Column({
-    type: 'enum',
-    enum: ['free', 'premium'],
-    default: 'free'
-  })
-  accountType: string;
-
-  @ManyToOne(() => School, { nullable: true })
-  school: School | null;
+  @OneToOne(() => School, { nullable: false })
+  @JoinColumn()
+  school: School;
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
