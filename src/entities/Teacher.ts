@@ -10,7 +10,7 @@ export class Teacher {
   @Column({ nullable: false })
   fullName: string;
 
-  @Column({ nullable: false, unique: true })
+  @Column({ nullable: false })
   cpf: string;
 
   @OneToMany(() => TeacherSchool, teacherSchool => teacherSchool.teacher)
