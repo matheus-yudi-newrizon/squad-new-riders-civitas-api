@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { User } from './User';
 import { TeacherSchool } from './TeacherSchool';
 
 @Entity()
@@ -11,6 +12,9 @@ export class School {
 
   @Column({ nullable: true })
   address: string;
+
+  @OneToOne(() => User, user => user.school, { nullable: false })
+  administrator: User;
 
   @OneToMany(() => TeacherSchool, teacherSchool => teacherSchool.school)
   teacherSchools: TeacherSchool[];

@@ -3,7 +3,7 @@ import { Teacher } from './Teacher';
 import { School } from './School';
 
 @Entity()
-@Unique(['registrationNumber'])
+@Unique(['teacher', 'school'])
 export class TeacherSchool {
   @PrimaryGeneratedColumn()
   id: number;
@@ -14,7 +14,7 @@ export class TeacherSchool {
   @ManyToOne(() => School, school => school.teacherSchools)
   school: School;
 
-  @Column({ nullable: false, unique: true })
+  @Column({ nullable: false })
   registrationNumber: string;
 
   @CreateDateColumn({ type: 'timestamp' })
