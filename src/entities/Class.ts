@@ -6,6 +6,7 @@ import { School } from './School';
 import { Student } from './Student';
 
 @Entity()
+@Unique(['school', 'schoolYear', 'schoolShift', 'educationType', 'name'])
 export class Class {
   @PrimaryGeneratedColumn()
   id: number;
@@ -34,7 +35,7 @@ export class Class {
   })
   educationType: EducationType;
 
-  @ManyToOne(() => School, { nullable: false })
+  @ManyToOne(() => School, school => school.classes, { nullable: false })
   school: School;
 
   @OneToMany(() => Student, student => student.studentClass)

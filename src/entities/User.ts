@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { BeforeInsert, Column, CreateDateColumn, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
+import { BeforeInsert, Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
 import { School } from './School';
 
 @Entity()
@@ -14,8 +14,7 @@ export class User {
   @Column()
   password: string;
 
-  @OneToOne(() => School, { nullable: false })
-  @JoinColumn()
+  @OneToOne(() => School, school => school.administrator, { nullable: false })
   school: School;
 
   @CreateDateColumn({ type: 'timestamp' })

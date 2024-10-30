@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Class } from './Class';
 import { Student } from './Student';
 import { TeacherSchool } from './TeacherSchool';
 import { User } from './User';
@@ -14,11 +15,15 @@ export class School {
   @Column({ nullable: true })
   address: string;
 
-  @OneToOne(() => User, user => user.school)
+  @OneToOne(() => User, user => user.school, { nullable: false })
+  @JoinColumn()
   administrator: User;
 
   @OneToMany(() => TeacherSchool, teacherSchool => teacherSchool.school)
   teacherSchools: TeacherSchool[];
+
+  @OneToMany(() => Class, classEntity => classEntity.school)
+  classes: Class[];
 
   @OneToMany(() => Student, student => student.school)
   students: Student[];
