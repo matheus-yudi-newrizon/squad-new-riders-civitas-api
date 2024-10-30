@@ -8,14 +8,21 @@ import { JwtService } from '../services/JwtService';
 const jwtService = new JwtService();
 
 /**
- * Middleware para proteger rotas que precisam de autenticação.
+ * Middleware de autenticação para proteger rotas que requerem um token JWT válido.
  *
- * Verifica o token JWT presente no cabeçalho Authorization.
- * Se o token for válido, adiciona as informações do usuário ao `req.token`.
+ * Este middleware verifica a presença de um token JWT no cabeçalho `Authorization`.
+ * Se o token estiver presente e for válido, as informações do usuário autenticado
+ * são adicionadas ao `res.locals`, permitindo que outras partes da aplicação
+ * acessem esses dados, como o `schoolId`.
  *
- * @param req - A requisição HTTP
- * @param res - A resposta HTTP
- * @param next - Função que passa o controle para o próximo middleware ou rota
+ * @param req - A requisição HTTP, que deve incluir o cabeçalho `Authorization` contendo o token JWT.
+ * @param res - A resposta HTTP, onde as informações do usuário autenticado serão armazenadas em `res.locals`.
+ * @param next - A função de callback para passar o controle ao próximo middleware ou rota.
+ *
+ * @throws UnauthorizedError - Lançado quando o cabeçalho `Authorization` não está presente na requisição.
+ * @throws InvalidJWTTokenError - Lançado quando o token JWT está inválido ou expirado.
+ *
+ *
  */
 export const authMiddleware = (req: IAuthJWTRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;

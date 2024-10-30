@@ -1,7 +1,7 @@
 import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { SchoolYear } from '../enums/SchoolYear';
-import { SchoolShift } from '../enums/SchoolShift';
 import { EducationType } from '../enums/EducationType';
+import { SchoolShift } from '../enums/SchoolShift';
+import { SchoolYear } from '../enums/SchoolYear';
 
 export class CreateClassDTO {
   @IsNotEmpty({ message: 'O campo nome é obrigatório.' })
