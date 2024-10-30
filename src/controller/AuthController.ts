@@ -1,20 +1,22 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import validator from 'validator';
+import { User } from '../entities/User';
 import { BadRequestError } from '../errors/BadRequestError';
-import { ILoginAdminRequest } from '../interfaces/ILoginAdminRequest';
-import { ILoginAdminResponse } from '../interfaces/ILoginAdminResponse';
+import { UnauthorizedError } from '../errors/UnauthorizedError';
+import { ILoginAdminRequest } from '../models/interfaces/ILoginAdminRequest';
+import { ILoginResponse } from '../models/interfaces/ILoginResponse';
 import { AdminService } from '../services/AdminService';
 
 @Controller()
-export class AdminController {
+export class AuthController {
   constructor(private readonly adminService: AdminService) {}
   /**
    * @swagger
    * /admin/login:
    *   post:
    *     summary: Login de administrador
-   *     description: "Este endpoint faz a intermediação do login do administrador, fornecendo um token de autenticação JWT"
+   *     description: "Este endpoint autentica o administrador e fornece um token JWT."
    *     tags: [Admin]
    *     consumes:
    *       - application/json
@@ -26,6 +28,9 @@ export class AdminController {
    *         application/json:
    *           schema:
    *             type: object
+   *             required:
+   *               - email
+   *               - password
    *             properties:
    *               email:
    *                 type: string
@@ -58,18 +63,31 @@ export class AdminController {
    *               properties:
    *                 message:
    *                   type: string
-   *                   example: "Por favor, preencha todos os campos obrigatórios"
-   *
+   *                   example: "Por favor, preencha os campos obrigatórios corretamente"
+   *       401:
+   *         description: Credenciais incorretas
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Seu e-mail ou senha estão incorretos"
    */
-  public async login(req: Request, res: Response): Promise<Response<ILoginAdminResponse>> {
+  public async adminLogin(req: Request, res: Response): Promise<Response<ILoginResponse>> {
     const { email, password } = req.body;
     const loginRequestDTO: ILoginAdminRequest = { email, password };
 
-    if (!email || !password || !validator.isEmail(email)) {
-      throw new BadRequestError('Por favor, preencha os campos corretamente');
-    }
+    if (!email || !password || !validator.isEmail(email)) throw new BadRequestError('Por favor, preencha os campos corretamente');
 
-    const responseLoginDTO: ILoginAdminResponse = await this.adminService.login(loginRequestDTO);
+    const admin: User = await this.adminService.findAdminEmail(loginRequestDTO);
+    if (!admin) throw new UnauthorizedError('Seu e-mail ou senha estão incorretos');
+
+    const matchPassword: boolean = await this.adminService.validatePassword(loginRequestDTO, admin);
+    if (!matchPassword) throw new UnauthorizedError('Seu e-mail ou senha estão incorretos');
+
+    const responseLoginDTO: ILoginResponse = await this.adminService.login(loginRequestDTO, admin);
 
     return res.status(200).json(responseLoginDTO);
   }

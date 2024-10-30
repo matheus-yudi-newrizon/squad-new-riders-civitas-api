@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { Container } from 'typedi';
-import { AdminController } from '../controller/AdminController';
+import { AuthController } from '../controller/AuthController';
 
 const adminRouter = Router();
-const adminController: AdminController = Container.get(AdminController);
+const adminController: AuthController = Container.get(AuthController);
 
-adminRouter.post('/login', (req, res) => adminController.login(req, res));
+adminRouter.post('/login', (req, res) => adminController.adminLogin(req, res));
 
 export default adminRouter;

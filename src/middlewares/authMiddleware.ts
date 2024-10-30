@@ -1,8 +1,8 @@
 import { NextFunction, Response } from 'express';
-import { IAuthJWTRequest } from 'interfaces/IAuthJWTRequest';
 import { VerifyErrors } from 'jsonwebtoken';
 import { InvalidJWTTokenError } from '../errors/InvalidJWTTokenError';
 import { UnauthorizedError } from '../errors/UnauthorizedError';
+import { IAuthJWTRequest } from '../models/interfaces/IAuthJWTRequest';
 import { JwtService } from '../services/JwtService';
 
 const jwtService = new JwtService();
@@ -31,8 +31,8 @@ export const authMiddleware = (req: IAuthJWTRequest, res: Response, next: NextFu
       return next(new InvalidJWTTokenError('Token inválido ou expirado.'));
     }
 
-    if (typeof decoded !== 'string') {
-      req.token = decoded;
+    if (typeof decoded !== 'string' && decoded.schoolId) {
+      res.locals.schoolId = decoded.schoolId;
     } else {
       return next(new InvalidJWTTokenError('Token inválido.'));
     }

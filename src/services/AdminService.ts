@@ -1,9 +1,7 @@
 import { User } from 'entities/User';
-import { ILoginAdminResponse } from 'interfaces/ILoginAdminResponse';
+import { ILoginResponse } from 'models/interfaces/ILoginResponse';
 import { Service } from 'typedi';
-import { v4 as uuidv4 } from 'uuid';
-import { UnauthorizedError } from '../errors/UnauthorizedError';
-import { ILoginAdminRequest } from '../interfaces/ILoginAdminRequest';
+import { ILoginAdminRequest } from '../models/interfaces/ILoginAdminRequest';
 import { AdminRepository } from '../repositories/AdminRepository';
 import { JwtService } from '../services/JwtService';
 
@@ -15,35 +13,46 @@ export class AdminService {
   ) {}
 
   /**
-   * Realiza o login do administrador, verificando email e senha.
+   * Busca um administrador pelo email fornecido.
    *
-   * @param adminDTO - Dados de login (email e senha) como ILoginAdminRequest.
-   * @returns Uma promessa que se resolve com uma mensagem de sucesso ou lança um erro.
+   * @param adminDTO - Objeto contendo o email e senha para autenticação.
+   * @returns Uma promessa que se resolve com o objeto `User` do administrador, caso o email exista,
+   * ou `undefined` se o administrador não for encontrado.
    */
-  public async login(adminDTO: ILoginAdminRequest): Promise<ILoginAdminResponse> {
+  public async findAdminEmail(adminDTO: ILoginAdminRequest): Promise<User | undefined> {
     const admin: User = await this.adminRepository.findByEmail(adminDTO.email);
+    return admin || undefined;
+  }
+  /**
+   * Valida a senha do administrador comparando com o hash armazenado.
+   *
+   * @param adminDTO - Objeto contendo os dados de login, incluindo a senha a ser verificada.
+   * @param admin - O objeto `User` do administrador recuperado do banco de dados.
+   * @returns Uma promessa que se resolve com `true` se a senha estiver correta ou `false` caso contrário.
+   */
+  public async validatePassword(adminDTO: ILoginAdminRequest, admin: User): Promise<boolean> {
+    const adminPasswordCompare: boolean = await this.adminRepository.validatePassword(admin, adminDTO.password);
+    return !!adminPasswordCompare;
+  }
 
-    if (!admin) {
-      throw new UnauthorizedError('Seu e-mail ou senha estão incorretos');
-    }
-
-    const validPassword: boolean = await this.adminRepository.validatePassword(admin, adminDTO.password);
-
-    if (!validPassword) {
-      throw new UnauthorizedError('Seu e-mail ou senha estão incorretos');
-    }
-
-    const sessionId: string = uuidv4();
+  /**
+   * Realiza o login do administrador gerando um token JWT para autenticação.
+   * Este método deve ser chamado após a validação do email e da senha.
+   *
+   * @param adminDTO - Objeto contendo o email e senha para autenticação.
+   * @param admin - O objeto `User` do administrador já validado.
+   * @returns Um objeto `ILoginResponse` contendo a mensagem de sucesso e o token JWT gerado.
+   */
+  public async login(adminDTO: ILoginAdminRequest, admin: User): Promise<ILoginResponse> {
     const token: string = this.jwtService.generateToken({
       id: admin.id,
       email: admin.email,
-      iat: Math.floor(Date.now() / 1000),
-      sessionId: sessionId
+      schoolId: admin.school.id
     });
 
     return {
       message: 'Login bem-sucedido',
-      token: token
+      token
     };
   }
 }
