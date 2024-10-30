@@ -1,10 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, Unique } from 'typeorm';
 import { SchoolYear } from '../enums/SchoolYear';
 import { SchoolShift } from '../enums/SchoolShift';
 import { EducationType } from '../enums/EducationType';
 import { School } from './School';
 
 @Entity()
+@Unique(['school', 'schoolYear', 'schoolShift', 'educationType', 'name'])
 export class Class {
   @PrimaryGeneratedColumn()
   id: number;
@@ -33,7 +34,7 @@ export class Class {
   })
   educationType: EducationType;
 
-  @ManyToOne(() => School, { nullable: false })
+  @ManyToOne(() => School, school => school.classes, { nullable: false })
   school: School;
 
   @CreateDateColumn({ type: 'timestamp' })

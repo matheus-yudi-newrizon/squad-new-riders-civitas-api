@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn, Unique, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn, Unique, OneToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { generateAndHashPassword } from '../utils/generateAndHashPassword';
 import { School } from './School';
 
@@ -14,8 +14,7 @@ export class User {
   @Column()
   password: string;
 
-  @OneToOne(() => School, { nullable: false })
-  @JoinColumn()
+  @OneToOne(() => School, school => school.administrator, { nullable: false })
   school: School;
 
   @CreateDateColumn({ type: 'timestamp' })
