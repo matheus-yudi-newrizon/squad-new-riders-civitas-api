@@ -3,7 +3,7 @@ import { MysqlDataSource } from '../config/database';
 import { Class } from '../entities/Class';
 import { School } from '../entities/School';
 import { BadRequestError } from '../errors/BadRequestError';
-import { ICreateClassResponse } from '../interfaces/CreateClassResponse';
+import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
 
 export class ClassController {
   /**
@@ -42,7 +42,7 @@ export class ClassController {
    *       500:
    *         description: "Erro interno no servidor."
    */
-  public async createClass(req: Request, res: Response): Promise<Response<ICreateClassResponse>> {
+  public async createClass(req: Request, res: Response): Promise<Response<ICreationSucessResponse>> {
     const schoolId = res.locals.schoolId;
 
     const classRepository = MysqlDataSource.getRepository(Class);

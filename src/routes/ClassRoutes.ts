@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { ClassController } from '../controller/ClassController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { validationMiddleware } from '../middlewares/validateMiddleware';
-import { CreateClassDTO } from '../interfaces/CreateClassDTO';
+import { CreateClassDTO } from '../models/DTO/CreateClassDTO';
 
 const router = Router();
 const classController = new ClassController();

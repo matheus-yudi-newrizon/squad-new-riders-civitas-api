@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
 import { EducationType } from '../models/enums/EducationType';
 import { SchoolShift } from '../models/enums/SchoolShift';
 import { SchoolYear } from '../models/enums/SchoolYear';

@@ -15,7 +15,7 @@ export class School {
   @Column({ nullable: true })
   address: string;
 
-  @OneToOne(() => User, user => user.school, { nullable: false })
+  @OneToOne(() => User, user => user.school, { nullable: true })
   @JoinColumn()
   administrator: User;
 
