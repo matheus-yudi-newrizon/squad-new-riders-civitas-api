@@ -87,7 +87,7 @@ export class AuthController {
     const matchPassword: boolean = await this.adminService.validatePassword(loginRequestDTO, admin);
     if (!matchPassword) throw new UnauthorizedError('Seu e-mail ou senha estão incorretos');
 
-    const responseLoginDTO: ILoginResponse = await this.adminService.login(loginRequestDTO, admin);
+    const responseLoginDTO: ILoginResponse = await this.adminService.generateAccessToken(admin);
 
     return res.status(200).json(responseLoginDTO);
   }

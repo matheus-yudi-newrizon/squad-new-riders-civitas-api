@@ -36,20 +36,21 @@ export class AdminService {
   }
 
   /**
-   * Realiza o login do administrador gerando um token JWT para autenticação.
-   * Este método deve ser chamado após a validação do email e da senha.
+   * Gera um token JWT para autenticar o administrador.
    *
-   * @param adminDTO - Objeto contendo o email e senha para autenticação.
-   * @param admin - O objeto `User` do administrador já validado.
-   * @returns Um objeto `ILoginResponse` contendo a mensagem de sucesso e o token JWT gerado.
+   * Este método deve ser chamado após o administrador ter sido validado com sucesso.
+   *
+   * @param admin - Instância do administrador autenticado (`User`).
+   * @returns Um objeto contendo uma mensagem de sucesso e o token JWT (`ILoginResponse`).
    */
-  public async login(adminDTO: ILoginAdminRequest, admin: User): Promise<ILoginResponse> {
+  public async generateAccessToken(admin: User): Promise<ILoginResponse> {
+    console.log(admin);
     const token: string = this.jwtService.generateToken({
       id: admin.id,
       email: admin.email,
       schoolId: admin.school.id
     });
-
+    console.log(token);
     return {
       message: 'Login bem-sucedido',
       token
