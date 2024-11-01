@@ -3,10 +3,10 @@ import { ILoginResponse } from 'models/interfaces/ILoginResponse';
 import { Service } from 'typedi';
 import { ILoginAdminRequest } from '../models/interfaces/ILoginAdminRequest';
 import { AdminRepository } from '../repositories/AdminRepository';
-import { JwtService } from '../services/JwtService';
+import { JwtService } from './JwtService';
 
 @Service()
-export class AdminService {
+export class AuthService {
   constructor(
     private readonly adminRepository: AdminRepository,
     private readonly jwtService: JwtService
@@ -44,13 +44,11 @@ export class AdminService {
    * @returns Um objeto contendo uma mensagem de sucesso e o token JWT (`ILoginResponse`).
    */
   public async generateAccessToken(admin: User): Promise<ILoginResponse> {
-    console.log(admin);
     const token: string = this.jwtService.generateToken({
       id: admin.id,
       email: admin.email,
       schoolId: admin.school.id
     });
-    console.log(token);
     return {
       message: 'Login bem-sucedido',
       token

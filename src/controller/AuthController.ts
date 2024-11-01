@@ -6,11 +6,11 @@ import { BadRequestError } from '../errors/BadRequestError';
 import { UnauthorizedError } from '../errors/UnauthorizedError';
 import { ILoginAdminRequest } from '../models/interfaces/ILoginAdminRequest';
 import { ILoginResponse } from '../models/interfaces/ILoginResponse';
-import { AdminService } from '../services/AdminService';
+import { AuthService } from '../services/AuthService';
 
 @Controller()
 export class AuthController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(private readonly adminService: AuthService) {}
   /**
    * @swagger
    * /admin/login:
