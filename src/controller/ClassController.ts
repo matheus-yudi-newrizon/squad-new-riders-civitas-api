@@ -1,76 +1,57 @@
 import { Request, Response } from 'express';
-import { MysqlDataSource } from '../config/database';
-import { Class } from '../entities/Class';
-import { School } from '../entities/School';
+import { Service as Controller } from 'typedi';
 import { BadRequestError } from '../errors/BadRequestError';
 import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
+import { ClassService } from '../services/ClassService';
+import { CreateClassDTO } from '../models/DTO/CreateClassDTO';
 
+@Controller()
 export class ClassController {
+  constructor(private readonly classService: ClassService) {}
+
   /**
    * @swagger
    * /classes/create:
    *   post:
    *     summary: Cadastrar uma nova turma
-   *     description: "Este endpoint permite criar uma nova turma associada a uma escola com os campos `name`, `schoolYear`, `schoolShift`, e `educationType`."
+   *     description: "Este endpoint permite criar uma nova turma associada a uma escola com os campos `name`, `schoolYear`, `schoolShift`, e `educationType`. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'."
    *     tags: [Classes]
+   *     consumes:
+   *       - application/json
+   *     produces:
+   *       - application/json
    *     requestBody:
    *       required: true
    *       content:
    *         application/json:
    *           schema:
-   *             type: object
-   *             properties:
-   *               name:
-   *                 type: string
-   *                 description: "O nome da turma."
-   *               schoolYear:
-   *                 type: string
-   *                 description: "O ano letivo (ex: 1st year, 2nd year)."
-   *               schoolShift:
-   *                 type: string
-   *                 description: "O turno da turma (Morning, Afternoon, Night)."
-   *               educationType:
-   *                 type: string
-   *                 description: "O tipo de ensino (Nursery, Preschool, etc.)."
+   *             $ref: '#/components/schemas/CreateClassDTO'
    *     responses:
    *       201:
    *         description: "Cadastro realizado com sucesso."
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Cadastro realizado com sucesso."
    *       400:
-   *         description: "Erro de validação."
+   *         description: "Erro na requisição - dados faltando ou incorretos"
    *       404:
    *         description: "Escola não encontrada."
-   *       500:
-   *         description: "Erro interno no servidor."
+   *       409:
+   *         description: "O apelido da turma já existe para as seleções feitas."
    */
-  public async createClass(req: Request, res: Response): Promise<Response<ICreationSucessResponse>> {
+
+  public async create(req: Request, res: Response): Promise<Response<ICreationSucessResponse>> {
     const schoolId = res.locals.schoolId;
+    const createClassDTO: CreateClassDTO = req.body;
 
-    const classRepository = MysqlDataSource.getRepository(Class);
+    if (!schoolId) throw new BadRequestError('School ID não encontrado no token.');
 
-    const existingClass = await classRepository.findOne({
-      where: {
-        school: { id: schoolId },
-        name: req.body.name,
-        schoolYear: req.body.schoolYear,
-        schoolShift: req.body.schoolShift,
-        educationType: req.body.educationType
-      }
-    });
-
-    if (existingClass) {
-      throw new BadRequestError('O apelido da turma já existe para as seleções feitas.');
-    }
-
-    const schoolRepository = MysqlDataSource.getRepository(School);
-    const school = await schoolRepository.findOne({ where: { id: schoolId } });
-
-    if (!school) {
-      throw new BadRequestError('Escola não encontrada.');
-    }
-
-    const newClass = classRepository.create({ ...req.body, school });
-    await classRepository.save(newClass);
-
-    return res.status(201).json({ message: 'Cadastro realizado com sucesso.' });
+    const result = await this.classService.createClassWithValidation(createClassDTO, schoolId);
+    return res.status(201).json(result);
   }
 }
