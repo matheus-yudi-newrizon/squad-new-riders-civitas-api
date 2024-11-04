@@ -39,10 +39,34 @@ export class ClassController {
    *                   example: "Cadastro realizado com sucesso."
    *       400:
    *         description: "Erro na requisição - dados faltando ou incorretos"
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "School ID não encontrado no token."
    *       404:
    *         description: "Escola não encontrada."
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Escola não encontrada."
    *       409:
    *         description: "O apelido da turma já existe para as seleções feitas."
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "O apelido da turma já existe para as seleções feitas."
    */
 
   public async create(req: Request, res: Response): Promise<Response<ICreationSucessResponse>> {

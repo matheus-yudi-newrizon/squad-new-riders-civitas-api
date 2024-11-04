@@ -10,14 +10,36 @@ import { EducationType } from '../models/enums/EducationType';
 export class ClassRepository {
   private repository: TypeORMRepository<Class> = MysqlDataSource.getRepository(Class);
 
+  /**
+   * Cria uma instância de uma turma com os dados fornecidos, mas não a salva no banco de dados.
+   *
+   * @param classData - Dados parciais da turma que será criada.
+   * @returns Uma instância de `Class` criada, mas não persistida.
+   */
   public createClass(classData: Partial<Class>): Class {
     return this.repository.create(classData);
   }
 
+  /**
+   * Salva uma instância de turma no banco de dados.
+   *
+   * @param classEntity - A instância da turma a ser salva.
+   * @returns A instância de `Class` após ser salva no banco de dados.
+   */
   public async saveClass(classEntity: Class): Promise<Class> {
     return await this.repository.save(classEntity);
   }
 
+  /**
+   * Verifica a existência de uma turma duplicada com base nos parâmetros fornecidos.
+   *
+   * @param name - Nome da turma.
+   * @param schoolYear - Ano escolar da turma.
+   * @param schoolShift - Turno escolar da turma.
+   * @param educationType - Tipo de educação da turma.
+   * @param schoolId - ID da escola associada à turma.
+   * @returns Uma instância de `Class` se uma turma duplicada for encontrada, ou `undefined` caso contrário.
+   */
   public async findDuplicateClass(
     name: string,
     schoolYear: SchoolYear,
@@ -37,7 +59,7 @@ export class ClassRepository {
   }
 
   /**
-   * Busca uma turma pelo nome.
+   * Busca uma turma pelo nome fornecido.
    *
    * @param name - Nome da turma.
    * @returns Uma instância de `Class` se encontrada, ou `undefined` caso contrário.

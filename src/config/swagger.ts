@@ -51,6 +51,36 @@ export const swaggerConfig: swaggerJSDoc.OAS3Options = {
             }
           },
           required: ['name', 'schoolYear', 'schoolShift', 'educationType']
+        },
+        CreateTeacherDTO: {
+          type: 'object',
+          properties: {
+            fullName: {
+              type: 'string',
+              description: 'Nome completo do professor',
+              example: 'João Silva'
+            },
+            cpf: {
+              type: 'string',
+              description: 'CPF do professor',
+              example: '123.456.789-00'
+            },
+            registrationNumber: {
+              type: 'string',
+              description: 'Número de matrícula do professor',
+              example: '20230001'
+            },
+            classes: {
+              type: 'array',
+              items: {
+                type: 'string',
+                description: 'ID da turma associada'
+              },
+              description: 'Lista de turmas associadas ao professor',
+              example: ['Turma A', 'Turma B']
+            }
+          },
+          required: ['fullName', 'cpf', 'registrationNumber', 'classes']
         }
       }
     }

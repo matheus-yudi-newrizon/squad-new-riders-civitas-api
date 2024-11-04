@@ -18,7 +18,7 @@ export class ClassService {
   ) {}
 
   /**
-   * Verifica a existência da escola e a duplicidade da turma, e cria uma nova turma caso esteja tudo ok.
+   * Verifica a existência da escola e a duplicidade da turma, e cria uma nova turma caso não haja conflitos.
    *
    * @param createClassDTO - Dados da turma a ser criada.
    * @param schoolId - ID da escola associada.
@@ -45,12 +45,29 @@ export class ClassService {
     return { message: 'Cadastro realizado com sucesso.' };
   }
 
+  /**
+   * Verifica a existência de uma escola com base no ID fornecido.
+   *
+   * @param id - ID da escola.
+   * @returns A instância de `School` se encontrada.
+   * @throws BadRequestError - Se a escola não for encontrada.
+   */
   private async verifySchool(id: number): Promise<School> {
     const school = await this.schoolRepository.findByID(id);
     if (!school) throw new BadRequestError('Escola não encontrada');
     return school;
   }
 
+  /**
+   * Verifica a duplicidade de uma turma com base nos dados fornecidos.
+   *
+   * @param name - Nome da turma.
+   * @param schoolYear - Ano escolar da turma.
+   * @param schoolShift - Turno escolar da turma.
+   * @param educationType - Tipo de educação da turma.
+   * @param schoolId - ID da escola associada à turma.
+   * @returns `true` se uma turma duplicada for encontrada, caso contrário `false`.
+   */
   private async verifyClassDuplicate(
     name: string,
     schoolYear: SchoolYear,
