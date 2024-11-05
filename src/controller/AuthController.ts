@@ -10,7 +10,7 @@ import { AuthService } from '../services/AuthService';
 
 @Controller()
 export class AuthController {
-  constructor(private readonly adminService: AuthService) {}
+  constructor(private readonly authService: AuthService) {}
   /**
    * @swagger
    * /admin/login:
@@ -81,13 +81,13 @@ export class AuthController {
 
     if (!email || !password || !validator.isEmail(email)) throw new BadRequestError('Por favor, preencha os campos corretamente');
 
-    const admin: User = await this.adminService.findAdminEmail(loginRequestDTO);
+    const admin: User = await this.authService.findAdminEmail(loginRequestDTO);
     if (!admin) throw new UnauthorizedError('Seu e-mail ou senha estão incorretos');
 
-    const matchPassword: boolean = await this.adminService.validatePassword(loginRequestDTO, admin);
+    const matchPassword: boolean = await this.authService.validatePassword(loginRequestDTO, admin);
     if (!matchPassword) throw new UnauthorizedError('Seu e-mail ou senha estão incorretos');
 
-    const responseLoginDTO: ILoginResponse = await this.adminService.generateAccessToken(admin);
+    const responseLoginDTO: ILoginResponse = await this.authService.generateAccessToken(admin);
 
     return res.status(200).json(responseLoginDTO);
   }

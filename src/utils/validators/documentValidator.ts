@@ -35,9 +35,9 @@ class IsDocumentValidConstraint implements ValidatorConstraintInterface {
      *
      * Retorna uma mensagem de erro que será exibida quando a validação falhar.
      *
-     * @returns A mensagem de erro padrão: "O valor deve ser um CPF ou RG válido".
+     * @returns A mensagem de erro padrão: "O documento do estudante é inválido. Verifique as informações digitadas".
      */
-    return 'O valor deve ser um CPF ou RG válido';
+    return 'O documento do estudante é inválido. Verifique as informações digitadas';
   }
 }
 
@@ -53,7 +53,7 @@ class IsDocumentValidConstraint implements ValidatorConstraintInterface {
  * @example
  * ```typescript
  * class Student {
- *   @IsDocumentValid({ message: "O valor deve ser um CPF ou RG válido" })
+ *   @IsDocumentValid({ message: "O documento do estudante é inválido. Verifique as informações digitadas" })
  *   documento: string;
  * }
  * ```
