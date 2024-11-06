@@ -1,12 +1,13 @@
 import { Router } from 'express';
+import { Container } from 'typedi';
 import { ClassController } from '../controller/ClassController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { validationMiddleware } from '../middlewares/validateMiddleware';
 import { CreateClassDTO } from '../models/DTO/CreateClassDTO';
 
-const router = Router();
-const classController = new ClassController();
+const classRoutes = Router();
+const classController: ClassController = Container.get(ClassController);
 
-router.post('/create', authMiddleware, validationMiddleware(CreateClassDTO), classController.createClass);
+classRoutes.post('/create', authMiddleware, validationMiddleware(CreateClassDTO), (req, res) => classController.create(req, res));
 
-export default router;
+export default classRoutes;
