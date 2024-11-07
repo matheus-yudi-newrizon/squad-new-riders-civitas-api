@@ -17,10 +17,6 @@ export class TeacherController {
    *     summary: Cadastra um novo professor
    *     description: "Este endpoint cria um novo registro de professor vinculado a uma escola. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'. O token é decodificado no backend, e o `schoolId` é extraído do payload do token."
    *     tags: [Teachers]
-   *     consumes:
-   *       - application/json
-   *     produces:
-   *       - application/json
    *     security:
    *       - bearerAuth: []
    *     requestBody:
@@ -31,9 +27,9 @@ export class TeacherController {
    *             $ref: '#/components/schemas/CreateTeacherDTO'
    *     responses:
    *       201:
-   *         description: "Cadastro realizado com sucesso."
+   *         description: Cadastro realizado com sucesso.
    *         content:
-   *           application/json
+   *           application/json:
    *             schema:
    *               type: object
    *               properties:
@@ -41,11 +37,11 @@ export class TeacherController {
    *                   type: string
    *                   example: "Cadastro de professor realizado com sucesso."
    *       400:
-   *         description: "Erro na requisição - dados faltando ou incorretos"
+   *         description: Erro na requisição - dados faltando ou incorretos
    *       409:
-   *         description: "Conflito de cadastro"
+   *         description: Conflito de cadastro
    *         content:
-   *           application/json
+   *           application/json:
    *             schema:
    *               type: object
    *               properties:
@@ -65,7 +61,7 @@ export class TeacherController {
 
   /**
    * @swagger
-   * /teachers/classes:
+   * /teachers/me/classes:
    *   get:
    *     summary: Lista as turmas associadas a um professor
    *     description: "Este endpoint lista todas as turmas associadas a um professor específico. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}', e o `teacherId` é extraído do token."
@@ -74,15 +70,15 @@ export class TeacherController {
    *       - bearerAuth: []
    *     responses:
    *       200:
-   *         description: "Lista de turmas associadas ao professor."
+   *         description: Lista de turmas associadas ao professor.
    *         content:
-   *           application/json
+   *           application/json:
    *             schema:
    *               type: array
    *               items:
    *                 $ref: '#/components/schemas/Class'
    *       404:
-   *         description: "Nenhuma turma encontrada para o professor especificado."
+   *         description: Nenhuma turma encontrada para o professor especificado.
    */
   public async listClassesByTeacher(req: Request, res: Response): Promise<Response> {
     const teacherId: number = res.locals.teacherId;
@@ -104,13 +100,13 @@ export class TeacherController {
    *       - bearerAuth: []
    *     responses:
    *       200:
-   *         description: "Informações do professor."
+   *         description: Informações do professor.
    *         content:
-   *           application/json
+   *           application/json:
    *             schema:
    *               $ref: '#/components/schemas/Teacher'
    *       404:
-   *         description: "Professor não encontrado."
+   *         description: Professor não encontrado.
    */
   public async getTeacherById(req: Request, res: Response): Promise<Response> {
     const teacherId: number = res.locals.teacherId;

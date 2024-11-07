@@ -40,6 +40,10 @@ export const authMiddleware = (req: IAuthJWTRequest, res: Response, next: NextFu
 
     if (typeof decoded !== 'string' && decoded.schoolId) {
       res.locals.schoolId = decoded.schoolId;
+
+      if (decoded.teacherId) {
+        res.locals.teacherId = decoded.teacherId;
+      }
     } else {
       return next(new InvalidJWTTokenError('Token inválido.'));
     }
