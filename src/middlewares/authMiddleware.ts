@@ -1,20 +1,28 @@
 import { NextFunction, Response } from 'express';
-import { IAuthJWTRequest } from 'interfaces/IAuthJWTRequest';
 import { VerifyErrors } from 'jsonwebtoken';
+import { InvalidJWTTokenError } from '../errors/InvalidJWTTokenError';
+import { UnauthorizedError } from '../errors/UnauthorizedError';
+import { IAuthJWTRequest } from '../models/interfaces/IAuthJWTRequest';
 import { JwtService } from '../services/JwtService';
-import { InvalidJWTTokenError, UnauthorizedError } from '../utils/apiErrors';
 
 const jwtService = new JwtService();
 
 /**
- * Middleware para proteger rotas que precisam de autenticação.
+ * Middleware de autenticação para proteger rotas que requerem um token JWT válido.
  *
- * Verifica o token JWT presente no cabeçalho Authorization.
- * Se o token for válido, adiciona as informações do usuário ao `req.token`.
+ * Este middleware verifica a presença de um token JWT no cabeçalho `Authorization`.
+ * Se o token estiver presente e for válido, as informações do usuário autenticado
+ * são adicionadas ao `res.locals`, permitindo que outras partes da aplicação
+ * acessem esses dados, como o `schoolId`.
  *
- * @param req - A requisição HTTP
- * @param res - A resposta HTTP
- * @param next - Função que passa o controle para o próximo middleware ou rota
+ * @param req - A requisição HTTP, que deve incluir o cabeçalho `Authorization` contendo o token JWT.
+ * @param res - A resposta HTTP, onde as informações do usuário autenticado serão armazenadas em `res.locals`.
+ * @param next - A função de callback para passar o controle ao próximo middleware ou rota.
+ *
+ * @throws UnauthorizedError - Lançado quando o cabeçalho `Authorization` não está presente na requisição.
+ * @throws InvalidJWTTokenError - Lançado quando o token JWT está inválido ou expirado.
+ *
+ *
  */
 export const authMiddleware = (req: IAuthJWTRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
@@ -30,8 +38,8 @@ export const authMiddleware = (req: IAuthJWTRequest, res: Response, next: NextFu
       return next(new InvalidJWTTokenError('Token inválido ou expirado.'));
     }
 
-    if (typeof decoded !== 'string') {
-      req.token = decoded;
+    if (typeof decoded !== 'string' && decoded.schoolId) {
+      res.locals.schoolId = decoded.schoolId;
     } else {
       return next(new InvalidJWTTokenError('Token inválido.'));
     }

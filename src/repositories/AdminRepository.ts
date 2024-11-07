@@ -15,7 +15,7 @@ export class AdminRepository {
    * @returns Uma promessa que resolve com a instância de User ou undefined se não for encontrado.
    */
   public async findByEmail(email: string): Promise<User | undefined> {
-    return this.repository.findOne({ where: { email } });
+    return this.repository.findOne({ where: { email }, relations: ['school'] });
   }
 
   /**

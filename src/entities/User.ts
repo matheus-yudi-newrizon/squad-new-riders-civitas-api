@@ -1,5 +1,6 @@
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
-import { generateAndHashPassword } from '../utils/generateAndHashPassword';
+import bcrypt from 'bcryptjs';
+import { BeforeInsert, Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
+import { School } from './School';
 
 @Entity()
 @Unique(['email'])
@@ -13,26 +14,25 @@ export class User {
   @Column()
   password: string;
 
-  @Column({
-    type: 'enum',
-    enum: ['admin', 'user'],
-    default: 'user'
-  })
-  accessLevel: string;
+  @OneToOne(() => School, school => school.administrator, { nullable: false })
+  school: School;
 
-  @Column({
-    type: 'enum',
-    enum: ['free', 'premium'],
-    default: 'free'
-  })
-  accountType: string;
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
 
-  public rawPassword: string;
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
 
+  /**
+   * Método executado automaticamente antes de inserir um novo registro no banco de dados.
+   * Ele criptografa a senha do administrador para segurança.
+   *
+   * @returns Uma promessa que resolve quando a senha é criptografada.
+   */
   @BeforeInsert()
   public async encryptPassword(): Promise<void> {
-    const { hashedPassword, rawPassword } = await generateAndHashPassword();
+    const fixedPassword: string = '22345511';
+    const hashedPassword: string = await bcrypt.hash(fixedPassword, 10);
     this.password = hashedPassword;
-    this.rawPassword = rawPassword;
   }
 }

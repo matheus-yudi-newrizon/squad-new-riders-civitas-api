@@ -1,5 +1,5 @@
+import { ApiError } from 'errors/ApiErrors';
 import { NextFunction, Request, Response } from 'express';
-import { ApiError } from 'utils/apiErrors';
 
 /**
  * Middleware para tratar erros na aplicação.

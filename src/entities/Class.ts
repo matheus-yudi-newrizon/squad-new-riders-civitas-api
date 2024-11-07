@@ -1,9 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { SchoolYear } from '../enums/SchoolYear';
-import { SchoolShift } from '../enums/SchoolShift';
-import { EducationType } from '../enums/EducationType';
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
+import { EducationType } from '../models/enums/EducationType';
+import { SchoolShift } from '../models/enums/SchoolShift';
+import { SchoolYear } from '../models/enums/SchoolYear';
+import { School } from './School';
+import { Student } from './Student';
 
 @Entity()
+@Unique(['school', 'schoolYear', 'schoolShift', 'educationType', 'name'])
 export class Class {
   @PrimaryGeneratedColumn()
   id: number;
@@ -31,4 +34,16 @@ export class Class {
     nullable: false
   })
   educationType: EducationType;
+
+  @ManyToOne(() => School, school => school.classes, { nullable: false })
+  school: School;
+
+  @OneToMany(() => Student, student => student.studentClass)
+  students: Student[];
+
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
 }
