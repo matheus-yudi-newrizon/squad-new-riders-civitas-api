@@ -2,9 +2,9 @@ import { Service as Repository } from 'typedi';
 import { Repository as TypeORMRepository, In } from 'typeorm';
 import { MysqlDataSource } from '../config/database';
 import { Class } from '../entities/Class';
-import { SchoolYear } from '../models/enums/SchoolYear';
-import { SchoolShift } from '../models/enums/SchoolShift';
 import { EducationType } from '../models/enums/EducationType';
+import { SchoolShift } from '../models/enums/SchoolShift';
+import { SchoolYear } from '../models/enums/SchoolYear';
 
 @Repository()
 export class ClassRepository {

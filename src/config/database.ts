@@ -8,6 +8,5 @@ export const MysqlDataSource = new DataSource({
   entities: ['src/entities/*.ts', 'entities/*.js'],
   logging: true,
   synchronize: true,
-  migrations: ['src/migrations/*.ts'],
-  migrationsRun: true
+  migrations: ['src/migrations/*.ts']
 });

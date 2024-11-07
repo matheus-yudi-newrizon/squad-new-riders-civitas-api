@@ -28,13 +28,14 @@ export class StudentService {
   }
 
   /**
-   * Verifica se a turma existe com base no nome fornecido.
+   * Verifica se a turma existe com base no Id fornecido.
    *
-   * @param className - Nome da turma.
+   * @param classId - Id da turma.
    * @returns A instância da turma se encontrada, ou `undefined` caso contrário.
    */
-  public async stringToClass(className: string): Promise<Class | undefined> {
-    const studentClass: Class = await this.classRepository.findByName(className);
+  public async stringToClass(classId: string): Promise<Class | undefined> {
+    const convertedId: number = Number(classId);
+    const studentClass: Class = await this.classRepository.findById(convertedId);
     return studentClass || undefined;
   }
 
