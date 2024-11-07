@@ -4,6 +4,7 @@ import { SchoolShift } from '../models/enums/SchoolShift';
 import { SchoolYear } from '../models/enums/SchoolYear';
 import { School } from './School';
 import { Student } from './Student';
+import { TeacherClass } from './TeacherClass';
 
 @Entity()
 @Unique(['school', 'schoolYear', 'schoolShift', 'educationType', 'name'])
@@ -40,6 +41,9 @@ export class Class {
 
   @OneToMany(() => Student, student => student.studentClass)
   students: Student[];
+
+  @OneToMany(() => TeacherClass, teacherClass => teacherClass.class)
+  teacherClasses: TeacherClass[];
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;

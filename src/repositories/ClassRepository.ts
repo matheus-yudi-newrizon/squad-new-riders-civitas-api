@@ -1,5 +1,5 @@
 import { Service as Repository } from 'typedi';
-import { Repository as TypeORMRepository } from 'typeorm';
+import { Repository as TypeORMRepository, In } from 'typeorm';
 import { MysqlDataSource } from '../config/database';
 import { Class } from '../entities/Class';
 import { SchoolYear } from '../models/enums/SchoolYear';
@@ -69,5 +69,77 @@ export class ClassRepository {
       where: { name },
       relations: ['school']
     });
+  }
+
+  /**
+   * Busca múltiplas turmas com base em um array de IDs fornecido.
+   *
+   * @param ids - Array de IDs das turmas.
+   * @returns Uma lista de instâncias de `Class` correspondentes aos IDs fornecidos.
+   */
+  public async findByIds(ids: number[]): Promise<Class[]> {
+    return await this.repository.find({
+      where: { id: In(ids) }
+    });
+  }
+
+  /**
+   * Busca uma turma específica com base no ID fornecido.
+   *
+   * @param id - ID da turma a ser buscada.
+   * @returns Uma instância de `Class` se encontrada, ou `undefined` caso contrário.
+   */
+  public async findById(id: number): Promise<Class | undefined> {
+    return await this.repository.findOne({
+      where: { id },
+      relations: ['school', 'students']
+    });
+  }
+
+  /**
+   * Busca todas as turmas associadas a um professor específico com base no ID do professor.
+   *
+   * @param teacherId - ID do professor.
+   * @returns Uma lista de instâncias de `Class` associadas ao professor.
+   */
+  public async findByTeacherId(teacherId: number): Promise<Class[]> {
+    return await this.repository
+      .createQueryBuilder('class')
+      .innerJoin('class.teacherClasses', 'teacherClass')
+      .where('teacherClass.teacherId = :teacherId', { teacherId })
+      .leftJoinAndSelect('class.school', 'school')
+      .getMany();
+  }
+
+  /**
+   * Busca turmas com base nos filtros opcionais fornecidos.
+   *
+   * @param filters - Filtros opcionais para listar as turmas, incluindo ano, turno, tipo de educação e escola.
+   * @returns Uma lista de instâncias de `Class` que atendem aos critérios fornecidos.
+   */
+  public async findClassesWithFilters(filters: {
+    schoolYear?: string;
+    educationType?: string;
+    schoolShift?: string;
+    schoolId: number;
+  }): Promise<Class[]> {
+    const queryBuilder = this.repository
+      .createQueryBuilder('class')
+      .leftJoinAndSelect('class.school', 'school')
+      .where('school.id = :schoolId', { schoolId: filters.schoolId });
+
+    if (filters.schoolYear) {
+      queryBuilder.andWhere('class.schoolYear = :schoolYear', { schoolYear: filters.schoolYear });
+    }
+
+    if (filters.educationType) {
+      queryBuilder.andWhere('class.educationType = :educationType', { educationType: filters.educationType });
+    }
+
+    if (filters.schoolShift) {
+      queryBuilder.andWhere('class.schoolShift = :schoolShift', { schoolShift: filters.schoolShift });
+    }
+
+    return await queryBuilder.getMany();
   }
 }

@@ -8,6 +8,21 @@ import { CreateTeacherDTO } from '../models/DTO/CreateTeacherDTO';
 const teacherRoutes = Router();
 const teacherController: TeacherController = Container.get(TeacherController);
 
+/**
+ * @route POST /teachers/register
+ * @description Rota para cadastro de um novo professor, exigindo autenticação e validação dos dados.
+ * @access Private
+ * @middleware authMiddleware - Garante que o usuário está autenticado.
+ * @middleware validationMiddleware(CreateTeacherDTO) - Valida o payload com base no DTO fornecido.
+ */
 teacherRoutes.post('/register', authMiddleware, validationMiddleware(CreateTeacherDTO), (req, res) => teacherController.create(req, res));
+
+/**
+ * @route GET /teachers/me/classes
+ * @description Rota para listar as turmas associadas ao professor autenticado.
+ * @access Private
+ * @middleware authMiddleware - Garante que o usuário está autenticado.
+ */
+teacherRoutes.get('/me/classes', authMiddleware, (req, res) => teacherController.listClassesByTeacher(req, res));
 
 export default teacherRoutes;

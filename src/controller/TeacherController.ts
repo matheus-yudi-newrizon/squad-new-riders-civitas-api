@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError } from '../errors/BadRequestError';
+import { NotFoundError } from '../errors/NotFoundError';
 import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
 import { TeacherService } from '../services/TeacherService';
 import { CreateTeacherDTO } from '../models/DTO/CreateTeacherDTO';
@@ -14,12 +15,14 @@ export class TeacherController {
    * /teachers/register:
    *   post:
    *     summary: Cadastra um novo professor
-   *     description: "Este endpoint cria um novo registro de professor vinculado a uma escola. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'."
+   *     description: "Este endpoint cria um novo registro de professor vinculado a uma escola. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'. O token é decodificado no backend, e o `schoolId` é extraído do payload do token."
    *     tags: [Teachers]
    *     consumes:
    *       - application/json
    *     produces:
    *       - application/json
+   *     security:
+   *       - bearerAuth: []
    *     requestBody:
    *       required: true
    *       content:
@@ -30,7 +33,7 @@ export class TeacherController {
    *       201:
    *         description: "Cadastro realizado com sucesso."
    *         content:
-   *           application/json:
+   *           application/json
    *             schema:
    *               type: object
    *               properties:
@@ -42,7 +45,7 @@ export class TeacherController {
    *       409:
    *         description: "Conflito de cadastro"
    *         content:
-   *           application/json:
+   *           application/json
    *             schema:
    *               type: object
    *               properties:
@@ -58,5 +61,62 @@ export class TeacherController {
 
     const result = await this.teacherService.createTeacherWithValidation(createTeacherDTO, schoolId);
     return res.status(201).json(result);
+  }
+
+  /**
+   * @swagger
+   * /teachers/classes:
+   *   get:
+   *     summary: Lista as turmas associadas a um professor
+   *     description: "Este endpoint lista todas as turmas associadas a um professor específico. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}', e o `teacherId` é extraído do token."
+   *     tags: [Teachers]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: "Lista de turmas associadas ao professor."
+   *         content:
+   *           application/json
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Class'
+   *       404:
+   *         description: "Nenhuma turma encontrada para o professor especificado."
+   */
+  public async listClassesByTeacher(req: Request, res: Response): Promise<Response> {
+    const teacherId: number = res.locals.teacherId;
+
+    if (!teacherId) throw new BadRequestError('ID do professor não encontrado no token.');
+
+    const classes = await this.teacherService.listClassesByTeacher(teacherId);
+    return res.status(200).json(classes);
+  }
+
+  /**
+   * @swagger
+   * /teachers:
+   *   get:
+   *     summary: Busca um professor pelo token
+   *     description: "Este endpoint permite buscar as informações de um professor específico pelo seu token JWT. O token é decodificado, e o `teacherId` é extraído para realizar a busca."
+   *     tags: [Teachers]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: "Informações do professor."
+   *         content:
+   *           application/json
+   *             schema:
+   *               $ref: '#/components/schemas/Teacher'
+   *       404:
+   *         description: "Professor não encontrado."
+   */
+  public async getTeacherById(req: Request, res: Response): Promise<Response> {
+    const teacherId: number = res.locals.teacherId;
+
+    const teacher = await this.teacherService.getTeacherById(teacherId);
+    if (!teacher) throw new NotFoundError('Professor não encontrado.');
+    return res.status(200).json(teacher);
   }
 }

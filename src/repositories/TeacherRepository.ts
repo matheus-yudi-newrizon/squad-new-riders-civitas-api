@@ -3,11 +3,23 @@ import { Repository as TypeORMRepository } from 'typeorm';
 import { MysqlDataSource } from '../config/database';
 import { Teacher } from '../entities/Teacher';
 import { TeacherSchool } from '../entities/TeacherSchool';
+import { TeacherClass } from '../entities/TeacherClass';
 
 @Repository()
 export class TeacherRepository {
   private repository: TypeORMRepository<Teacher> = MysqlDataSource.getRepository(Teacher);
   private teacherSchoolRepository: TypeORMRepository<TeacherSchool> = MysqlDataSource.getRepository(TeacherSchool);
+  private teacherClassRepository: TypeORMRepository<TeacherClass> = MysqlDataSource.getRepository(TeacherClass);
+
+  /**
+   * Busca um professor pelo ID fornecido.
+   *
+   * @param teacherId - ID do professor a ser buscado.
+   * @returns Uma instância de `Teacher` se encontrada, ou `undefined` caso contrário.
+   */
+  public async findById(teacherId: number): Promise<Teacher | undefined> {
+    return await this.repository.findOne({ where: { id: teacherId } });
+  }
 
   /**
    * Cria uma instância de professor com os dados fornecidos, mas não a salva no banco de dados.
@@ -74,5 +86,25 @@ export class TeacherRepository {
         school: { id: schoolId }
       }
     });
+  }
+
+  /**
+   * Cria uma associação entre o professor e a turma na tabela `TeacherClass`.
+   *
+   * @param teacherClassData - Dados parciais da associação `TeacherClass` que será criada.
+   * @returns Uma instância de `TeacherClass` criada, mas não persistida.
+   */
+  public createTeacherClass(teacherClassData: Partial<TeacherClass>): TeacherClass {
+    return this.teacherClassRepository.create(teacherClassData);
+  }
+
+  /**
+   * Salva múltiplas associações entre o professor e as turmas no banco de dados.
+   *
+   * @param teacherClasses - Lista de instâncias de `TeacherClass` a serem salvas.
+   * @returns A lista de instâncias `TeacherClass` após serem salvas no banco de dados.
+   */
+  public async saveTeacherClasses(teacherClasses: TeacherClass[]): Promise<TeacherClass[]> {
+    return await this.teacherClassRepository.save(teacherClasses);
   }
 }

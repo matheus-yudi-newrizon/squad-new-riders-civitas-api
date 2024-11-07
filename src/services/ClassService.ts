@@ -1,11 +1,13 @@
 import { Service } from 'typedi';
 import { School } from '../entities/School';
+import { Class } from '../entities/Class';
 import { CreateClassDTO } from '../models/DTO/CreateClassDTO';
 import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
 import { ClassRepository } from '../repositories/ClassRepository';
 import { SchoolRepository } from '../repositories/SchoolRepository';
 import { BadRequestError } from '../errors/BadRequestError';
 import { ConflictError } from '../errors/ConflictError';
+import { NotFoundError } from '../errors/NotFoundError';
 import { SchoolYear } from '../models/enums/SchoolYear';
 import { SchoolShift } from '../models/enums/SchoolShift';
 import { EducationType } from '../models/enums/EducationType';
@@ -18,9 +20,9 @@ export class ClassService {
   ) {}
 
   /**
-   * Verifica a existência da escola e a duplicidade da turma, e cria uma nova turma caso não haja conflitos.
+   * Cria uma nova turma caso a escola seja válida e não haja duplicidade com turmas existentes.
    *
-   * @param createClassDTO - Dados da turma a ser criada.
+   * @param createClassDTO - Dados para criação da turma.
    * @param schoolId - ID da escola associada.
    * @returns Um objeto contendo uma mensagem de sucesso.
    * @throws BadRequestError - Se a escola não for encontrada.
@@ -46,11 +48,47 @@ export class ClassService {
   }
 
   /**
-   * Verifica a existência de uma escola com base no ID fornecido.
+   * Lista todas as turmas associadas a um professor específico.
+   *
+   * @param teacherId - ID do professor.
+   * @returns Uma lista de turmas associadas ao professor.
+   * @throws NotFoundError - Se nenhuma turma for encontrada para o professor.
+   */
+  public async listClassesByTeacher(teacherId: number): Promise<Class[]> {
+    const classes = await this.classRepository.findByTeacherId(teacherId);
+    if (!classes.length) throw new NotFoundError('Nenhuma turma encontrada para o professor especificado.');
+    return classes;
+  }
+
+  /**
+   * Lista todas as turmas de uma escola com filtros opcionais.
+   *
+   * @param filters - Filtros opcionais para listar as turmas.
+   * @returns Uma lista de turmas que atendem aos filtros fornecidos.
+   */
+  public async listClasses(filters: { schoolYear?: string; educationType?: string; schoolShift?: string; schoolId: number }): Promise<Class[]> {
+    return await this.classRepository.findClassesWithFilters(filters);
+  }
+
+  /**
+   * Busca uma turma específica pelo ID.
+   *
+   * @param classId - ID da turma a ser buscada.
+   * @returns A instância de `Class` encontrada.
+   * @throws NotFoundError - Se a turma não for encontrada.
+   */
+  public async getClassById(classId: number): Promise<Class> {
+    const classEntity = await this.classRepository.findById(classId);
+    if (!classEntity) throw new NotFoundError('Turma não encontrada.');
+    return classEntity;
+  }
+
+  /**
+   * Verifica se uma escola existe com base no ID fornecido.
    *
    * @param id - ID da escola.
-   * @returns A instância de `School` se encontrada.
-   * @throws BadRequestError - Se a escola não for encontrada.
+   * @returns A entidade `School` se a escola for encontrada.
+   * @throws BadRequestError - Se a escola não for encontrada no banco de dados.
    */
   private async verifySchool(id: number): Promise<School> {
     const school = await this.schoolRepository.findByID(id);

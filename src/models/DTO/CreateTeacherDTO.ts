@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, MaxLength, IsArray } from 'class-validator';
+import { IsNotEmpty, IsString, MaxLength, IsArray, ArrayNotEmpty, IsInt } from 'class-validator';
 import { IsCPF } from '../../utils/validators/cpfValidator';
 import { IsValidClass } from '../../utils/validators/classExistsValidator';
 
@@ -20,6 +20,8 @@ export class CreateTeacherDTO {
 
   @IsNotEmpty({ message: 'O campo turmas é obrigatório.' })
   @IsArray({ message: 'O campo turmas deve ser um array.' })
+  @ArrayNotEmpty({ message: 'O campo turmas não pode estar vazio.' })
+  @IsInt({ each: true, message: 'Cada turma deve ser identificada por um número.' })
   @IsValidClass({ each: true })
-  readonly classes: string[];
+  readonly classes: number[];
 }

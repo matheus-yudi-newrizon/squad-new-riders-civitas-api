@@ -9,7 +9,10 @@ export const swaggerConfig: swaggerJSDoc.OAS3Options = {
       version: '1.0.0'
     },
     host: 'localhost:4444',
-    tags: [],
+    tags: [
+      { name: 'Classes', description: 'Endpoints relacionados às turmas' },
+      { name: 'Teachers', description: 'Endpoints relacionados aos professores' }
+    ],
     externalDocs: {
       description: 'View swagger.json',
       url: '../swagger.json'
@@ -76,8 +79,8 @@ export const swaggerConfig: swaggerJSDoc.OAS3Options = {
                 type: 'string',
                 description: 'ID da turma associada'
               },
-              description: 'Lista de turmas associadas ao professor',
-              example: ['Turma A', 'Turma B']
+              description: 'Lista de IDs das turmas associadas ao professor',
+              example: ['1', '2', '3']
             }
           },
           required: ['fullName', 'cpf', 'registrationNumber', 'classes']
