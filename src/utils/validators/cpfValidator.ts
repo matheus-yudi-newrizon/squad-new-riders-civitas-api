@@ -33,7 +33,7 @@ class IsCPFConstraint implements ValidatorConstraintInterface {
   }
 
   defaultMessage(): string {
-    return 'O valor deve ser um CPF válido';
+    return 'CPF inválido. Verifique as informações digitadas';
   }
 }
 

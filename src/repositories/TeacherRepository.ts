@@ -107,4 +107,14 @@ export class TeacherRepository {
   public async saveTeacherClasses(teacherClasses: TeacherClass[]): Promise<TeacherClass[]> {
     return await this.teacherClassRepository.save(teacherClasses);
   }
+
+  /**
+   * Busca um professor pelo seu número de registro, incluindo o relacionamento com a escola.
+   *
+   * @param registrationNumber - O número de registro do professor.
+   * @returns Uma instância de `TeacherSchool` com o relacionamento `School` carregado, se encontrada, ou `undefined` caso contrário.
+   */
+  public async findByRegistrationNumber(registrationNumber: string): Promise<TeacherSchool | undefined> {
+    return await this.teacherSchoolRepository.findOne({ where: { registrationNumber }, relations: ['school'] });
+  }
 }

@@ -1,16 +1,19 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import validator from 'validator';
+import { TeacherSchool } from '../entities/TeacherSchool';
 import { User } from '../entities/User';
 import { BadRequestError } from '../errors/BadRequestError';
 import { UnauthorizedError } from '../errors/UnauthorizedError';
 import { ILoginAdminRequest } from '../models/interfaces/ILoginAdminRequest';
 import { ILoginResponse } from '../models/interfaces/ILoginResponse';
-import { AdminService } from '../services/AdminService';
+import { ILoginTeacherRequest } from '../models/interfaces/ILoginTeacherRequest';
+import { IPayloadLogin } from '../models/interfaces/IPayloadLogin';
+import { AuthService } from '../services/AuthService';
 
 @Controller()
 export class AuthController {
-  constructor(private readonly adminService: AdminService) {}
+  constructor(private readonly authService: AuthService) {}
   /**
    * @swagger
    * /admin/login:
@@ -81,13 +84,88 @@ export class AuthController {
 
     if (!email || !password || !validator.isEmail(email)) throw new BadRequestError('Por favor, preencha os campos corretamente');
 
-    const admin: User = await this.adminService.findAdminEmail(loginRequestDTO);
+    const admin: User = await this.authService.findAdminEmail(loginRequestDTO);
     if (!admin) throw new UnauthorizedError('Seu e-mail ou senha estão incorretos');
 
-    const matchPassword: boolean = await this.adminService.validatePassword(loginRequestDTO, admin);
+    const matchPassword: boolean = await this.authService.validatePassword(loginRequestDTO, admin);
     if (!matchPassword) throw new UnauthorizedError('Seu e-mail ou senha estão incorretos');
 
-    const responseLoginDTO: ILoginResponse = await this.adminService.generateAccessToken(admin);
+    const adminPayload: IPayloadLogin = this.authService.generatePayload(admin);
+    const responseLoginDTO: ILoginResponse = await this.authService.generateAccessToken(adminPayload);
+
+    return res.status(200).json(responseLoginDTO);
+  }
+
+  /**
+   * @swagger
+   * /teacher/login:
+   *   post:
+   *     summary: Login de professor
+   *     description: "Este endpoint autentica o professor e fornece um token JWT."
+   *     tags: [Professor]
+   *     consumes:
+   *       - application/json
+   *     produces:
+   *       - application/json
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - registrationNumber
+   *             properties:
+   *               registrationNumber:
+   *                 type: string
+   *                 description: Número de matrícula do professor
+   *                 example: "123456"
+   *     responses:
+   *       200:
+   *         description: Login bem-sucedido
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Login bem-sucedido"
+   *                 token:
+   *                   type: string
+   *                   example: "seu_jwt_token"
+   *       400:
+   *         description: Número de matrícula inválido ou não preenchido
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Número de matrícula inválido. Verifique e tente novamente."
+   *       401:
+   *         description: Matrícula não encontrada
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Matrícula não encontrada. Verifique seus dados e tente novamente."
+   */
+  public async teacherLogin(req: Request, res: Response): Promise<Response<ILoginResponse>> {
+    const { registrationNumber } = req.body;
+    const loginRequestDTO: ILoginTeacherRequest = { registrationNumber };
+
+    if (!registrationNumber) throw new BadRequestError('Por favor, preencha os campos corretamente');
+
+    const teacher: TeacherSchool = await this.authService.findRegistrationNumber(loginRequestDTO);
+    if (!teacher) throw new UnauthorizedError('Matrícula não encontrada. Verifique seus dados e tente novamente');
+
+    const teacherPayload: IPayloadLogin = this.authService.generatePayload(teacher);
+    const responseLoginDTO: ILoginResponse = await this.authService.generateAccessToken(teacherPayload);
 
     return res.status(200).json(responseLoginDTO);
   }
