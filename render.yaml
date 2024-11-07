@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: civitas-api
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    branch: feature/NWR-10  # Deploy temporário na branch feature/NWR-10. TROCAR PARA develop após o merge.
+    envVars:
+      - key: NODE_ENV
+        value: development
+      - key: SERVER_PORT
+        value: 4444
+      - key: DB_DATABASE
+        value: civitas
