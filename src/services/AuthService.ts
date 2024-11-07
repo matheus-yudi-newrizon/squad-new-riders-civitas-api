@@ -1,15 +1,20 @@
-import { User } from 'entities/User';
 import { ILoginResponse } from 'models/interfaces/ILoginResponse';
+import { IPayloadLogin } from 'models/interfaces/IPayloadLogin';
 import { Service } from 'typedi';
+import { TeacherSchool } from '../entities/TeacherSchool';
+import { User } from '../entities/User';
 import { ILoginAdminRequest } from '../models/interfaces/ILoginAdminRequest';
+import { ILoginTeacherRequest } from '../models/interfaces/ILoginTeacherRequest';
 import { AdminRepository } from '../repositories/AdminRepository';
+import { TeacherRepository } from '../repositories/TeacherRepository';
 import { JwtService } from './JwtService';
 
 @Service()
 export class AuthService {
   constructor(
     private readonly adminRepository: AdminRepository,
-    private readonly jwtService: JwtService
+    private readonly jwtService: JwtService,
+    private readonly teacherRepository: TeacherRepository
   ) {}
 
   /**
@@ -36,19 +41,40 @@ export class AuthService {
   }
 
   /**
-   * Gera um token JWT para autenticar o administrador.
+   * Busca o número de matrícula de um professor.
    *
-   * Este método deve ser chamado após o administrador ter sido validado com sucesso.
-   *
-   * @param admin - Instância do administrador autenticado (`User`).
-   * @returns Um objeto contendo uma mensagem de sucesso e o token JWT (`ILoginResponse`).
+   * @param teacherDTO - Objeto contendo o número de matrícula do professor (`ILoginTeacherRequest`).
+   * @returns A entidade `TeacherSchool` correspondente ao número de matrícula ou `undefined` caso não encontre.
    */
-  public async generateAccessToken(admin: User): Promise<ILoginResponse> {
-    const token: string = this.jwtService.generateToken({
-      id: admin.id,
-      email: admin.email,
-      schoolId: admin.school.id
-    });
+  public async findRegistrationNumber(teacherDTO: ILoginTeacherRequest): Promise<TeacherSchool | undefined> {
+    const teacher: TeacherSchool = await this.teacherRepository.findByRegistrationNumber(teacherDTO.registrationNumber);
+    return teacher || undefined;
+  }
+
+  /**
+   * Gera o payload necessário para autenticação, com base na entidade fornecida.
+   *
+   * @param entity - Instância de `User` ou `TeacherSchool`.
+   * @returns Um objeto `IPayloadLogin` com os dados necessários para o payload JWT.
+   */
+  public generatePayload(entity: User | TeacherSchool): IPayloadLogin {
+    if (entity instanceof User) return { id: entity.id, email: entity.email, schoolId: entity.school.id };
+    if (entity instanceof TeacherSchool) return { id: entity.id, registrationNumber: entity.registrationNumber, schoolId: entity.school.id };
+  }
+
+  /**
+   * Gera um token JWT para autenticar o usuário.
+   *
+   * Este método deve ser chamado após a validação bem-sucedida da entidade,
+   * e utiliza um payload restrito (definido em `IPayloadLogin`) para gerar o token.
+   *
+   * @param payload - Objeto `IPayloadLogin` contendo os atributos necessários
+   *                  para o token JWT, incluindo `id`, `schoolId`, e opcionalmente
+   *                  `email` ou `registrationNumber` dependendo do tipo de usuário.
+   * @returns Um objeto `ILoginResponse` contendo uma mensagem de sucesso e o token JWT.
+   */
+  public async generateAccessToken(payload: IPayloadLogin): Promise<ILoginResponse> {
+    const token: string = this.jwtService.generateToken(payload);
     return {
       message: 'Login bem-sucedido',
       token
