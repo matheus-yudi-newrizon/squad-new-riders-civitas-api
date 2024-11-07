@@ -2,9 +2,9 @@ import { Service as Repository } from 'typedi';
 import { Repository as TypeORMRepository } from 'typeorm';
 import { MysqlDataSource } from '../config/database';
 import { Class } from '../entities/Class';
-import { SchoolYear } from '../models/enums/SchoolYear';
-import { SchoolShift } from '../models/enums/SchoolShift';
 import { EducationType } from '../models/enums/EducationType';
+import { SchoolShift } from '../models/enums/SchoolShift';
+import { SchoolYear } from '../models/enums/SchoolYear';
 
 @Repository()
 export class ClassRepository {
@@ -67,6 +67,19 @@ export class ClassRepository {
   public async findByName(name: string): Promise<Class | undefined> {
     return await this.repository.findOne({
       where: { name },
+      relations: ['school']
+    });
+  }
+
+  /**
+   * Busca uma turma pelo Id fornecido.
+   *
+   * @param Id - Id da turma.
+   * @returns Uma instância de `Class` se encontrada, ou `undefined` caso contrário.
+   */
+  public async findById(id: number): Promise<Class | undefined> {
+    return await this.repository.findOne({
+      where: { id },
       relations: ['school']
     });
   }

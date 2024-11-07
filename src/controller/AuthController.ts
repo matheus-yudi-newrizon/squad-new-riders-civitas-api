@@ -98,7 +98,7 @@ export class AuthController {
 
   /**
    * @swagger
-   * /teacher/login:
+   * /teachers/login:
    *   post:
    *     summary: Login de professor
    *     description: "Este endpoint autentica o professor e fornece um token JWT."
