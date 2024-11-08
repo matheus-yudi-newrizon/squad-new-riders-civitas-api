@@ -14,4 +14,7 @@ RUN chown -R node /app/node_modules
 
 USER node
 
-EXPOSE 8080
+EXPOSE 4444
+
+CMD ["npx", "ts-node", "src/index.ts"]
+
