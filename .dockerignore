@@ -1,0 +1,8 @@
+node_modules
+.vscode/
+.husky/
+.env
+.editorconfig
+.eslintrc.js
+.gitignore
+.prettierrc
