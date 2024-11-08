@@ -31,6 +31,8 @@ app.get('/swagger.json', (_req, res) => res.send(swaggerSpec));
 console.log(`Add swagger on /swagger`);
 
 app.use(errorMiddleware);
-app.listen(process.env.SERVER_PORT, () => {
-  console.log(`Server listening on port ${process.env.SERVER_PORT}`);
+
+const port = parseInt(process.env.PORT || '4444', 10);
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server listening on port ${port}`);
 });
