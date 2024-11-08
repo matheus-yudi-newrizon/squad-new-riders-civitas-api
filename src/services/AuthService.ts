@@ -7,7 +7,7 @@ import { ILoginAdminRequest } from '../models/interfaces/ILoginAdminRequest';
 import { ILoginTeacherRequest } from '../models/interfaces/ILoginTeacherRequest';
 import { AdminRepository } from '../repositories/AdminRepository';
 import { TeacherRepository } from '../repositories/TeacherRepository';
-import { JwtService } from './JwtService';
+import { JwtService } from './JwTService';
 
 @Service()
 export class AuthService {
