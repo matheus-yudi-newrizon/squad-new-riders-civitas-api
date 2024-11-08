@@ -3,7 +3,7 @@ import { VerifyErrors } from 'jsonwebtoken';
 import { InvalidJWTTokenError } from '../errors/InvalidJWTTokenError';
 import { UnauthorizedError } from '../errors/UnauthorizedError';
 import { IAuthJWTRequest } from '../models/interfaces/IAuthJWTRequest';
-import { JwtService } from '../services/JwtService';
+import { JwtService } from '../services/JwTService';
 
 const jwtService = new JwtService();
 
