@@ -16,5 +16,5 @@ USER node
 
 EXPOSE 4444
 
-CMD ["npx", "ts-node", "src/app.ts"]
+CMD ["sh", "-c", "npx ts-node src/database.ts && npx ts-node src/app.ts"]
 
