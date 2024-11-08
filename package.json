@@ -10,7 +10,9 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
     "test": "echo \"Error: no test specified\" && exit 1",
     "docs": "typedoc src",
-    "prepare": "husky"
+    "prepare": "husky",
+    "start": "npx ts-node src/app.ts",
+    "run:migrations": "npx ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d src/config/database.ts"
   },
   "devDependencies": {
     "@types/bcryptjs": "2.4.6",

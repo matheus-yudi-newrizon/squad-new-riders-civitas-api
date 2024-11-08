@@ -16,6 +16,7 @@ USER node
 
 EXPOSE 4444
 
-CMD CMD ["sh", "-c", "npx ts-node -r tsconfig-paths/register ./src/config/database.ts && npx ts-node src/app.ts"]
+CMD ["sh", "-c", "npm run run:migrations && npm start"]
+
 
 
