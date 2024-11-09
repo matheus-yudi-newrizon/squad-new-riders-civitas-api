@@ -145,19 +145,35 @@ export class TeacherController {
    * /teachers/all:
    *   get:
    *     summary: Lista todos os professores associados à escola do administrador
-   *     description: "Este endpoint lista todos os professores associados à escola do administrador autenticado. Requer um token JWT no cabeçalho Authorization."
+   *     description: "Este endpoint lista todos os professores associados à escola do administrador autenticado, incluindo as turmas associadas a cada professor. Requer um token JWT no cabeçalho Authorization."
    *     tags: [Teachers]
    *     security:
    *       - bearerAuth: []
    *     responses:
    *       200:
-   *         description: Lista de professores.
+   *         description: Lista de professores com suas turmas.
    *         content:
    *           application/json:
    *             schema:
    *               type: array
    *               items:
-   *                 $ref: '#/components/schemas/Teacher'
+   *                 type: object
+   *                 properties:
+   *                   id:
+   *                     type: number
+   *                   fullName:
+   *                     type: string
+   *                   registrationNumber:
+   *                     type: string
+   *                   classes:
+   *                     type: array
+   *                     items:
+   *                       type: object
+   *                       properties:
+   *                         id:
+   *                           type: number
+   *                         name:
+   *                           type: string
    *       404:
    *         description: Nenhum professor encontrado para a escola especificada.
    *         content:
@@ -174,7 +190,18 @@ export class TeacherController {
 
     if (!schoolId) throw new BadRequestError('ID da escola não encontrado no token.');
 
-    const teachers = await this.teacherService.listTeachersBySchool(schoolId);
-    return res.status(200).json(teachers);
+    const teachers = await this.teacherService.listTeachersBySchoolWithClasses(schoolId);
+
+    const formattedTeachers = teachers.map(teacher => ({
+      id: teacher.id,
+      fullName: teacher.fullName,
+      registrationNumber: teacher.teacherSchools[0]?.registrationNumber,
+      classes: teacher.teacherClasses.map(tc => ({
+        id: tc.class.id,
+        name: tc.class.name
+      }))
+    }));
+
+    return res.status(200).json(formattedTeachers);
   }
 }
