@@ -117,4 +117,17 @@ export class TeacherRepository {
   public async findByRegistrationNumber(registrationNumber: string): Promise<TeacherSchool | undefined> {
     return await this.teacherSchoolRepository.findOne({ where: { registrationNumber }, relations: ['school'] });
   }
+
+  /**
+   * Busca todos os professores associados a uma escola específica.
+   *
+   * @param schoolId - ID da escola.
+   * @returns Uma lista de instâncias de `Teacher` associadas à escola.
+   */
+  public async findTeachersBySchoolId(schoolId: number): Promise<Teacher[]> {
+    return await this.repository
+      .createQueryBuilder('teacher')
+      .innerJoin('teacher.teacherSchools', 'teacherSchool', 'teacherSchool.schoolId = :schoolId', { schoolId })
+      .getMany();
+  }
 }

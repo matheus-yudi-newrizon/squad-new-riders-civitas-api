@@ -15,7 +15,7 @@ export class TeacherController {
    * /teachers/register:
    *   post:
    *     summary: Cadastra um novo professor
-   *     description: "Este endpoint cria um novo registro de professor vinculado a uma escola. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'. O token é decodificado no backend, e o `schoolId` é extraído do payload do token."
+   *     description: "Este endpoint cria um novo registro de professor vinculado a uma escola. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'."
    *     tags: [Teachers]
    *     security:
    *       - bearerAuth: []
@@ -37,9 +37,17 @@ export class TeacherController {
    *                   type: string
    *                   example: "Cadastro de professor realizado com sucesso."
    *       400:
-   *         description: Erro na requisição - dados faltando ou incorretos
+   *         description: Erro na requisição - dados faltando ou incorretos.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Erro na requisição - dados faltando ou incorretos."
    *       409:
-   *         description: Conflito de cadastro
+   *         description: Conflito de cadastro.
    *         content:
    *           application/json:
    *             schema:
@@ -64,7 +72,7 @@ export class TeacherController {
    * /teachers/me/classes:
    *   get:
    *     summary: Lista as turmas associadas a um professor
-   *     description: "Este endpoint lista todas as turmas associadas a um professor específico. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}', e o `teacherId` é extraído do token."
+   *     description: "Este endpoint lista todas as turmas associadas a um professor específico. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'."
    *     tags: [Teachers]
    *     security:
    *       - bearerAuth: []
@@ -79,6 +87,14 @@ export class TeacherController {
    *                 $ref: '#/components/schemas/Class'
    *       404:
    *         description: Nenhuma turma encontrada para o professor especificado.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Nenhuma turma encontrada para o professor especificado."
    */
   public async listClassesByTeacher(req: Request, res: Response): Promise<Response> {
     const teacherId: number = res.locals.teacherId;
@@ -107,6 +123,14 @@ export class TeacherController {
    *               $ref: '#/components/schemas/Teacher'
    *       404:
    *         description: Professor não encontrado.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Professor não encontrado."
    */
   public async getTeacherById(req: Request, res: Response): Promise<Response> {
     const teacherId: number = res.locals.teacherId;
@@ -114,5 +138,43 @@ export class TeacherController {
     const teacher = await this.teacherService.getTeacherById(teacherId);
     if (!teacher) throw new NotFoundError('Professor não encontrado.');
     return res.status(200).json(teacher);
+  }
+
+  /**
+   * @swagger
+   * /teachers/all:
+   *   get:
+   *     summary: Lista todos os professores associados à escola do administrador
+   *     description: "Este endpoint lista todos os professores associados à escola do administrador autenticado. Requer um token JWT no cabeçalho Authorization."
+   *     tags: [Teachers]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: Lista de professores.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Teacher'
+   *       404:
+   *         description: Nenhum professor encontrado para a escola especificada.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Nenhum professor encontrado para a escola especificada."
+   */
+  public async listTeachersBySchool(req: Request, res: Response): Promise<Response> {
+    const schoolId = res.locals.schoolId;
+
+    if (!schoolId) throw new BadRequestError('ID da escola não encontrado no token.');
+
+    const teachers = await this.teacherService.listTeachersBySchool(schoolId);
+    return res.status(200).json(teachers);
   }
 }
