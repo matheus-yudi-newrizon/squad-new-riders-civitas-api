@@ -1,16 +1,17 @@
 import { Service } from 'typedi';
-import { School } from '../entities/School';
 import { Class } from '../entities/Class';
-import { CreateClassDTO } from '../models/DTO/CreateClassDTO';
-import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
-import { ClassRepository } from '../repositories/ClassRepository';
-import { SchoolRepository } from '../repositories/SchoolRepository';
+import { School } from '../entities/School';
 import { BadRequestError } from '../errors/BadRequestError';
 import { ConflictError } from '../errors/ConflictError';
 import { NotFoundError } from '../errors/NotFoundError';
-import { SchoolYear } from '../models/enums/SchoolYear';
-import { SchoolShift } from '../models/enums/SchoolShift';
+import { CreateClassDTO } from '../models/DTO/CreateClassDTO';
+import { UpdateClassDTO } from '../models/DTO/UpdateClassDTO';
 import { EducationType } from '../models/enums/EducationType';
+import { SchoolShift } from '../models/enums/SchoolShift';
+import { SchoolYear } from '../models/enums/SchoolYear';
+import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
+import { ClassRepository } from '../repositories/ClassRepository';
+import { SchoolRepository } from '../repositories/SchoolRepository';
 
 @Service()
 export class ClassService {
@@ -45,6 +46,30 @@ export class ClassService {
     await this.classRepository.saveClass(newClass);
 
     return { message: 'Cadastro realizado com sucesso.' };
+  }
+
+  public async updateClass(classId: number, updateClassDTO: UpdateClassDTO): Promise<ICreationSucessResponse> {
+    const classEntity: Class = await this.classRepository.findById(classId);
+    if (!classEntity) throw new NotFoundError('Turma não encontrada.');
+
+    const isDuplicate = await this.verifyClassDuplicate(
+      updateClassDTO.name,
+      updateClassDTO.schoolYear,
+      updateClassDTO.schoolShift,
+      updateClassDTO.educationType,
+      classEntity.school.id
+    );
+
+    if (isDuplicate) throw new ConflictError('Verifique as informações digitadas ou cadastre novos dados');
+
+    classEntity.name = updateClassDTO.name;
+    classEntity.schoolYear = updateClassDTO.schoolYear;
+    classEntity.schoolShift = updateClassDTO.schoolShift;
+    classEntity.educationType = updateClassDTO.educationType;
+
+    await this.classRepository.saveClass(classEntity);
+
+    return { message: 'Dados da turma atualizados!' };
   }
 
   /**

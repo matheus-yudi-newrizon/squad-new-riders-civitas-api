@@ -2,9 +2,10 @@ import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError } from '../errors/BadRequestError';
 import { NotFoundError } from '../errors/NotFoundError';
-import { ClassService } from '../services/ClassService';
-import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
 import { CreateClassDTO } from '../models/DTO/CreateClassDTO';
+import { UpdateClassDTO } from '../models/DTO/UpdateClassDTO';
+import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
+import { ClassService } from '../services/ClassService';
 
 @Controller()
 export class ClassController {
@@ -92,5 +93,13 @@ export class ClassController {
 
     if (classes.length === 0) throw new NotFoundError('Nenhuma turma encontrada com os critérios fornecidos.');
     return res.status(200).json(classes);
+  }
+
+  public async updateClass(req: Request, res: Response): Promise<Response> {
+    const classId: number = Number(req.params.id);
+    const updateClassDTO: UpdateClassDTO = req.body;
+
+    const result = await this.classService.updateClass(classId, updateClassDTO);
+    return res.status(200).json(result);
   }
 }
