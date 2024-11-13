@@ -74,9 +74,12 @@ export class StudentService {
   }
 
   /**
-   * Retorna todos os estudantes cadastrados no banco de dados.
+   * Recupera uma lista de estudantes com base nos filtros fornecidos.
    *
-   * @returns Um array contendo todos os estudantes.
+   * @param {object} filters - Um objeto contendo os filtros para a consulta.
+   * @param {number} filters.schoolId - O ID da escola para filtrar os estudantes.
+   * @param {string} filters.fullName - O nome completo para filtrar os estudantes.
+   * @returns {Promise<Student[]>} Uma promessa que resolve para um array de estudantes que correspondem aos filtros.
    */
   public async listStudents(filters: object): Promise<Student[]> {
     const schoolId: number = filters['schoolId'];
@@ -84,6 +87,15 @@ export class StudentService {
     return this.studentRepository.listStudents(schoolId, fullName);
   }
 
+  /**
+   * Lista estudantes por turma com base nos filtros fornecidos.
+   *
+   * @param {object} filters - Os filtros a serem aplicados ao listar os estudantes.
+   * @param {number} filters.classId - O ID da turma para filtrar os estudantes.
+   * @param {number} filters.schoolId - O ID da escola para filtrar os estudantes.
+   * @param {string} filters.fullName - O nome completo para filtrar os estudantes.
+   * @returns {Promise<Student[]>} Uma promessa que resolve para um array de estudantes.
+   */
   public async listStudentsByClass(filters: object): Promise<Student[]> {
     const classId: number = filters['classId'];
     const schoolId: number = filters['schoolId'];

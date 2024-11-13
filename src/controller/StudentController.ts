@@ -17,7 +17,7 @@ export class StudentController {
    *   post:
    *     summary: Cria um novo estudante
    *     description: "Este endpoint cria um novo registro de estudante vinculado a uma escola. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'."
-   *     tags: [Student]
+   *     tags: [Students]
    *     consumes:
    *       - application/json
    *     produces:
@@ -106,6 +106,40 @@ export class StudentController {
     return res.status(201).json(result);
   }
 
+  /**
+   * @swagger
+   * /students:
+   *   get:
+   *     summary: Lista todos os estudantes da escola
+   *     description: "Este endpoint retorna a lista de estudantes cadastrados, podendo filtrar por nome. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'."
+   *     tags: [Students]
+   *     parameters:
+   *       - in: query
+   *         name: fullName
+   *         description: Nome completo do estudante para filtrar os resultados
+   *         required: false
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: Lista de estudantes encontrada com sucesso
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Student'
+   *       404:
+   *         description: Nenhum estudante encontrado com os critérios fornecidos
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Nenhum estudante encontrado com os critérios fornecidos."
+   */
   public async listStudents(req: Request, res: Response): Promise<Response> {
     const { fullName } = req.query;
     const schoolId: number = res.locals.schoolId;
@@ -117,6 +151,46 @@ export class StudentController {
     return res.status(200).json(students);
   }
 
+  /**
+   * @swagger
+   * /students/class/{classId}:
+   *   get:
+   *     summary: Lista os estudantes de uma classe específica
+   *     description: "Este endpoint retorna a lista de estudantes de uma classe específica, com a possibilidade de filtrar por nome. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'."
+   *     tags: [Students]
+   *     parameters:
+   *       - in: path
+   *         name: classId
+   *         description: ID da classe para filtrar os estudantes
+   *         required: true
+   *         schema:
+   *           type: integer
+   *       - in: query
+   *         name: fullName
+   *         description: Nome completo do estudante para filtrar os resultados
+   *         required: false
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: Lista de estudantes encontrada com sucesso
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Student'
+   *       404:
+   *         description: Nenhum estudante encontrado com os critérios fornecidos
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Nenhum estudante encontrado com os critérios fornecidos."
+   */
   public async listStudentsByClass(req: Request, res: Response): Promise<Response> {
     const { classId } = req.params;
     const { fullName } = req.query;
