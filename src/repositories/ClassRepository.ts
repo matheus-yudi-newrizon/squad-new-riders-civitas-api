@@ -1,5 +1,5 @@
 import { Service as Repository } from 'typedi';
-import { Repository as TypeORMRepository, In } from 'typeorm';
+import { In, Repository as TypeORMRepository } from 'typeorm';
 import { MysqlDataSource } from '../config/database';
 import { Class } from '../entities/Class';
 import { EducationType } from '../models/enums/EducationType';
@@ -28,6 +28,10 @@ export class ClassRepository {
    */
   public async saveClass(classEntity: Class): Promise<Class> {
     return await this.repository.save(classEntity);
+  }
+
+  public async deleteClass(classEntity: Class): Promise<void> {
+    await this.repository.remove(classEntity);
   }
 
   /**
@@ -92,7 +96,7 @@ export class ClassRepository {
   public async findById(id: number): Promise<Class | undefined> {
     return await this.repository.findOne({
       where: { id },
-      relations: ['school', 'students']
+      relations: ['school', 'students', 'teacherClasses']
     });
   }
 

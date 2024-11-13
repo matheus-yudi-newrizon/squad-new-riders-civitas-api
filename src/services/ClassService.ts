@@ -10,6 +10,7 @@ import { EducationType } from '../models/enums/EducationType';
 import { SchoolShift } from '../models/enums/SchoolShift';
 import { SchoolYear } from '../models/enums/SchoolYear';
 import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
+import { IUpdateResponse } from '../models/interfaces/IUpdateResponse';
 import { ClassRepository } from '../repositories/ClassRepository';
 import { SchoolRepository } from '../repositories/SchoolRepository';
 
@@ -48,7 +49,7 @@ export class ClassService {
     return { message: 'Cadastro realizado com sucesso.' };
   }
 
-  public async updateClass(classId: number, updateClassDTO: UpdateClassDTO): Promise<ICreationSucessResponse> {
+  public async updateClass(classId: number, updateClassDTO: UpdateClassDTO): Promise<IUpdateResponse> {
     const classEntity: Class = await this.classRepository.findById(classId);
     if (!classEntity) throw new NotFoundError('Turma não encontrada.');
 
@@ -70,6 +71,17 @@ export class ClassService {
     await this.classRepository.saveClass(classEntity);
 
     return { message: 'Dados da turma atualizados!' };
+  }
+
+  public async deleteClass(classId: number): Promise<void> {
+    const classEntity: Class = await this.classRepository.findById(classId);
+    if (!classEntity) throw new NotFoundError('Turma não encontrada.');
+
+    if (classEntity.students?.length > 0 || classEntity.teacherClasses?.length > 0) {
+      throw new ConflictError('Turma está associada à professores ou estudantes. Remova para prosseguir na exclusão da turma');
+    }
+
+    await this.classRepository.deleteClass(classEntity);
   }
 
   /**

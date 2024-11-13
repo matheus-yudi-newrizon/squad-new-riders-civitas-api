@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { IUpdateResponse } from 'models/interfaces/IUpdateResponse';
 import { Service as Controller } from 'typedi';
 import { BadRequestError } from '../errors/BadRequestError';
 import { NotFoundError } from '../errors/NotFoundError';
@@ -95,11 +96,18 @@ export class ClassController {
     return res.status(200).json(classes);
   }
 
-  public async updateClass(req: Request, res: Response): Promise<Response> {
+  public async updateClass(req: Request, res: Response): Promise<Response<IUpdateResponse>> {
     const classId: number = Number(req.params.id);
     const updateClassDTO: UpdateClassDTO = req.body;
 
     const result = await this.classService.updateClass(classId, updateClassDTO);
     return res.status(200).json(result);
+  }
+
+  public async deleteClass(req: Request, res: Response): Promise<Response> {
+    const classId: number = Number(req.params.id);
+
+    await this.classService.deleteClass(classId);
+    return res.status(204).send();
   }
 }

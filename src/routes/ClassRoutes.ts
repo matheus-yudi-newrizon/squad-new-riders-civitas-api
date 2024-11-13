@@ -28,4 +28,6 @@ classRoutes.get('/', authMiddleware, (req, res) => classController.listClasses(r
 
 classRoutes.put('/:id', authMiddleware, validationMiddleware(UpdateClassDTO), (req, res) => classController.updateClass(req, res));
 
+classRoutes.delete('/:id', authMiddleware, (req, res) => classController.deleteClass(req, res));
+
 export default classRoutes;
