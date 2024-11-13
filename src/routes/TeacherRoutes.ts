@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { Container } from 'typedi';
 import { AuthController } from '../controller/AuthController';
+import { StudentController } from '../controller/StudentController';
 import { TeacherController } from '../controller/TeacherController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { validationMiddleware } from '../middlewares/validateMiddleware';
@@ -9,7 +10,7 @@ import { CreateTeacherDTO } from '../models/DTO/CreateTeacherDTO';
 const teacherRoutes = Router();
 const teacherController: TeacherController = Container.get(TeacherController);
 const teacherAuth: AuthController = Container.get(AuthController);
-
+const studentController: StudentController = Container.get(StudentController);
 /**
  * @route POST /teachers/register
  * @description Rota para cadastro de um novo professor, exigindo autenticação e validação dos dados.
@@ -35,5 +36,13 @@ teacherRoutes.get('/me/classes', authMiddleware, (req, res) => teacherController
  * @middleware authMiddleware - Garante que o usuário está autenticado.
  */
 teacherRoutes.get('/', authMiddleware, (req, res) => teacherController.getTeacherById(req, res));
+
+/**
+ * @route GET /teachers/me/classes/:classId/students
+ * @description Esta rota recupera todos os estudantes de uma classe específica. Requer autenticação.
+ * @middleware authMiddleware - Garante que o usuário está autenticado.
+ * @access Private
+ */
+teacherRoutes.get('/me/classes/:classId/students', authMiddleware, (req, res) => studentController.listStudentsByClass(req, res));
 
 export default teacherRoutes;
