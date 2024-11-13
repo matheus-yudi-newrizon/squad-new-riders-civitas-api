@@ -72,4 +72,22 @@ export class StudentService {
       message: 'Estudante criado com sucesso'
     };
   }
+
+  /**
+   * Retorna todos os estudantes cadastrados no banco de dados.
+   *
+   * @returns Um array contendo todos os estudantes.
+   */
+  public async listStudents(filters: object): Promise<Student[]> {
+    const schoolId: number = filters['schoolId'];
+    const fullName: string = filters['fullName'];
+    return this.studentRepository.listStudents(schoolId, fullName);
+  }
+
+  public async listStudentsByClass(filters: object): Promise<Student[]> {
+    const classId: number = filters['classId'];
+    const schoolId: number = filters['schoolId'];
+    const fullName: string = filters['fullName'];
+    return this.studentRepository.listStudentsByClass(classId, schoolId, fullName);
+  }
 }

@@ -38,4 +38,49 @@ export class StudentRepository {
       where: [{ document }, { registrationNumber }]
     });
   }
+
+  /**
+   * Recupera uma lista de estudantes para uma determinada escola.
+   *
+   * @param schoolId - O ID da escola para recuperar os estudantes.
+   * @param fullName - (Opcional) O nome completo do estudante para filtrar.
+   * @returns Uma promessa que resolve para um array de estudantes.
+   */
+  public async listStudents(schoolId: number, fullName?: string): Promise<Student[]> {
+    const query = this.repository
+      .createQueryBuilder('student')
+      .innerJoin('student.studentClass', 'class')
+      .innerJoin('class.school', 'school')
+      .where('school.id = :schoolId', { schoolId })
+      .select(['student', 'class.name']);
+
+    if (fullName) {
+      query.andWhere('student.fullName LIKE :fullName COLLATE utf8mb4_general_ci', { fullName: `%${fullName}%` });
+    }
+
+    return query.getMany();
+  }
+
+  /**
+   * Busca todos os estudantes de uma determinada turma.
+   *
+   * @param classId - O ID da turma.
+   * @param schoolId - O ID da escola.
+   * @param fullName - O nome completo do estudante (opcional).
+   * @returns Um array contendo todos os estudantes da turma especificada.
+   */
+  public async listStudentsByClass(classId: number, schoolId: number, fullName?: string): Promise<Student[]> {
+    const query = this.repository
+      .createQueryBuilder('student')
+      .innerJoin('student.studentClass', 'class')
+      .where('class.id = :classId', { classId })
+      .andWhere('class.schoolId = :schoolId', { schoolId })
+      .select(['student']);
+
+    if (fullName) {
+      query.andWhere('student.fullName LIKE :fullName COLLATE utf8mb4_general_ci', { fullName: `%${fullName}%` });
+    }
+
+    return query.getMany();
+  }
 }

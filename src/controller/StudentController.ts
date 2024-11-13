@@ -4,6 +4,7 @@ import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError } from '../errors/BadRequestError';
 import { ConflictError } from '../errors/ConflictError';
+import { NotFoundError } from '../errors/NotFoundError';
 import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
 import { StudentService } from '../services/StudentService';
 
@@ -103,5 +104,28 @@ export class StudentController {
 
     const result: ICreationSucessResponse = await this.studentService.create(createStudentDTO, studentClass, school);
     return res.status(201).json(result);
+  }
+
+  public async listStudents(req: Request, res: Response): Promise<Response> {
+    const { fullName } = req.query;
+    const schoolId: number = res.locals.schoolId;
+    const filters = { fullName, schoolId };
+
+    const students = await this.studentService.listStudents(filters);
+    if (students.length === 0) throw new NotFoundError('Nenhum estudante encontrado com os critérios fornecidos.');
+
+    return res.status(200).json(students);
+  }
+
+  public async listStudentsByClass(req: Request, res: Response): Promise<Response> {
+    const { classId } = req.params;
+    const { fullName } = req.query;
+    const schoolId: number = res.locals.schoolId;
+    const filters = { classId, fullName, schoolId };
+
+    const students = await this.studentService.listStudentsByClass(filters);
+    if (students.length === 0) throw new NotFoundError('Nenhum estudante encontrado com os critérios fornecidos.');
+
+    return res.status(200).json(students);
   }
 }
