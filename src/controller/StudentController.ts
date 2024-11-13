@@ -108,11 +108,11 @@ export class StudentController {
 
   /**
    * @swagger
-   * /students:
+   * /admin/me/students:
    *   get:
    *     summary: Lista todos os estudantes da escola
    *     description: "Este endpoint retorna a lista de estudantes cadastrados, podendo filtrar por nome. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'."
-   *     tags: [Students]
+   *     tags: [Admin]
    *     parameters:
    *       - in: query
    *         name: fullName
@@ -143,7 +143,7 @@ export class StudentController {
   public async listStudents(req: Request, res: Response): Promise<Response> {
     const { fullName } = req.query;
     const schoolId: number = res.locals.schoolId;
-    const filters = { fullName, schoolId };
+    const filters: object = { fullName, schoolId };
 
     const students = await this.studentService.listStudents(filters);
     if (students.length === 0) throw new NotFoundError('Nenhum estudante encontrado com os critérios fornecidos.');
@@ -153,11 +153,11 @@ export class StudentController {
 
   /**
    * @swagger
-   * /students/class/{classId}:
+   * /teachers/me/classes/:classId/students:
    *   get:
    *     summary: Lista os estudantes de uma classe específica
    *     description: "Este endpoint retorna a lista de estudantes de uma classe específica, com a possibilidade de filtrar por nome. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'."
-   *     tags: [Students]
+   *     tags: [Teachers]
    *     parameters:
    *       - in: path
    *         name: classId
@@ -195,7 +195,7 @@ export class StudentController {
     const { classId } = req.params;
     const { fullName } = req.query;
     const schoolId: number = res.locals.schoolId;
-    const filters = { classId, fullName, schoolId };
+    const filters: object = { classId, fullName, schoolId };
 
     const students = await this.studentService.listStudentsByClass(filters);
     if (students.length === 0) throw new NotFoundError('Nenhum estudante encontrado com os critérios fornecidos.');
