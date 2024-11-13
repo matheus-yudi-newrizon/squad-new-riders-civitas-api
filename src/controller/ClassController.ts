@@ -96,14 +96,73 @@ export class ClassController {
     return res.status(200).json(classes);
   }
 
+  /**
+   * @swagger
+   * /classes/{id}:
+   *   put:
+   *     summary: Atualiza uma turma existente
+   *     description: "Permite atualizar os dados de uma turma existente. Caso os dados fornecidos sejam inválidos ou conflitantes, um erro apropriado será retornado"
+   *     tags: [Classes]
+   *     requestBody:
+   *       required: true
+   *       description: "Dados atualizados da turma"
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               name:
+   *                 type: string
+   *                 description: "Nome da turma"
+   *               schoolYear:
+   *                 type: string
+   *                 description: "Ano escolar da turma"
+   *               educationType:
+   *                 type: string
+   *                 description: "Tipo de educação da turma"
+   *               schoolShift:
+   *                 type: string
+   *                 description: "Turno escolar da turma"
+   *     responses:
+   *       200:
+   *         description: "Dados da turma atualizados!"
+   *       400:
+   *         description: "Erros de validação"
+   *       404:
+   *         description: "Turma não encontrada"
+   *       409:
+   *         description: "Verifique as informações digitadas ou cadastre novos dados"
+   */
   public async updateClass(req: Request, res: Response): Promise<Response<IUpdateResponse>> {
     const classId: number = Number(req.params.id);
     const updateClassDTO: UpdateClassDTO = req.body;
 
-    const result = await this.classService.updateClass(classId, updateClassDTO);
+    const result: IUpdateResponse = await this.classService.updateClass(classId, updateClassDTO);
     return res.status(200).json(result);
   }
 
+  /**
+   * @swagger
+   * /classes/{id}:
+   *   delete:
+   *     summary: Deleta uma turma específica
+   *     description: "Permite deletar uma turma específica com base no ID fornecido. Caso a turma tenha associações com estudantes ou professores, a exclusão não será permitida."
+   *     tags: [Classes]
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: integer
+   *         description: "ID da turma a ser deletada"
+   *     responses:
+   *       204:
+   *         description: "Turma deletada com sucesso"
+   *       404:
+   *         description: "Turma não encontrada"
+   *       409:
+   *         description: "Turma está associada à professores ou estudantes. Remova para prosseguir na exclusão da turma"
+   */
   public async deleteClass(req: Request, res: Response): Promise<Response> {
     const classId: number = Number(req.params.id);
 

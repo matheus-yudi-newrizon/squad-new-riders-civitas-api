@@ -49,11 +49,20 @@ export class ClassService {
     return { message: 'Cadastro realizado com sucesso.' };
   }
 
+  /**
+   * Atualiza os detalhes de uma turma existente.
+   *
+   * @param classId - O ID da turma a ser atualizada.
+   * @param updateClassDTO - O objeto de transferência de dados contendo os detalhes atualizados da turma.
+   * @returns Uma promessa que resolve para um objeto contendo uma mensagem de sucesso.
+   * @throws NotFoundError - Se a turma com o ID especificado não for encontrada.
+   * @throws ConflictError - Se os detalhes atualizados da turma entrarem em conflito com uma turma existente.
+   */
   public async updateClass(classId: number, updateClassDTO: UpdateClassDTO): Promise<IUpdateResponse> {
     const classEntity: Class = await this.classRepository.findById(classId);
     if (!classEntity) throw new NotFoundError('Turma não encontrada.');
 
-    const isDuplicate = await this.verifyClassDuplicate(
+    const isDuplicate: boolean = await this.verifyClassDuplicate(
       updateClassDTO.name,
       updateClassDTO.schoolYear,
       updateClassDTO.schoolShift,
@@ -73,6 +82,14 @@ export class ClassService {
     return { message: 'Dados da turma atualizados!' };
   }
 
+  /**
+   * Exclui uma turma pelo seu ID.
+   *
+   * @param classId - O ID da turma a ser excluída.
+   * @throws {NotFoundError} Se a turma com o ID fornecido não for encontrada.
+   * @throws {ConflictError} Se a turma estiver associada a estudantes ou professores.
+   * @returns {Promise<void>} Uma promessa que é resolvida quando a turma é excluída.
+   */
   public async deleteClass(classId: number): Promise<void> {
     const classEntity: Class = await this.classRepository.findById(classId);
     if (!classEntity) throw new NotFoundError('Turma não encontrada.');

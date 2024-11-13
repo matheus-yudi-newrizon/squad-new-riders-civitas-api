@@ -26,8 +26,23 @@ classRoutes.post('/create', authMiddleware, validationMiddleware(CreateClassDTO)
  */
 classRoutes.get('/', authMiddleware, (req, res) => classController.listClasses(req, res));
 
+/**
+ * @route PUT /classes/:id
+ * @description Rota para atualizar as informações de uma turma específica.
+ * @param id - ID da turma a ser atualizada.
+ * @access Private
+ * @middleware authMiddleware - Garante que o usuário está autenticado.
+ * @middleware validationMiddleware - Valida os dados de entrada com o DTO de atualização.
+ */
 classRoutes.put('/:id', authMiddleware, validationMiddleware(UpdateClassDTO), (req, res) => classController.updateClass(req, res));
 
+/**
+ * @route DELETE /classes/:id
+ * @description Rota para deletar uma turma específica pelo seu ID.
+ * @param id - ID da turma a ser deletada.
+ * @access Private
+ * @middleware authMiddleware - Garante que o usuário está autenticado.
+ */
 classRoutes.delete('/:id', authMiddleware, (req, res) => classController.deleteClass(req, res));
 
 export default classRoutes;
