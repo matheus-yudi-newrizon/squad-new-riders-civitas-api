@@ -5,7 +5,6 @@ import { BadRequestError } from '../errors/BadRequestError';
 import { ConflictError } from '../errors/ConflictError';
 import { NotFoundError } from '../errors/NotFoundError';
 import { CreateClassDTO } from '../models/DTO/CreateClassDTO';
-import { UpdateClassDTO } from '../models/DTO/UpdateClassDTO';
 import { EducationType } from '../models/enums/EducationType';
 import { SchoolShift } from '../models/enums/SchoolShift';
 import { SchoolYear } from '../models/enums/SchoolYear';
@@ -58,7 +57,7 @@ export class ClassService {
    * @throws NotFoundError - Se a turma com o ID especificado não for encontrada.
    * @throws ConflictError - Se os detalhes atualizados da turma entrarem em conflito com uma turma existente.
    */
-  public async updateClass(classId: number, updateClassDTO: UpdateClassDTO): Promise<IUpdateResponse> {
+  public async updateClass(classId: number, updateClassDTO: CreateClassDTO): Promise<IUpdateResponse> {
     const classEntity: Class = await this.classRepository.findById(classId);
     if (!classEntity) throw new NotFoundError('Turma não encontrada.');
 

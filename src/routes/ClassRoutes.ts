@@ -4,7 +4,6 @@ import { ClassController } from '../controller/ClassController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { validationMiddleware } from '../middlewares/validateMiddleware';
 import { CreateClassDTO } from '../models/DTO/CreateClassDTO';
-import { UpdateClassDTO } from '../models/DTO/UpdateClassDTO';
 
 const classRoutes = Router();
 const classController: ClassController = Container.get(ClassController);
@@ -34,7 +33,7 @@ classRoutes.get('/', authMiddleware, (req, res) => classController.listClasses(r
  * @middleware authMiddleware - Garante que o usuário está autenticado.
  * @middleware validationMiddleware - Valida os dados de entrada com o DTO de atualização.
  */
-classRoutes.put('/:id', authMiddleware, validationMiddleware(UpdateClassDTO), (req, res) => classController.updateClass(req, res));
+classRoutes.put('/:id', authMiddleware, validationMiddleware(CreateClassDTO), (req, res) => classController.updateClass(req, res));
 
 /**
  * @route DELETE /classes/:id

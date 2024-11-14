@@ -4,7 +4,6 @@ import { Service as Controller } from 'typedi';
 import { BadRequestError } from '../errors/BadRequestError';
 import { NotFoundError } from '../errors/NotFoundError';
 import { CreateClassDTO } from '../models/DTO/CreateClassDTO';
-import { UpdateClassDTO } from '../models/DTO/UpdateClassDTO';
 import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
 import { ClassService } from '../services/ClassService';
 
@@ -175,7 +174,7 @@ export class ClassController {
 
   public async updateClass(req: Request, res: Response): Promise<Response<IUpdateResponse>> {
     const classId: number = Number(req.params.id);
-    const updateClassDTO: UpdateClassDTO = req.body;
+    const updateClassDTO: CreateClassDTO = req.body;
 
     const result: IUpdateResponse = await this.classService.updateClass(classId, updateClassDTO);
     return res.status(200).json(result);
