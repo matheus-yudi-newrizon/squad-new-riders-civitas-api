@@ -30,6 +30,12 @@ export class ClassRepository {
     return await this.repository.save(classEntity);
   }
 
+  /**
+   * Exclui a entidade de turma especificada do repositório.
+   *
+   * @param classEntity - A entidade de turma a ser excluída.
+   * @returns Uma promessa que é resolvida quando a entidade de turma for removida.
+   */
   public async deleteClass(classEntity: Class): Promise<void> {
     await this.repository.remove(classEntity);
   }

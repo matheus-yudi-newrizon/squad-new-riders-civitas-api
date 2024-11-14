@@ -101,8 +101,15 @@ export class ClassController {
    * /classes/{id}:
    *   put:
    *     summary: Atualiza uma turma existente
-   *     description: "Permite atualizar os dados de uma turma existente. Caso os dados fornecidos sejam inválidos ou conflitantes, um erro apropriado será retornado"
+   *     description: "Permite atualizar os dados de uma turma existente. Caso os dados fornecidos sejam inválidos ou conflitantes, um erro apropriado será retornado."
    *     tags: [Classes]
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: ID da turma a ser atualizada
+   *         required: true
+   *         schema:
+   *           type: integer
    *     requestBody:
    *       required: true
    *       description: "Dados atualizados da turma"
@@ -125,14 +132,47 @@ export class ClassController {
    *                 description: "Turno escolar da turma"
    *     responses:
    *       200:
-   *         description: "Dados da turma atualizados!"
+   *         description: Dados da turma atualizados com sucesso
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Dados da turma atualizados!"
    *       400:
-   *         description: "Erros de validação"
+   *         description: Erros de validação nos dados fornecidos
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Erro de validação nos dados fornecidos."
    *       404:
-   *         description: "Turma não encontrada"
+   *         description: Turma não encontrada
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Turma não encontrada."
    *       409:
-   *         description: "Verifique as informações digitadas ou cadastre novos dados"
+   *         description: Conflito nas informações fornecidas
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Verifique as informações digitadas ou cadastre novos dados."
    */
+
   public async updateClass(req: Request, res: Response): Promise<Response<IUpdateResponse>> {
     const classId: number = Number(req.params.id);
     const updateClassDTO: UpdateClassDTO = req.body;
@@ -151,17 +191,33 @@ export class ClassController {
    *     parameters:
    *       - in: path
    *         name: id
+   *         description: "ID da turma a ser deletada"
    *         required: true
    *         schema:
    *           type: integer
-   *         description: "ID da turma a ser deletada"
    *     responses:
    *       204:
-   *         description: "Turma deletada com sucesso"
+   *         description: Turma deletada com sucesso
    *       404:
-   *         description: "Turma não encontrada"
+   *         description: Turma não encontrada
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Turma não encontrada."
    *       409:
-   *         description: "Turma está associada à professores ou estudantes. Remova para prosseguir na exclusão da turma"
+   *         description: A turma está associada a professores ou estudantes
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Turma está associada a professores ou estudantes. Remova essas associações para prosseguir com a exclusão da turma."
    */
   public async deleteClass(req: Request, res: Response): Promise<Response> {
     const classId: number = Number(req.params.id);
