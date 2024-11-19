@@ -91,6 +91,35 @@ export class TeacherService {
   }
 
   /**
+   * Lista todos os professores associados a uma escola específica.
+   *
+   * @param schoolId - ID da escola.
+   * @returns Uma lista de professores associados à escola.
+   * @throws NotFoundError - Se nenhum professor for encontrado para a escola.
+   */
+  public async listTeachersBySchool(schoolId: number): Promise<Teacher[]> {
+    const teachers = await this.teacherRepository.findTeachersBySchoolId(schoolId);
+    if (!teachers.length) throw new NotFoundError('Nenhum professor encontrado para a escola especificada.');
+    return teachers;
+  }
+
+  /**
+   * Lista todos os professores de uma escola específica, incluindo as turmas de cada professor.
+   *
+   * Este método utiliza o método `findTeachersBySchoolIdWithClasses` do repositório para buscar os professores
+   * associados à escola com as turmas em que cada professor foi cadastrado.
+   *
+   * @param schoolId - ID da escola.
+   * @returns Uma lista de professores com suas turmas associadas.
+   * @throws NotFoundError - Se nenhum professor for encontrado para a escola.
+   */
+  public async listTeachersBySchoolWithClasses(schoolId: number): Promise<Teacher[]> {
+    const teachers = await this.teacherRepository.findTeachersBySchoolIdWithClasses(schoolId);
+    if (!teachers.length) throw new NotFoundError('Nenhum professor encontrado para a escola especificada.');
+    return teachers;
+  }
+
+  /**
    * Verifica se a escola existe no banco de dados.
    *
    * @param id - ID da escola a ser verificada.

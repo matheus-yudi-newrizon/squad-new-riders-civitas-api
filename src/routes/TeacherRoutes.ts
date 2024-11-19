@@ -28,4 +28,12 @@ teacherRoutes.post('/login', (req, res) => teacherAuth.teacherLogin(req, res));
  */
 teacherRoutes.get('/me/classes', authMiddleware, (req, res) => teacherController.listClassesByTeacher(req, res));
 
+/**
+ * @route GET /teachers
+ * @description Rota para buscar as informações do professor autenticado usando o token JWT.
+ * @access Private
+ * @middleware authMiddleware - Garante que o usuário está autenticado.
+ */
+teacherRoutes.get('/', authMiddleware, (req, res) => teacherController.getTeacherById(req, res));
+
 export default teacherRoutes;
