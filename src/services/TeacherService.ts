@@ -1,3 +1,4 @@
+import { IUpdateResponse } from 'models/interfaces/IUpdateResponse';
 import { Service } from 'typedi';
 import { Class } from '../entities/Class';
 import { School } from '../entities/School';
@@ -67,7 +68,18 @@ export class TeacherService {
     return { message: 'Cadastro de professor realizado com sucesso.' };
   }
 
-  public async updateTeacher(teacherId: number, schoolId: number, updateTeacherDTO: UpdateTeacherDTO): Promise<ICreationSucessResponse> {
+  /**
+   * Atualiza os dados de um professor, incluindo informações pessoais,
+   * número de matrícula e associação com turmas.
+   *
+   * @param teacherId - ID do professor a ser atualizado.
+   * @param schoolId - ID da escola associada ao professor.
+   * @param updateTeacherDTO - Dados para atualização do professor.
+   * @returns Retorna uma mensagem de sucesso após a atualização.
+   * @throws {NotFoundError} Se o professor não for encontrado.
+   * @throws {ConflictError} Se o CPF ou número de matrícula já estiver em uso.
+   */
+  public async updateTeacher(teacherId: number, schoolId: number, updateTeacherDTO: UpdateTeacherDTO): Promise<IUpdateResponse> {
     const teacher: Teacher = await this.getTeacherById(teacherId);
     await this.updateTeacherData(teacher, updateTeacherDTO);
 
@@ -77,6 +89,13 @@ export class TeacherService {
     return { message: 'Dados do professor atualizados!' };
   }
 
+  /**
+   * Atualiza as informações pessoais de um professor.
+   *
+   * @param teacher - Entidade do professor a ser atualizada.
+   * @param updateTeacherDTO - Dados para atualizar as informações do professor.
+   * @throws {ConflictError} Se o CPF já estiver em uso por outro professor.
+   */
   private async updateTeacherData(teacher: Teacher, updateTeacherDTO: UpdateTeacherDTO) {
     if (updateTeacherDTO.fullName) teacher.fullName = updateTeacherDTO.fullName;
 
@@ -88,6 +107,15 @@ export class TeacherService {
     await this.teacherRepository.saveTeacher(teacher);
   }
 
+  /**
+   * Atualiza a relação entre professor e escola, incluindo o número de matrícula.
+   *
+   * @param teacherId - ID do professor.
+   * @param schoolId - ID da escola associada.
+   * @param updateTeacherDTO - Dados de atualização, incluindo número de matrícula.
+   * @throws {NotFoundError} Se a relação professor-escola não existir.
+   * @throws {ConflictError} Se o número de matrícula já estiver em uso.
+   */
   private async updateTeacherSchool(teacherId: number, schoolId: number, updateTeacherDTO: UpdateTeacherDTO) {
     const registrationNumber: string = updateTeacherDTO.registrationNumber;
     const teacherSchool: TeacherSchool = await this.teacherRepository.findTeacherSchoolByTeacherAndSchool(teacherId, schoolId);
@@ -100,6 +128,12 @@ export class TeacherService {
     await this.teacherRepository.saveTeacherSchool(teacherSchool);
   }
 
+  /**
+   * Atualiza as turmas associadas a um professor.
+   *
+   * @param teacherId - ID do professor.
+   * @param classIds - IDs das turmas a serem associadas ao professor.
+   */
   private async updateTeacherClasses(teacherId: number, classIds: number[]) {
     const selectedClasses: Class[] = await this.classRepository.findByIds(classIds);
 
@@ -115,6 +149,13 @@ export class TeacherService {
     await this.teacherRepository.saveTeacherClasses(teacherClasses);
   }
 
+  /**
+   * Remove um professor, incluindo suas associações com escola e turmas.
+   *
+   * @param teacherId - ID do professor a ser removido.
+   * @param schoolId - ID da escola associada ao professor.
+   * @throws {NotFoundError} Se o professor não for encontrado na escola.
+   */
   public async deleteTeacher(teacherId: number, schoolId: number): Promise<void> {
     const teacherSchool: TeacherSchool = await this.teacherRepository.findTeacherSchoolByTeacherAndSchool(teacherId, schoolId);
     if (!teacherSchool) throw new NotFoundError('Professor não encontrado nesta escola.');
@@ -203,6 +244,16 @@ export class TeacherService {
     const teacherSchoolExists = await this.teacherRepository.findTeacherSchoolByRegistrationAndSchool(registrationNumber, schoolId);
     return !!teacherSchoolExists;
   }
+
+  /**
+   * Verifica a duplicidade do número de matrícula para evitar conflitos durante a atualização.
+   *
+   * @param teacherSchool - Relação existente entre professor e escola.
+   * @param registrationNumber - Número de matrícula a ser verificado.
+   * @param teacherId - ID do professor.
+   * @param schoolId - ID da escola associada.
+   * @throws {ConflictError} Se o número de matrícula já estiver em uso por outra relação.
+   */
   private async verifyRegistrationNumberDuplicateUpdate(
     teacherSchool: TeacherSchool,
     registrationNumber: string,
@@ -214,6 +265,13 @@ export class TeacherService {
       throw new ConflictError('O número de matrícula já está em uso para esta escola.');
   }
 
+  /**
+   * Verifica a duplicidade de CPF para evitar conflitos ao atualizar ou criar um professor.
+   *
+   * @param cpf - CPF a ser verificado.
+   * @param teacherId - ID do professor.
+   * @throws {ConflictError} Se o CPF já estiver em uso por outro professor.
+   */
   private async verifyCPFDuplicate(cpf: string, teacherId: number): Promise<void> {
     const existingTeacher: Teacher = await this.teacherRepository.findByCpf(cpf);
     if (existingTeacher && existingTeacher.id !== teacherId) throw new ConflictError('CPF já cadastrado para outro professor.');

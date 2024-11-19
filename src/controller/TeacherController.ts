@@ -69,6 +69,108 @@ export class TeacherController {
     return res.status(201).json(result);
   }
 
+  /**
+   * @swagger
+   * /admin/teachers/{id}:
+   *   put:
+   *     summary: Atualiza os dados de um professor
+   *     description: "Este endpoint atualiza as informações de um professor, como nome, CPF, número de matrícula e associações com turmas."
+   *     tags: [Admin]
+   *     security:
+   *       - bearerAuth: []
+   *     consumes:
+   *       - application/json
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: integer
+   *         description: ID do professor a ser atualizado
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             $ref: '#/components/schemas/UpdateTeacherDTO'
+   *     responses:
+   *       200:
+   *         description: Dados do professor atualizados com sucesso
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Dados do professor atualizados com sucesso."
+   *                 data:
+   *                   $ref: '#/components/schemas/IUpdateResponse'
+   *       400:
+   *         description: ID do professor não fornecido ou dados inválidos
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "ID do professor não fornecido."
+   *       401:
+   *         description: Acesso não autorizado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *             examples:
+   *               tokenAusente:
+   *                 summary: Token ausente
+   *                 value:
+   *                   message: "Token não consta na requisição."
+   *               tokenInvalidoOuExpirado:
+   *                 summary: Token inválido ou expirado
+   *                 value:
+   *                   message: "Token inválido ou expirado."
+   *               tokenInvalido:
+   *                 summary: Token inválido
+   *                 value:
+   *                   message: "Token inválido."
+   *       403:
+   *         description: "Você não tem permissão para acessar este recurso"
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 error:
+   *                   type: string
+   *                   example: "Você não tem permissão para acessar este recurso"
+   *       404:
+   *         description: Professor não encontrado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Professor não encontrado."
+   *       409:
+   *         description: Conflito de dados (CPF ou matrícula duplicados)
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "O número de matrícula já está em uso para esta escola."
+   */
   public async updateTeacher(req: Request, res: Response): Promise<Response<IUpdateResponse>> {
     const teacherId: number = Number(req.params.id);
     const schoolId: number = res.locals.schoolId;
@@ -80,6 +182,78 @@ export class TeacherController {
     return res.status(200).json(result);
   }
 
+  /**
+   * @swagger
+   * /admin/teachers/{id}:
+   *   delete:
+   *     summary: Remove um professor
+   *     description: "Este endpoint exclui um professor e remove suas associações com escola e turmas."
+   *     tags: [Admin]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         schema:
+   *           type: integer
+   *         description: ID do professor a ser removido
+   *     responses:
+   *       204:
+   *         description: Professor removido com sucesso
+   *       400:
+   *         description: ID do professor não fornecido
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "ID do professor não fornecido."
+   *       401:
+   *         description: Acesso não autorizado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *             examples:
+   *               tokenAusente:
+   *                 summary: Token ausente
+   *                 value:
+   *                   message: "Token não consta na requisição."
+   *               tokenInvalidoOuExpirado:
+   *                 summary: Token inválido ou expirado
+   *                 value:
+   *                   message: "Token inválido ou expirado."
+   *               tokenInvalido:
+   *                 summary: Token inválido
+   *                 value:
+   *                   message: "Token inválido."
+   *       403:
+   *         description: "Você não tem permissão para acessar este recurso"
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 error:
+   *                   type: string
+   *                   example: "Você não tem permissão para acessar este recurso"
+   *       404:
+   *         description: Professor não encontrado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Professor não encontrado nesta escola."
+   */
   public async deleteTeacher(req: Request, res: Response): Promise<Response> {
     const teacherId: number = Number(req.params.id);
     const schoolId: number = res.locals.schoolId;
@@ -89,6 +263,7 @@ export class TeacherController {
     await this.teacherService.deleteTeacher(teacherId, schoolId);
     return res.status(204).send();
   }
+
   /**
    * @swagger
    * /teachers/me/classes:

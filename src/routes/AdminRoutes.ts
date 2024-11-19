@@ -47,10 +47,24 @@ adminRouter.get('/me/students', authMiddleware, roleMiddleware(['admin']), (req,
  */
 adminRouter.get('/me/classes/:id/students', authMiddleware, roleMiddleware(['admin']), (req, res) => studentController.listStudents(req, res));
 
+/**
+ * @route POST /admin/teachers/:id
+ * @description Rota para atualizar um professor associado à escola do administrador autenticado.
+ * @middleware authMiddleware - Garante que o usuário está autenticado.
+ * @middleware roleMiddleware(['admin']) - Restringe acesso a administradores.
+ * @access Private
+ */
 adminRouter.put('/teachers/:id', authMiddleware, roleMiddleware(['admin']), validationMiddleware(UpdateTeacherDTO), (req, res) =>
   teacherController.updateTeacher(req, res)
 );
 
+/**
+ * @route DELETE /admin/teachers/:id
+ * @description Rota para deletar um professor associado à escola do administrador autenticado.
+ * @middleware authMiddleware - Garante que o usuário está autenticado.
+ * @middleware roleMiddleware(['admin']) - Restringe acesso a administradores.
+ * @access Private
+ */
 adminRouter.delete('/teachers/:id', authMiddleware, roleMiddleware(['admin']), (req, res) => teacherController.deleteTeacher(req, res));
 
 export default adminRouter;

@@ -88,6 +88,13 @@ export class TeacherRepository {
     });
   }
 
+  /**
+   * Busca uma associação `TeacherSchool` com base no ID do professor e no ID da escola.
+   *
+   * @param teacherId - O ID do professor.
+   * @param schoolId - O ID da escola.
+   * @returns Uma instância de `TeacherSchool` se encontrada, ou `undefined` caso contrário.
+   */
   public async findTeacherSchoolByTeacherAndSchool(teacherId: number, schoolId: number): Promise<TeacherSchool | undefined> {
     return await this.teacherSchoolRepository.findOne({
       where: {
@@ -97,14 +104,32 @@ export class TeacherRepository {
     });
   }
 
+  /**
+   * Remove uma associação `TeacherSchool` do repositório.
+   *
+   * @param teacherSchool - A associação `TeacherSchool` a ser removida.
+   * @returns Uma promessa que é resolvida quando a remoção é concluída.
+   */
   public async removeTeacherSchool(teacherSchool: TeacherSchool): Promise<void> {
     await this.teacherSchoolRepository.remove(teacherSchool);
   }
 
+  /**
+   * Remove todas as associações de turmas de um professor com base no ID do professor.
+   *
+   * @param teacherId - O ID do professor cujas associações de turmas serão removidas.
+   * @returns Uma promessa que é resolvida quando as associações são removidas.
+   */
   public async removeTeacherClassesByTeacherId(teacherId: number): Promise<void> {
     await this.teacherClassRepository.delete({ teacher: { id: teacherId } });
   }
 
+  /**
+   * Remove um professor do repositório com base no seu ID.
+   *
+   * @param teacherId - O ID do professor a ser removido.
+   * @returns Uma promessa que é resolvida quando a remoção é concluída.
+   */
   public async removeTeacher(teacherId: number): Promise<void> {
     await this.repository.delete({ id: teacherId });
   }
