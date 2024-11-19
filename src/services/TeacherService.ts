@@ -93,8 +93,7 @@ export class TeacherService {
     const teacherSchool: TeacherSchool = await this.teacherRepository.findTeacherSchoolByTeacherAndSchool(teacherId, schoolId);
     if (!teacherSchool) throw new NotFoundError('Professor não encontrado nesta escola');
 
-    const isDuplicateRegistrationNumber = await this.verifyRegistrationNumberDuplicate(registrationNumber, schoolId);
-    if (isDuplicateRegistrationNumber) throw new ConflictError('O número de matrícula já está em uso para esta escola.');
+    await this.verifyRegistrationNumberDuplicateUpdate(teacherSchool, registrationNumber, teacherId, schoolId);
 
     teacherSchool.registrationNumber = registrationNumber;
 
@@ -204,6 +203,17 @@ export class TeacherService {
     const teacherSchoolExists = await this.teacherRepository.findTeacherSchoolByRegistrationAndSchool(registrationNumber, schoolId);
     return !!teacherSchoolExists;
   }
+  private async verifyRegistrationNumberDuplicateUpdate(
+    teacherSchool: TeacherSchool,
+    registrationNumber: string,
+    teacherId: number,
+    schoolId: number
+  ): Promise<void> {
+    const isDuplicateRegistrationNumber: boolean = await this.verifyRegistrationNumberDuplicate(registrationNumber, schoolId);
+    if (isDuplicateRegistrationNumber && teacherSchool.registrationNumber !== registrationNumber)
+      throw new ConflictError('O número de matrícula já está em uso para esta escola.');
+  }
+
   private async verifyCPFDuplicate(cpf: string, teacherId: number): Promise<void> {
     const existingTeacher: Teacher = await this.teacherRepository.findByCpf(cpf);
     if (existingTeacher && existingTeacher.id !== teacherId) throw new ConflictError('CPF já cadastrado para outro professor.');
