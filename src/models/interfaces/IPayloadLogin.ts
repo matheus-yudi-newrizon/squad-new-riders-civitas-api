@@ -1,5 +1,6 @@
 export interface IPayloadLogin {
-  id: number;
+  id?: number;
+  teacherId?: number;
   email?: string;
   registrationNumber?: string;
   schoolId: number;
