@@ -80,6 +80,15 @@ export class TeacherController {
     return res.status(200).json(result);
   }
 
+  public async deleteTeacher(req: Request, res: Response): Promise<Response> {
+    const teacherId: number = Number(req.params.id);
+    const schoolId: number = res.locals.schoolId;
+
+    if (!teacherId) throw new BadRequestError('ID do professor não fornecido.');
+
+    await this.teacherService.deleteTeacher(teacherId, schoolId);
+    return res.status(204).send();
+  }
   /**
    * @swagger
    * /teachers/me/classes:

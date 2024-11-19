@@ -51,4 +51,6 @@ adminRouter.put('/teachers/:id', authMiddleware, roleMiddleware(['admin']), vali
   teacherController.updateTeacher(req, res)
 );
 
+adminRouter.delete('/teachers/:id', authMiddleware, roleMiddleware(['admin']), (req, res) => teacherController.deleteTeacher(req, res));
+
 export default adminRouter;

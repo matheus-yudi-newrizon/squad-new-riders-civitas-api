@@ -116,6 +116,15 @@ export class TeacherService {
     await this.teacherRepository.saveTeacherClasses(teacherClasses);
   }
 
+  public async deleteTeacher(teacherId: number, schoolId: number): Promise<void> {
+    const teacherSchool: TeacherSchool = await this.teacherRepository.findTeacherSchoolByTeacherAndSchool(teacherId, schoolId);
+    if (!teacherSchool) throw new NotFoundError('Professor não encontrado nesta escola.');
+
+    await this.teacherRepository.removeTeacherSchool(teacherSchool);
+    await this.teacherRepository.removeTeacherClassesByTeacherId(teacherId);
+    await this.teacherRepository.removeTeacher(teacherId);
+  }
+
   /**
    * Busca um professor específico pelo ID.
    *

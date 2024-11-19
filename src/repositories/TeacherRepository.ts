@@ -97,8 +97,16 @@ export class TeacherRepository {
     });
   }
 
+  public async removeTeacherSchool(teacherSchool: TeacherSchool): Promise<void> {
+    await this.teacherSchoolRepository.remove(teacherSchool);
+  }
+
   public async removeTeacherClassesByTeacherId(teacherId: number): Promise<void> {
     await this.teacherClassRepository.delete({ teacher: { id: teacherId } });
+  }
+
+  public async removeTeacher(teacherId: number): Promise<void> {
+    await this.repository.delete({ id: teacherId });
   }
 
   /**
