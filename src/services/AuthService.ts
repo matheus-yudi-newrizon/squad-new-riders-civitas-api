@@ -58,8 +58,10 @@ export class AuthService {
    * @returns Um objeto `IPayloadLogin` com os dados necessários para o payload JWT.
    */
   public generatePayload(entity: User | TeacherSchool): IPayloadLogin {
-    if (entity instanceof User) return { id: entity.id, email: entity.email, schoolId: entity.school.id };
-    if (entity instanceof TeacherSchool) return { id: entity.id, registrationNumber: entity.registrationNumber, schoolId: entity.school.id };
+    if (entity instanceof User)
+      return { id: entity.id, email: entity.email, schoolId: entity.school.id, schoolName: entity.school.name, role: 'admin' };
+    if (entity instanceof TeacherSchool)
+      return { id: entity.id, registrationNumber: entity.registrationNumber, schoolId: entity.school.id, role: 'teacher' };
   }
 
   /**

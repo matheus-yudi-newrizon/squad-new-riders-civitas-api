@@ -3,4 +3,6 @@ export interface IPayloadLogin {
   email?: string;
   registrationNumber?: string;
   schoolId: number;
+  schoolName?: string;
+  role: 'admin' | 'teacher';
 }

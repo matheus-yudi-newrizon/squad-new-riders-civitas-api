@@ -102,7 +102,7 @@ export class AuthController {
    *   post:
    *     summary: Login de professor
    *     description: "Este endpoint autentica o professor e fornece um token JWT."
-   *     tags: [Professor]
+   *     tags: [Teachers]
    *     consumes:
    *       - application/json
    *     produces:
