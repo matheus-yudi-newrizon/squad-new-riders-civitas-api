@@ -1,15 +1,18 @@
 import { Service } from 'typedi';
-import { School } from '../entities/School';
 import { Class } from '../entities/Class';
+import { School } from '../entities/School';
 import { Teacher } from '../entities/Teacher';
+import { TeacherClass } from '../entities/TeacherClass';
+import { TeacherSchool } from '../entities/TeacherSchool';
+import { BadRequestError } from '../errors/BadRequestError';
+import { ConflictError } from '../errors/ConflictError';
+import { NotFoundError } from '../errors/NotFoundError';
 import { CreateTeacherDTO } from '../models/DTO/CreateTeacherDTO';
+import { UpdateTeacherDTO } from '../models/DTO/UpdateTeacherDTO';
 import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
-import { TeacherRepository } from '../repositories/TeacherRepository';
 import { ClassRepository } from '../repositories/ClassRepository';
 import { SchoolRepository } from '../repositories/SchoolRepository';
-import { ConflictError } from '../errors/ConflictError';
-import { BadRequestError } from '../errors/BadRequestError';
-import { NotFoundError } from '../errors/NotFoundError';
+import { TeacherRepository } from '../repositories/TeacherRepository';
 
 @Service()
 export class TeacherService {
@@ -62,6 +65,55 @@ export class TeacherService {
     await this.teacherRepository.saveTeacherSchool(teacherSchool);
 
     return { message: 'Cadastro de professor realizado com sucesso.' };
+  }
+
+  public async updateTeacher(teacherId: number, schoolId: number, updateTeacherDTO: UpdateTeacherDTO): Promise<ICreationSucessResponse> {
+    const teacher: Teacher = await this.getTeacherById(teacherId);
+    await this.updateTeacherData(teacher, updateTeacherDTO);
+
+    if (updateTeacherDTO.registrationNumber) await this.updateTeacherSchool(teacherId, schoolId, updateTeacherDTO);
+    if (updateTeacherDTO.classes) await this.updateTeacherClasses(teacherId, updateTeacherDTO.classes);
+
+    return { message: 'Dados do professor atualizados!' };
+  }
+
+  private async updateTeacherData(teacher: Teacher, updateTeacherDTO: UpdateTeacherDTO) {
+    if (updateTeacherDTO.fullName) teacher.fullName = updateTeacherDTO.fullName;
+
+    if (updateTeacherDTO.cpf) {
+      const unmaskedCpf: string = updateTeacherDTO.cpf.replace(/[.-]/g, '');
+      await this.verifyCPFDuplicate(unmaskedCpf, teacher.id);
+      teacher.cpf = updateTeacherDTO.cpf;
+    }
+    await this.teacherRepository.saveTeacher(teacher);
+  }
+
+  private async updateTeacherSchool(teacherId: number, schoolId: number, updateTeacherDTO: UpdateTeacherDTO) {
+    const registrationNumber: string = updateTeacherDTO.registrationNumber;
+    const teacherSchool: TeacherSchool = await this.teacherRepository.findTeacherSchoolByTeacherAndSchool(teacherId, schoolId);
+    if (!teacherSchool) throw new NotFoundError('Professor não encontrado nesta escola');
+
+    const isDuplicateRegistrationNumber = await this.verifyRegistrationNumberDuplicate(registrationNumber, schoolId);
+    if (isDuplicateRegistrationNumber) throw new ConflictError('O número de matrícula já está em uso para esta escola.');
+
+    teacherSchool.registrationNumber = registrationNumber;
+
+    await this.teacherRepository.saveTeacherSchool(teacherSchool);
+  }
+
+  private async updateTeacherClasses(teacherId: number, classIds: number[]) {
+    const selectedClasses: Class[] = await this.classRepository.findByIds(classIds);
+
+    await this.teacherRepository.removeTeacherClassesByTeacherId(teacherId);
+
+    const teacherClasses: TeacherClass[] = selectedClasses.map(classEntity => {
+      return this.teacherRepository.createTeacherClass({
+        teacher: { id: teacherId } as Teacher,
+        class: classEntity
+      });
+    });
+
+    await this.teacherRepository.saveTeacherClasses(teacherClasses);
   }
 
   /**
@@ -142,5 +194,9 @@ export class TeacherService {
   private async verifyRegistrationNumberDuplicate(registrationNumber: string, schoolId: number): Promise<boolean> {
     const teacherSchoolExists = await this.teacherRepository.findTeacherSchoolByRegistrationAndSchool(registrationNumber, schoolId);
     return !!teacherSchoolExists;
+  }
+  private async verifyCPFDuplicate(cpf: string, teacherId: number): Promise<void> {
+    const existingTeacher: Teacher = await this.teacherRepository.findByCpf(cpf);
+    if (existingTeacher && existingTeacher.id !== teacherId) throw new ConflictError('CPF já cadastrado para outro professor.');
   }
 }

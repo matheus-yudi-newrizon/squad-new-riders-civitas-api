@@ -2,8 +2,8 @@ import { Service as Repository } from 'typedi';
 import { Repository as TypeORMRepository } from 'typeorm';
 import { MysqlDataSource } from '../config/database';
 import { Teacher } from '../entities/Teacher';
-import { TeacherSchool } from '../entities/TeacherSchool';
 import { TeacherClass } from '../entities/TeacherClass';
+import { TeacherSchool } from '../entities/TeacherSchool';
 
 @Repository()
 export class TeacherRepository {
@@ -86,6 +86,19 @@ export class TeacherRepository {
         school: { id: schoolId }
       }
     });
+  }
+
+  public async findTeacherSchoolByTeacherAndSchool(teacherId: number, schoolId: number): Promise<TeacherSchool | undefined> {
+    return await this.teacherSchoolRepository.findOne({
+      where: {
+        teacher: { id: teacherId },
+        school: { id: schoolId }
+      }
+    });
+  }
+
+  public async removeTeacherClassesByTeacherId(teacherId: number): Promise<void> {
+    await this.teacherClassRepository.delete({ teacher: { id: teacherId } });
   }
 
   /**

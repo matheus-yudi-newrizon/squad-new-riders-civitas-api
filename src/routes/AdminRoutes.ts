@@ -5,6 +5,8 @@ import { StudentController } from '../controller/StudentController';
 import { TeacherController } from '../controller/TeacherController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { roleMiddleware } from '../middlewares/roleMiddleware';
+import { validationMiddleware } from '../middlewares/validateMiddleware';
+import { UpdateTeacherDTO } from '../models/DTO/UpdateTeacherDTO';
 
 const adminRouter = Router();
 const adminController: AuthController = Container.get(AuthController);
@@ -44,5 +46,9 @@ adminRouter.get('/me/students', authMiddleware, roleMiddleware(['admin']), (req,
  * @access Private
  */
 adminRouter.get('/me/classes/:id/students', authMiddleware, roleMiddleware(['admin']), (req, res) => studentController.listStudents(req, res));
+
+adminRouter.put('/teachers/:id', authMiddleware, roleMiddleware(['admin']), validationMiddleware(UpdateTeacherDTO), (req, res) =>
+  teacherController.updateTeacher(req, res)
+);
 
 export default adminRouter;

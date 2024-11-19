@@ -2,9 +2,11 @@ import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError } from '../errors/BadRequestError';
 import { NotFoundError } from '../errors/NotFoundError';
-import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
-import { TeacherService } from '../services/TeacherService';
 import { CreateTeacherDTO } from '../models/DTO/CreateTeacherDTO';
+import { UpdateTeacherDTO } from '../models/DTO/UpdateTeacherDTO';
+import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
+import { IUpdateResponse } from '../models/interfaces/IUpdateResponse';
+import { TeacherService } from '../services/TeacherService';
 
 @Controller()
 export class TeacherController {
@@ -65,6 +67,17 @@ export class TeacherController {
 
     const result = await this.teacherService.createTeacherWithValidation(createTeacherDTO, schoolId);
     return res.status(201).json(result);
+  }
+
+  public async updateTeacher(req: Request, res: Response): Promise<Response<IUpdateResponse>> {
+    const teacherId: number = Number(req.params.id);
+    const schoolId: number = res.locals.schoolId;
+    const updateTeacherDTO: UpdateTeacherDTO = req.body;
+
+    if (!teacherId) throw new BadRequestError('ID do professor não fornecido.');
+
+    const result: IUpdateResponse = await this.teacherService.updateTeacher(teacherId, schoolId, updateTeacherDTO);
+    return res.status(200).json(result);
   }
 
   /**
