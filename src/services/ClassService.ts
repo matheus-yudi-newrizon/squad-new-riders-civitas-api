@@ -68,15 +68,10 @@ export class ClassService {
       updateClassDTO.educationType,
       classEntity.school.id
     );
-
     if (isDuplicate) throw new ConflictError('Verifique as informações digitadas ou cadastre novos dados');
 
-    classEntity.name = updateClassDTO.name;
-    classEntity.schoolYear = updateClassDTO.schoolYear;
-    classEntity.schoolShift = updateClassDTO.schoolShift;
-    classEntity.educationType = updateClassDTO.educationType;
-
-    await this.classRepository.saveClass(classEntity);
+    const updateClass: Class = Object.assign(classEntity, updateClassDTO);
+    await this.classRepository.saveClass(updateClass);
 
     return { message: 'Dados da turma atualizados!' };
   }
@@ -90,7 +85,7 @@ export class ClassService {
    * @returns {Promise<void>} Uma promessa que é resolvida quando a turma é excluída.
    */
   public async deleteClass(classId: number): Promise<void> {
-    const classEntity: Class = await this.classRepository.findById(classId);
+    const classEntity: Class = await this.getClassById(classId);
     if (!classEntity) throw new NotFoundError('Turma não encontrada.');
 
     if (classEntity.students?.length > 0 || classEntity.teacherClasses?.length > 0) {

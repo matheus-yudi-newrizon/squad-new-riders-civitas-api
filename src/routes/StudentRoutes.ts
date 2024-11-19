@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { roleMiddleware } from 'middlewares/roleMiddleware';
 import { Container } from 'typedi';
 import { StudentController } from '../controller/StudentController';
 import { authMiddleware } from '../middlewares/authMiddleware';
+import { roleMiddleware } from '../middlewares/roleMiddleware';
 import { validationMiddleware } from '../middlewares/validateMiddleware';
 import { CreateStudentDTO } from '../models/DTO/CreateStudentDTO';
 
@@ -17,7 +17,7 @@ const studentController: StudentController = Container.get(StudentController);
  * @middleware validationMiddleware(CreateStudentDTO) - Valida o corpo da requisição.
  * @access Private
  */
-studentRoutes.post('/register', authMiddleware, roleMiddleware['admin'], validationMiddleware(CreateStudentDTO), (req, res) =>
+studentRoutes.post('/register', authMiddleware, roleMiddleware(['admin']), validationMiddleware(CreateStudentDTO), (req, res) =>
   studentController.create(req, res)
 );
 
