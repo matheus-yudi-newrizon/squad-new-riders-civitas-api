@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
+import { IUpdateResponse } from 'models/interfaces/IUpdateResponse';
 import { Service as Controller } from 'typedi';
 import { BadRequestError } from '../errors/BadRequestError';
 import { NotFoundError } from '../errors/NotFoundError';
-import { ClassService } from '../services/ClassService';
-import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
 import { CreateClassDTO } from '../models/DTO/CreateClassDTO';
+import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
+import { ClassService } from '../services/ClassService';
 
 @Controller()
 export class ClassController {
@@ -92,5 +93,135 @@ export class ClassController {
 
     if (classes.length === 0) throw new NotFoundError('Nenhuma turma encontrada com os critérios fornecidos.');
     return res.status(200).json(classes);
+  }
+
+  /**
+   * @swagger
+   * /classes/{id}:
+   *   put:
+   *     summary: Atualiza uma turma existente
+   *     description: "Permite atualizar os dados de uma turma existente. Caso os dados fornecidos sejam inválidos ou conflitantes, um erro apropriado será retornado."
+   *     tags: [Classes]
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: ID da turma a ser atualizada
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     requestBody:
+   *       required: true
+   *       description: "Dados atualizados da turma"
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             properties:
+   *               name:
+   *                 type: string
+   *                 description: "Nome da turma"
+   *               schoolYear:
+   *                 type: string
+   *                 description: "Ano escolar da turma"
+   *               educationType:
+   *                 type: string
+   *                 description: "Tipo de educação da turma"
+   *               schoolShift:
+   *                 type: string
+   *                 description: "Turno escolar da turma"
+   *     responses:
+   *       200:
+   *         description: Dados da turma atualizados com sucesso
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Dados da turma atualizados!"
+   *       400:
+   *         description: Erros de validação nos dados fornecidos
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Erro de validação nos dados fornecidos."
+   *       404:
+   *         description: Turma não encontrada
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Turma não encontrada."
+   *       409:
+   *         description: Conflito nas informações fornecidas
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Verifique as informações digitadas ou cadastre novos dados."
+   */
+
+  public async updateClass(req: Request, res: Response): Promise<Response<IUpdateResponse>> {
+    const classId: number = Number(req.params.id);
+    const updateClassDTO: CreateClassDTO = req.body;
+
+    const result: IUpdateResponse = await this.classService.updateClass(classId, updateClassDTO);
+    return res.status(200).json(result);
+  }
+
+  /**
+   * @swagger
+   * /classes/{id}:
+   *   delete:
+   *     summary: Deleta uma turma específica
+   *     description: "Permite deletar uma turma específica com base no ID fornecido. Caso a turma tenha associações com estudantes ou professores, a exclusão não será permitida."
+   *     tags: [Classes]
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: "ID da turma a ser deletada"
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     responses:
+   *       204:
+   *         description: Turma deletada com sucesso
+   *       404:
+   *         description: Turma não encontrada
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Turma não encontrada."
+   *       409:
+   *         description: A turma está associada a professores ou estudantes
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Turma está associada a professores ou estudantes. Remova essas associações para prosseguir com a exclusão da turma."
+   */
+  public async deleteClass(req: Request, res: Response): Promise<Response> {
+    const classId: number = Number(req.params.id);
+
+    await this.classService.deleteClass(classId);
+    return res.status(204).send();
   }
 }
