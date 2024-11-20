@@ -26,17 +26,16 @@ export class StudentRepository {
     return await this.repository.save(student);
   }
 
-  /**
-   * Busca um estudante pelo documento ou número de matrícula fornecidos.
-   *
-   * @param document - O documento do estudante (ex.: RG ou CPF).
-   * @param registrationNumber - O número de matrícula do estudante.
-   * @returns Uma instância de `Student` se encontrada, ou `undefined` caso contrário.
-   */
-  public async findByDocumentOrRegistration(document: string, registrationNumber: string): Promise<Student | undefined> {
-    return await this.repository.findOne({
-      where: [{ document }, { registrationNumber }]
-    });
+  public async findByDocument(document: string): Promise<Student | undefined> {
+    return await this.repository.findOne({ where: { document } });
+  }
+
+  public async findByRegistrationNumber(registrationNumber: string): Promise<Student | undefined> {
+    return await this.repository.findOne({ where: { registrationNumber } });
+  }
+
+  public async findById(id: number): Promise<Student | undefined> {
+    return await this.repository.findOne({ where: { id }, relations: ['studentClass'] });
   }
 
   /**
