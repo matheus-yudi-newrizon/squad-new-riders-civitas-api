@@ -3,9 +3,10 @@ import { School } from 'entities/School';
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError } from '../errors/BadRequestError';
-import { ConflictError } from '../errors/ConflictError';
 import { NotFoundError } from '../errors/NotFoundError';
+import { UpdateStudentDTO } from '../models/DTO/UpdateStudentDTO';
 import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
+import { IUpdateResponse } from '../models/interfaces/IUpdateResponse';
 import { StudentService } from '../services/StudentService';
 
 @Controller()
@@ -128,14 +129,21 @@ export class StudentController {
     const school: School = await this.studentService.verifySchool(schoolId);
     if (!school) throw new BadRequestError('Escola não encontrada');
 
-    const isDuplicate: boolean = await this.studentService.verifyStudentDuplicate(createStudentDTO.document, createStudentDTO.registrationNumber);
-    if (isDuplicate) throw new ConflictError('Estudante já cadastrado');
+    await this.studentService.verifyStudentDuplicate(createStudentDTO.document, createStudentDTO.registrationNumber);
 
     const studentClass: Class = await this.studentService.stringToClass(createStudentDTO.studentClass);
     if (!studentClass) throw new BadRequestError('Turma não encontrada');
 
     const result: ICreationSucessResponse = await this.studentService.create(createStudentDTO, studentClass, school);
     return res.status(201).json(result);
+  }
+
+  public async updateStudent(req: Request, res: Response): Promise<Response<IUpdateResponse>> {
+    const studentId: number = Number(req.params.id);
+    const updateStudentDTO: UpdateStudentDTO = req.body;
+
+    const result: IUpdateResponse = await this.studentService.updateStudent(studentId, updateStudentDTO);
+    return res.status(200).json(result);
   }
 
   /**
