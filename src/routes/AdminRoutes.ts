@@ -80,4 +80,13 @@ adminRouter.put('/students/:id', authMiddleware, roleMiddleware(['admin']), vali
   studentController.updateStudent(req, res)
 );
 
+/**
+ * @route DELETE /admin/students/:id
+ * @description Rota para deletar um aluno associado à escola do administrador autenticado.
+ * @middleware authMiddleware - Garante que o usuário está autenticado.
+ * @middleware roleMiddleware(['admin']) - Restringe acesso a administradores.
+ * @access Private
+ */
+adminRouter.delete('/students/:id', authMiddleware, roleMiddleware(['admin']), (req, res) => studentController.deleteStudent(req, res));
+
 export default adminRouter;

@@ -27,6 +27,15 @@ export class StudentRepository {
   }
 
   /**
+   * Deleta um estudante do banco de dados.
+   *
+   * @param student - A instância do estudante a ser deletada.
+   */
+  public async deleteStudent(student: Student): Promise<void> {
+    await this.repository.remove(student);
+  }
+
+  /**
    * Busca um estudante pelo documento.
    *
    * @param document - O documento (CPF ou equivalente) do estudante.

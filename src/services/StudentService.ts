@@ -165,6 +165,17 @@ export class StudentService {
   }
 
   /**
+   * Deleta um estudante do banco de dados.
+   *
+   * @param id - O identificador único do estudante a ser deletado.
+   * @throws {NotFoundError} Se o estudante não for encontrado.
+   */
+  public async deleteStudent(id: number): Promise<void> {
+    const student: Student = await this.verifyStudentId(id);
+    await this.studentRepository.deleteStudent(student);
+  }
+
+  /**
    * Recupera uma lista de estudantes com base nos filtros fornecidos.
    *
    * @param {object} filters - Um objeto contendo os filtros para a consulta.

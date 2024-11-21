@@ -251,8 +251,19 @@ export class StudentController {
     const studentId: number = Number(req.params.id);
     const updateStudentDTO: UpdateStudentDTO = req.body;
 
+    if (!studentId) throw new BadRequestError('ID do estudante não fornecido.');
+
     const result: IUpdateResponse = await this.studentService.updateStudent(studentId, updateStudentDTO);
     return res.status(200).json(result);
+  }
+
+  public async deleteStudent(req: Request, res: Response): Promise<Response> {
+    const studentId: number = Number(req.params.id);
+
+    if (!studentId) throw new BadRequestError('ID do professor não fornecido.');
+
+    await this.studentService.deleteStudent(studentId);
+    return res.status(204).send();
   }
 
   /**
