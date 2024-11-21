@@ -257,6 +257,66 @@ export class StudentController {
     return res.status(200).json(result);
   }
 
+  /**
+   * @swagger
+   * /admin/students/{id}:
+   *   delete:
+   *     summary: Deleta um estudante
+   *     description: "Este endpoint permite a deleção de um estudante pelo seu ID. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'."
+   *     tags: [Admin]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: O ID do estudante a ser deletado.
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     responses:
+   *       204:
+   *         description: Estudante deletado com sucesso. Nenhum conteúdo é retornado.
+   *       400:
+   *         description: Requisição inválida - ID não fornecido.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "ID do estudante não fornecido."
+   *       401:
+   *         description: Acesso não autorizado.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Token não consta na requisição."
+   *       403:
+   *         description: Permissão negada.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Você não tem permissão para acessar este recurso."
+   *       404:
+   *         description: Estudante não encontrado.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Estudante não encontrado."
+   */
   public async deleteStudent(req: Request, res: Response): Promise<Response> {
     const studentId: number = Number(req.params.id);
 
