@@ -46,9 +46,9 @@ teacherRoutes.get('/me/classes', authMiddleware, roleMiddleware(['teacher']), (r
  * @description Rota para buscar as informações do professor autenticado usando o token JWT.
  * @access Private
  * @middleware authMiddleware - Garante que o usuário está autenticado.
- * @middleware roleMiddleware(['teacher', 'admin']) - Restringe acesso a professores e administradores.
+ * @middleware roleMiddleware(['teacher']) - Restringe acesso a professores.
  */
-teacherRoutes.get('/', authMiddleware, roleMiddleware(['teacher', 'admin']), (req, res) => teacherController.getTeacherById(req, res));
+teacherRoutes.get('/', authMiddleware, roleMiddleware(['teacher']), (req, res) => teacherController.getTeacherById(req, res));
 
 /**
  * @route GET /teachers/me/classes/:classId/students

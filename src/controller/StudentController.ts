@@ -76,6 +76,38 @@ export class StudentController {
    *                 message:
    *                   type: string
    *                   example: "School ID não encontrado no token."
+   *       401:
+   *         description: Acesso não autorizado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *             examples:
+   *               tokenAusente:
+   *                 summary: Token ausente
+   *                 value:
+   *                   message: "Token não consta na requisição."
+   *               tokenInvalidoOuExpirado:
+   *                 summary: Token inválido ou expirado
+   *                 value:
+   *                   message: "Token inválido ou expirado."
+   *               tokenInvalido:
+   *                 summary: Token inválido
+   *                 value:
+   *                    example: "Acesso autorizado"
+   *       403:
+   *         description: "Você não tem permissão para acessar este recurso"
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 error:
+   *                   type: string
+   *                   example: "Você não tem permissão para acessar este recurso"
    *       409:
    *         description: Estudante já cadastrado
    *         content:
@@ -111,8 +143,10 @@ export class StudentController {
    * /admin/me/students:
    *   get:
    *     summary: Lista todos os estudantes da escola
-   *     description: "Este endpoint retorna a lista de estudantes cadastrados, podendo filtrar por nome. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'."
+   *     description: "Este endpoint retorna a lista de estudantes cadastrados, podendo filtrar por nome. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}' e verificação de permissões de acesso."
    *     tags: [Admin]
+   *     security:
+   *      - bearerAuth: []
    *     parameters:
    *       - in: query
    *         name: fullName
@@ -129,6 +163,38 @@ export class StudentController {
    *               type: array
    *               items:
    *                 $ref: '#/components/schemas/Student'
+   *       401:
+   *         description: Acesso não autorizado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *             examples:
+   *               tokenAusente:
+   *                 summary: Token ausente
+   *                 value:
+   *                   message: "Token não consta na requisição."
+   *               tokenInvalidoOuExpirado:
+   *                 summary: Token inválido ou expirado
+   *                 value:
+   *                   message: "Token inválido ou expirado."
+   *               tokenInvalido:
+   *                 summary: Token inválido
+   *                 value:
+   *                   message: "Token inválido."
+   *       403:
+   *         description: "Você não tem permissão para acessar este recurso"
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 error:
+   *                   type: string
+   *                   example: "Você não tem permissão para acessar este recurso."
    *       404:
    *         description: Nenhum estudante encontrado com os critérios fornecidos
    *         content:
@@ -153,11 +219,13 @@ export class StudentController {
 
   /**
    * @swagger
-   * /teachers/me/classes/:classId/students:
+   * /teachers/me/classes/{classId}/students:
    *   get:
    *     summary: Lista os estudantes de uma classe específica
-   *     description: "Este endpoint retorna a lista de estudantes de uma classe específica, com a possibilidade de filtrar por nome. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'."
+   *     description: "Este endpoint retorna a lista de estudantes de uma classe específica, com a possibilidade de filtrar por nome. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}' e verificação de permissões de acesso."
    *     tags: [Teachers]
+   *     security:
+   *      - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: classId
@@ -180,6 +248,112 @@ export class StudentController {
    *               type: array
    *               items:
    *                 $ref: '#/components/schemas/Student'
+   *       401:
+   *         description: Acesso não autorizado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *             examples:
+   *               tokenAusente:
+   *                 summary: Token ausente
+   *                 value:
+   *                   message: "Token não consta na requisição."
+   *               tokenInvalidoOuExpirado:
+   *                 summary: Token inválido ou expirado
+   *                 value:
+   *                   message: "Token inválido ou expirado."
+   *               tokenInvalido:
+   *                 summary: Token inválido
+   *                 value:
+   *                   message: "Token inválido."
+   *       403:
+   *         description: "Você não tem permissão para acessar este recurso"
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 error:
+   *                   type: string
+   *                   example: "Você não tem permissão para acessar este recurso."
+   *       404:
+   *         description: Nenhum estudante encontrado com os critérios fornecidos
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Nenhum estudante encontrado com os critérios fornecidos."
+   */
+  /**
+   * @swagger
+   * /admin/me/classes/{classId}/students:
+   *   get:
+   *     summary: Lista os estudantes de uma classe específica
+   *     description: "Este endpoint retorna a lista de estudantes de uma classe específica associada à escola do administrador autenticado, com a possibilidade de filtrar por nome. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}' e verificação de permissões de acesso. Administradores podem acessar esta rota para obter a lista de estudantes de qualquer classe dentro da escola que administram."
+   *     tags: [Admin]
+   *     security:
+   *      - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: classId
+   *         description: ID da classe para filtrar os estudantes
+   *         required: true
+   *         schema:
+   *           type: integer
+   *       - in: query
+   *         name: fullName
+   *         description: Nome completo do estudante para filtrar os resultados
+   *         required: false
+   *         schema:
+   *           type: string
+   *     responses:
+   *       200:
+   *         description: Lista de estudantes encontrada com sucesso
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: array
+   *               items:
+   *                 $ref: '#/components/schemas/Student'
+   *       401:
+   *         description: Acesso não autorizado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *             examples:
+   *               tokenAusente:
+   *                 summary: Token ausente
+   *                 value:
+   *                   message: "Token não consta na requisição."
+   *               tokenInvalidoOuExpirado:
+   *                 summary: Token inválido ou expirado
+   *                 value:
+   *                   message: "Token inválido ou expirado."
+   *               tokenInvalido:
+   *                 summary: Token inválido
+   *                 value:
+   *                   message: "Token inválido."
+   *       403:
+   *         description: "Você não tem permissão para acessar este recurso"
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 error:
+   *                   type: string
+   *                   example: "Você não tem permissão para acessar este recurso."
    *       404:
    *         description: Nenhum estudante encontrado com os critérios fornecidos
    *         content:

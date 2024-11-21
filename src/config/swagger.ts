@@ -22,7 +22,8 @@ export const swaggerConfig: swaggerJSDoc.OAS3Options = {
         BearerAuth: {
           in: 'header',
           type: 'http',
-          scheme: 'bearer'
+          scheme: 'bearer',
+          bearerFormat: 'JWT'
         }
       },
       schemas: {
@@ -198,6 +199,35 @@ export const swaggerConfig: swaggerJSDoc.OAS3Options = {
             }
           },
           required: ['fullName', 'document', 'registrationNumber', 'studentClass', 'cpfGuardian']
+        },
+        UpdateTeacherDTO: {
+          type: 'object',
+          properties: {
+            fullName: {
+              type: 'string',
+              description: 'Nome completo do professor',
+              example: 'João Silva'
+            },
+            cpf: {
+              type: 'string',
+              description: 'CPF do professor',
+              example: '123.456.789-00'
+            },
+            registrationNumber: {
+              type: 'string',
+              description: 'Número de matrícula do professor',
+              example: '20230001'
+            },
+            classes: {
+              type: 'array',
+              items: {
+                type: 'string',
+                description: 'ID da turma associada'
+              },
+              description: 'Lista de IDs das turmas associadas ao professor',
+              example: ['1', '2', '3']
+            }
+          }
         }
       }
     }

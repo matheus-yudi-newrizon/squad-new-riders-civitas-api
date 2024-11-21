@@ -102,6 +102,8 @@ export class ClassController {
    *     summary: Atualiza uma turma existente
    *     description: "Permite atualizar os dados de uma turma existente. Caso os dados fornecidos sejam inválidos ou conflitantes, um erro apropriado será retornado."
    *     tags: [Classes]
+   *     security:
+   *      - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: id
@@ -150,6 +152,40 @@ export class ClassController {
    *                 message:
    *                   type: string
    *                   example: "Erro de validação nos dados fornecidos."
+   *                 example: "email@example.com"
+   *       401:
+   *         description: Acesso não autorizado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *             examples:
+   *               tokenAusente:
+   *                 summary: Token ausente
+   *                 value:
+   *                   message: "Token não consta na requisição."
+   *               tokenInvalidoOuExpirado:
+   *                 summary: Token inválido ou expirado
+   *                 value:
+   *                   message: "Token inválido ou expirado."
+   *               tokenInvalido:
+   *                 summary: Token inválido
+   *                 value:
+   *                   message: "Token inválido."
+   *             example: "Acesso autorizado"
+   *       403:
+   *         description: "Você não tem permissão para acessar este recurso"
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 error:
+   *                   type: string
+   *                   example: "Você não tem permissão para acessar este recurso"
    *       404:
    *         description: Turma não encontrada
    *         content:
@@ -187,6 +223,8 @@ export class ClassController {
    *     summary: Deleta uma turma específica
    *     description: "Permite deletar uma turma específica com base no ID fornecido. Caso a turma tenha associações com estudantes ou professores, a exclusão não será permitida."
    *     tags: [Classes]
+   *     security:
+   *      - bearerAuth: []
    *     parameters:
    *       - in: path
    *         name: id
@@ -207,6 +245,39 @@ export class ClassController {
    *                 message:
    *                   type: string
    *                   example: "Turma não encontrada."
+   *       401:
+   *         description: Acesso não autorizado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *             examples:
+   *               tokenAusente:
+   *                 summary: Token ausente
+   *                 value:
+   *                   message: "Token não consta na requisição."
+   *               tokenInvalidoOuExpirado:
+   *                 summary: Token inválido ou expirado
+   *                 value:
+   *                   message: "Token inválido ou expirado."
+   *               tokenInvalido:
+   *                 summary: Token inválido
+   *                 value:
+   *                   message: "Token inválido."
+   *                   example: "Acesso autorizado"
+   *       403:
+   *         description: "Você não tem permissão para acessar este recurso"
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 error:
+   *                   type: string
+   *                   example: "Você não tem permissão para acessar este recurso"
    *       409:
    *         description: A turma está associada a professores ou estudantes
    *         content:
