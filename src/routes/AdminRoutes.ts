@@ -46,7 +46,9 @@ adminRouter.get('/me/students', authMiddleware, roleMiddleware(['admin']), (req,
  * @middleware roleMiddleware(['admin']) - Restringe acesso a administradores.
  * @access Private
  */
-adminRouter.get('/me/classes/:id/students', authMiddleware, roleMiddleware(['admin']), (req, res) => studentController.listStudents(req, res));
+adminRouter.get('/me/classes/:classId/students', authMiddleware, roleMiddleware(['admin']), (req, res) =>
+  studentController.listStudentsByClass(req, res)
+);
 
 /**
  * @route POST /admin/teachers/:id
