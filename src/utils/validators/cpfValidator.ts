@@ -49,7 +49,7 @@ export function IsCPF(validationOptions?: ValidationOptions) {
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
-      constraints: [],
+      constraints: validationOptions?.message ? [validationOptions.message] : [],
       validator: IsCPFConstraint
     });
   };

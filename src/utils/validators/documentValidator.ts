@@ -24,7 +24,7 @@ class IsDocumentValidConstraint implements ValidatorConstraintInterface {
   validate(value: string): boolean {
     const strippedValue: string = value.replace(/[.-]/g, '');
     const isValidCPF: boolean = cpf.isValid(strippedValue);
-    const isValidRG = /^[A-Za-z]{0,2}?\d{2}\d{3}\d{3}[0-9Xx]$/.test(strippedValue);
+    const isValidRG = /^([A-Z]{2})?\d{7,9}[A-Z0-9]?$/.test(strippedValue);
 
     return isValidCPF || isValidRG;
   }

@@ -7,7 +7,7 @@ import { ILoginAdminRequest } from '../models/interfaces/ILoginAdminRequest';
 import { ILoginTeacherRequest } from '../models/interfaces/ILoginTeacherRequest';
 import { AdminRepository } from '../repositories/AdminRepository';
 import { TeacherRepository } from '../repositories/TeacherRepository';
-import { JwtService } from './JwtService';
+import { JwtService } from './JwTService';
 
 @Service()
 export class AuthService {
@@ -58,8 +58,10 @@ export class AuthService {
    * @returns Um objeto `IPayloadLogin` com os dados necessários para o payload JWT.
    */
   public generatePayload(entity: User | TeacherSchool): IPayloadLogin {
-    if (entity instanceof User) return { id: entity.id, email: entity.email, schoolId: entity.school.id };
-    if (entity instanceof TeacherSchool) return { id: entity.id, registrationNumber: entity.registrationNumber, schoolId: entity.school.id };
+    if (entity instanceof User)
+      return { id: entity.id, email: entity.email, schoolId: entity.school.id, schoolName: entity.school.name, role: 'admin' };
+    if (entity instanceof TeacherSchool)
+      return { teacherId: entity.id, registrationNumber: entity.registrationNumber, schoolId: entity.school.id, role: 'teacher' };
   }
 
   /**

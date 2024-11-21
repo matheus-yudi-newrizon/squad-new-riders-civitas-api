@@ -16,14 +16,17 @@ export class IsValidClassConstraint implements ValidatorConstraintInterface {
   }
 
   /**
-   * Valida se o nome da turma fornecido existe no banco de dados.
+   * Valida se o id da turma fornecida existe no banco de dados.
    *
-   * @param className - O nome da turma que será verificado.
+   * @param classId - O id da turma que será verificado.
    * @returns `true` se a turma existir, caso contrário, `false`.
    */
-  async validate(className: string): Promise<boolean> {
-    if (!className) return false;
-    const classEntity = await this.classRepository.findByName(className);
+  async validate(classId: string): Promise<boolean> {
+    if (!classId) return false;
+    const convertedId = Number(classId);
+    if (isNaN(convertedId)) return false;
+
+    const classEntity = await this.classRepository.findById(convertedId);
     return !!classEntity;
   }
 

@@ -27,15 +27,87 @@ export class StudentRepository {
   }
 
   /**
-   * Busca um estudante pelo documento ou número de matrícula fornecidos.
+   * Deleta um estudante do banco de dados.
    *
-   * @param document - O documento do estudante (ex.: RG ou CPF).
+   * @param student - A instância do estudante a ser deletada.
+   */
+  public async deleteStudent(student: Student): Promise<void> {
+    await this.repository.remove(student);
+  }
+
+  /**
+   * Busca um estudante pelo documento.
+   *
+   * @param document - O documento (CPF ou equivalente) do estudante.
+   * @returns Uma instância de `Student` se encontrada, ou `undefined` caso contrário.
+   */
+  public async findByDocument(document: string): Promise<Student | undefined> {
+    return await this.repository.findOne({ where: { document } });
+  }
+
+  /**
+   * Busca um estudante pelo número de matrícula.
+   *
    * @param registrationNumber - O número de matrícula do estudante.
    * @returns Uma instância de `Student` se encontrada, ou `undefined` caso contrário.
    */
-  public async findByDocumentOrRegistration(document: string, registrationNumber: string): Promise<Student | undefined> {
-    return await this.repository.findOne({
-      where: [{ document }, { registrationNumber }]
-    });
+  public async findByRegistrationNumber(registrationNumber: string): Promise<Student | undefined> {
+    return await this.repository.findOne({ where: { registrationNumber } });
+  }
+
+  /**
+   * Busca um estudante pelo ID.
+   *
+   * @param id - O identificador único do estudante.
+   * @returns Uma instância de `Student` se encontrada, ou `undefined` caso contrário.
+   * Inclui as relações com a classe do estudante (`studentClass`).
+   */
+  public async findById(id: number): Promise<Student | undefined> {
+    return await this.repository.findOne({ where: { id }, relations: ['studentClass'] });
+  }
+
+  /**
+   * Recupera uma lista de estudantes para uma determinada escola.
+   *
+   * @param schoolId - O ID da escola para recuperar os estudantes.
+   * @param fullName - (Opcional) O nome completo do estudante para filtrar.
+   * @returns Uma promessa que resolve para um array de estudantes.
+   */
+  public async listStudents(schoolId: number, fullName?: string): Promise<Student[]> {
+    const query = this.repository
+      .createQueryBuilder('student')
+      .innerJoin('student.studentClass', 'class')
+      .innerJoin('class.school', 'school')
+      .where('school.id = :schoolId', { schoolId })
+      .select(['student', 'class.name']);
+
+    if (fullName) {
+      query.andWhere('student.fullName LIKE :fullName COLLATE utf8mb4_general_ci', { fullName: `%${fullName}%` });
+    }
+
+    return query.getMany();
+  }
+
+  /**
+   * Busca todos os estudantes de uma determinada turma.
+   *
+   * @param classId - O ID da turma.
+   * @param schoolId - O ID da escola.
+   * @param fullName - O nome completo do estudante (opcional).
+   * @returns Um array contendo todos os estudantes da turma especificada.
+   */
+  public async listStudentsByClass(classId: number, schoolId: number, fullName?: string): Promise<Student[]> {
+    const query = this.repository
+      .createQueryBuilder('student')
+      .innerJoin('student.studentClass', 'class')
+      .where('class.id = :classId', { classId })
+      .andWhere('class.schoolId = :schoolId', { schoolId })
+      .select(['student']);
+
+    if (fullName) {
+      query.andWhere('student.fullName LIKE :fullName COLLATE utf8mb4_general_ci', { fullName: `%${fullName}%` });
+    }
+
+    return query.getMany();
   }
 }

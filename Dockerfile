@@ -14,4 +14,9 @@ RUN chown -R node /app/node_modules
 
 USER node
 
-EXPOSE 8080
+EXPOSE 4444
+
+CMD ["sh", "-c", "npm run run:migrations && npm start"]
+
+
+

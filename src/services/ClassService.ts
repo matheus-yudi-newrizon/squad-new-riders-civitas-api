@@ -1,14 +1,17 @@
 import { Service } from 'typedi';
+import { Class } from '../entities/Class';
 import { School } from '../entities/School';
-import { CreateClassDTO } from '../models/DTO/CreateClassDTO';
-import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
-import { ClassRepository } from '../repositories/ClassRepository';
-import { SchoolRepository } from '../repositories/SchoolRepository';
 import { BadRequestError } from '../errors/BadRequestError';
 import { ConflictError } from '../errors/ConflictError';
-import { SchoolYear } from '../models/enums/SchoolYear';
-import { SchoolShift } from '../models/enums/SchoolShift';
+import { NotFoundError } from '../errors/NotFoundError';
+import { CreateClassDTO } from '../models/DTO/CreateClassDTO';
 import { EducationType } from '../models/enums/EducationType';
+import { SchoolShift } from '../models/enums/SchoolShift';
+import { SchoolYear } from '../models/enums/SchoolYear';
+import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
+import { IUpdateResponse } from '../models/interfaces/IUpdateResponse';
+import { ClassRepository } from '../repositories/ClassRepository';
+import { SchoolRepository } from '../repositories/SchoolRepository';
 
 @Service()
 export class ClassService {
@@ -18,9 +21,9 @@ export class ClassService {
   ) {}
 
   /**
-   * Verifica a existência da escola e a duplicidade da turma, e cria uma nova turma caso não haja conflitos.
+   * Cria uma nova turma caso a escola seja válida e não haja duplicidade com turmas existentes.
    *
-   * @param createClassDTO - Dados da turma a ser criada.
+   * @param createClassDTO - Dados para criação da turma.
    * @param schoolId - ID da escola associada.
    * @returns Um objeto contendo uma mensagem de sucesso.
    * @throws BadRequestError - Se a escola não for encontrada.
@@ -46,11 +49,94 @@ export class ClassService {
   }
 
   /**
-   * Verifica a existência de uma escola com base no ID fornecido.
+   * Atualiza os detalhes de uma turma existente.
+   *
+   * @param classId - O ID da turma a ser atualizada.
+   * @param updateClassDTO - O objeto de transferência de dados contendo os detalhes atualizados da turma.
+   * @returns Uma promessa que resolve para um objeto contendo uma mensagem de sucesso.
+   * @throws NotFoundError - Se a turma com o ID especificado não for encontrada.
+   * @throws ConflictError - Se os detalhes atualizados da turma entrarem em conflito com uma turma existente.
+   */
+  public async updateClass(classId: number, updateClassDTO: CreateClassDTO): Promise<IUpdateResponse> {
+    const classEntity: Class = await this.classRepository.findById(classId);
+    if (!classEntity) throw new NotFoundError('Turma não encontrada.');
+
+    const isDuplicate: boolean = await this.verifyClassDuplicate(
+      updateClassDTO.name,
+      updateClassDTO.schoolYear,
+      updateClassDTO.schoolShift,
+      updateClassDTO.educationType,
+      classEntity.school.id
+    );
+    if (isDuplicate) throw new ConflictError('Verifique as informações digitadas ou cadastre novos dados');
+
+    const updateClass: Class = Object.assign(classEntity, updateClassDTO);
+    await this.classRepository.saveClass(updateClass);
+
+    return { message: 'Dados da turma atualizados!' };
+  }
+
+  /**
+   * Exclui uma turma pelo seu ID.
+   *
+   * @param classId - O ID da turma a ser excluída.
+   * @throws {NotFoundError} Se a turma com o ID fornecido não for encontrada.
+   * @throws {ConflictError} Se a turma estiver associada a estudantes ou professores.
+   * @returns {Promise<void>} Uma promessa que é resolvida quando a turma é excluída.
+   */
+  public async deleteClass(classId: number): Promise<void> {
+    const classEntity: Class = await this.getClassById(classId);
+    if (!classEntity) throw new NotFoundError('Turma não encontrada.');
+
+    if (classEntity.students?.length > 0 || classEntity.teacherClasses?.length > 0) {
+      throw new ConflictError('Turma está associada à professores ou estudantes. Remova para prosseguir na exclusão da turma');
+    }
+
+    await this.classRepository.deleteClass(classEntity);
+  }
+
+  /**
+   * Lista todas as turmas associadas a um professor específico.
+   *
+   * @param teacherId - ID do professor.
+   * @returns Uma lista de turmas associadas ao professor.
+   * @throws NotFoundError - Se nenhuma turma for encontrada para o professor.
+   */
+  public async listClassesByTeacher(teacherId: number): Promise<Class[]> {
+    const classes = await this.classRepository.findByTeacherId(teacherId);
+    if (!classes.length) throw new NotFoundError('Nenhuma turma encontrada para o professor especificado.');
+    return classes;
+  }
+
+  /**
+   * Lista todas as turmas de uma escola com filtros opcionais.
+   *
+   * @param filters - Filtros opcionais para listar as turmas.
+   * @returns Uma lista de turmas que atendem aos filtros fornecidos.
+   */
+  public async listClasses(filters: { schoolYear?: string; educationType?: string; schoolShift?: string; schoolId: number }): Promise<Class[]> {
+    return await this.classRepository.findClassesWithFilters(filters);
+  }
+
+  /**
+   * Busca uma turma específica pelo ID.
+   *
+   * @param classId - ID da turma a ser buscada.
+   * @returns A instância de `Class` encontrada.
+   * @throws NotFoundError - Se a turma não for encontrada.
+   */
+  public async getClassById(classId: number): Promise<Class> {
+    const classEntity = await this.classRepository.findById(classId);
+    if (!classEntity) throw new NotFoundError('Turma não encontrada.');
+    return classEntity;
+  }
+
+  /**
+   * Verifica se uma escola existe com base no ID fornecido.
    *
    * @param id - ID da escola.
-   * @returns A instância de `School` se encontrada.
-   * @throws BadRequestError - Se a escola não for encontrada.
+   * @returns A entidade `School` se a escola for encontrada.
+   * @throws BadRequestError - Se a escola não for encontrada no banco de dados.
    */
   private async verifySchool(id: number): Promise<School> {
     const school = await this.schoolRepository.findByID(id);
