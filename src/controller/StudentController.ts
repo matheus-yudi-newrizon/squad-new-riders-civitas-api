@@ -3,9 +3,10 @@ import { School } from 'entities/School';
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError } from '../errors/BadRequestError';
-import { ConflictError } from '../errors/ConflictError';
 import { NotFoundError } from '../errors/NotFoundError';
+import { UpdateStudentDTO } from '../models/DTO/UpdateStudentDTO';
 import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
+import { IUpdateResponse } from '../models/interfaces/IUpdateResponse';
 import { StudentService } from '../services/StudentService';
 
 @Controller()
@@ -49,8 +50,8 @@ export class StudentController {
    *                 example: "20230001"
    *               studentClass:
    *                 type: string
-   *                 description: Classe ou turma do estudante
-   *                 example: "5º Ano A"
+   *                 description: Id da turma do estudante
+   *                 example: "1"
    *               cpfGuardian:
    *                 type: string
    *                 description: CPF do responsável pelo estudante
@@ -128,14 +129,201 @@ export class StudentController {
     const school: School = await this.studentService.verifySchool(schoolId);
     if (!school) throw new BadRequestError('Escola não encontrada');
 
-    const isDuplicate: boolean = await this.studentService.verifyStudentDuplicate(createStudentDTO.document, createStudentDTO.registrationNumber);
-    if (isDuplicate) throw new ConflictError('Estudante já cadastrado');
+    await this.studentService.verifyStudentDuplicate(createStudentDTO.document, createStudentDTO.registrationNumber);
 
     const studentClass: Class = await this.studentService.stringToClass(createStudentDTO.studentClass);
     if (!studentClass) throw new BadRequestError('Turma não encontrada');
 
     const result: ICreationSucessResponse = await this.studentService.create(createStudentDTO, studentClass, school);
     return res.status(201).json(result);
+  }
+
+  /**
+   * @swagger
+   * /admin/students/{id}:
+   *   put:
+   *     summary: Atualiza informações de um estudante
+   *     description: "Este endpoint permite a atualização das informações de um estudante específico. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'."
+   *     tags: [Admin]
+   *     consumes:
+   *       - application/json
+   *     produces:
+   *       - application/json
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: ID do estudante a ser atualizado
+   *         required: true
+   *         schema:
+   *           type: integer
+   *       - in: body
+   *         name: body
+   *         description: Dados do estudante a serem atualizados. Todos os campos são opcionais.
+   *         required: true
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 fullName:
+   *                   type: string
+   *                   description: Nome completo do estudante
+   *                   example: "João da Silva"
+   *                 document:
+   *                   type: string
+   *                   description: Documento do estudante (CPF ou equivalente)
+   *                   example: "123.456.789-00"
+   *                 registrationNumber:
+   *                   type: string
+   *                   description: Número de matrícula do estudante
+   *                   example: "20230001"
+   *                 studentClass:
+   *                   type: string
+   *                   description: Id da turma do estudante
+   *                   example: "1"
+   *                 cpfGuardian:
+   *                   type: string
+   *                   description: CPF do responsável pelo estudante
+   *                   example: "987.654.321-00"
+   *     responses:
+   *       200:
+   *         description: Estudante atualizado com sucesso
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Dados atualizados com sucesso!"
+   *       400:
+   *         description: Dados faltando ou incorretos
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "O campo nome é obrigatório."
+   *       401:
+   *         description: Acesso não autorizado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Token não consta na requisição."
+   *       403:
+   *         description: Permissão negada
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 error:
+   *                   type: string
+   *                   example: "Você não tem permissão para acessar este recurso."
+   *       404:
+   *         description: Estudante não encontrado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Estudante não encontrado."
+   *       409:
+   *         description: Dados conflitantes
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Estudante já cadastrado."
+   */
+  public async updateStudent(req: Request, res: Response): Promise<Response<IUpdateResponse>> {
+    const studentId: number = Number(req.params.id);
+    const updateStudentDTO: UpdateStudentDTO = req.body;
+
+    if (!studentId) throw new BadRequestError('ID do estudante não fornecido.');
+
+    const result: IUpdateResponse = await this.studentService.updateStudent(studentId, updateStudentDTO);
+    return res.status(200).json(result);
+  }
+
+  /**
+   * @swagger
+   * /admin/students/{id}:
+   *   delete:
+   *     summary: Deleta um estudante
+   *     description: "Este endpoint permite a deleção de um estudante pelo seu ID. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'."
+   *     tags: [Admin]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         description: O ID do estudante a ser deletado.
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     responses:
+   *       204:
+   *         description: Estudante deletado com sucesso. Nenhum conteúdo é retornado.
+   *       400:
+   *         description: Requisição inválida - ID não fornecido.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "ID do estudante não fornecido."
+   *       401:
+   *         description: Acesso não autorizado.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Token não consta na requisição."
+   *       403:
+   *         description: Permissão negada.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Você não tem permissão para acessar este recurso."
+   *       404:
+   *         description: Estudante não encontrado.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Estudante não encontrado."
+   */
+  public async deleteStudent(req: Request, res: Response): Promise<Response> {
+    const studentId: number = Number(req.params.id);
+
+    if (!studentId) throw new BadRequestError('ID do professor não fornecido.');
+
+    await this.studentService.deleteStudent(studentId);
+    return res.status(204).send();
   }
 
   /**

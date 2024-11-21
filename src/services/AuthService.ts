@@ -61,7 +61,7 @@ export class AuthService {
     if (entity instanceof User)
       return { id: entity.id, email: entity.email, schoolId: entity.school.id, schoolName: entity.school.name, role: 'admin' };
     if (entity instanceof TeacherSchool)
-      return { id: entity.id, registrationNumber: entity.registrationNumber, schoolId: entity.school.id, role: 'teacher' };
+      return { teacherId: entity.id, registrationNumber: entity.registrationNumber, schoolId: entity.school.id, role: 'teacher' };
   }
 
   /**

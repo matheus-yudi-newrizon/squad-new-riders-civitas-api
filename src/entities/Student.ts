@@ -1,4 +1,16 @@
-import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { cpf } from 'cpf-cnpj-validator';
+import {
+  AfterLoad,
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
+} from 'typeorm';
 import { Class } from './Class';
 import { School } from './School';
 
@@ -27,11 +39,18 @@ export class Student {
   @Column({ nullable: false })
   cpfGuardian: string;
 
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' })
+  updatedAt: Date;
+
   @BeforeInsert()
+  @BeforeUpdate()
   /**
    * Remove caracteres de máscara (pontos e traços) dos campos `document` e `cpfGuardian`.
    *
-   * Este método é chamado automaticamente antes de inserir um novo estudante.
+   * Este método é chamado automaticamente antes de inserir um novo estudante ou atualizar um existente.
    * Ele garante que os valores dos campos `document` e `cpfGuardian` estejam sem qualquer
    * formatação antes de serem salvos.
    *
@@ -39,5 +58,21 @@ export class Student {
   public unmaskFields(): void {
     this.document = this.document.replace(/[.-]/g, '');
     this.cpfGuardian = this.cpfGuardian.replace(/[.-]/g, '');
+  }
+
+  @AfterLoad()
+  /**
+   * Adiciona máscara de CPF aos campos `document` e `cpfGuardian`.
+   *
+   * Este método é chamado automaticamente após carregar um estudante do banco de dados.
+   * Ele garante que os valores dos campos `document` e `cpfGuardian` estejam formatados
+   * corretamente para exibição.
+   *
+   */
+  public maskFields(): void {
+    if (cpf.isValid(this.document)) {
+      this.document = this.document.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    } else this.document = this.document;
+    this.cpfGuardian = this.cpfGuardian.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
   }
 }
