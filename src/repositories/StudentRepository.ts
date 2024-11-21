@@ -26,14 +26,33 @@ export class StudentRepository {
     return await this.repository.save(student);
   }
 
+  /**
+   * Busca um estudante pelo documento.
+   *
+   * @param document - O documento (CPF ou equivalente) do estudante.
+   * @returns Uma instância de `Student` se encontrada, ou `undefined` caso contrário.
+   */
   public async findByDocument(document: string): Promise<Student | undefined> {
     return await this.repository.findOne({ where: { document } });
   }
 
+  /**
+   * Busca um estudante pelo número de matrícula.
+   *
+   * @param registrationNumber - O número de matrícula do estudante.
+   * @returns Uma instância de `Student` se encontrada, ou `undefined` caso contrário.
+   */
   public async findByRegistrationNumber(registrationNumber: string): Promise<Student | undefined> {
     return await this.repository.findOne({ where: { registrationNumber } });
   }
 
+  /**
+   * Busca um estudante pelo ID.
+   *
+   * @param id - O identificador único do estudante.
+   * @returns Uma instância de `Student` se encontrada, ou `undefined` caso contrário.
+   * Inclui as relações com a classe do estudante (`studentClass`).
+   */
   public async findById(id: number): Promise<Student | undefined> {
     return await this.repository.findOne({ where: { id }, relations: ['studentClass'] });
   }

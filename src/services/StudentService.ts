@@ -58,22 +58,50 @@ export class StudentService {
       throw new ConflictError('Estudante já cadastrado.');
   }
 
+  /**
+   * Verifica a existência de um estudante pelo documento.
+   *
+   * @param document - O documento (CPF ou equivalente) do estudante.
+   * @returns Uma instância de `Student` se encontrada, ou `undefined` caso contrário.
+   */
   private async verifyStudentDocument(document: string): Promise<Student | undefined> {
     const student: Student = await this.studentRepository.findByDocument(document.replace(/\D/g, ''));
     return student || undefined;
   }
 
+  /**
+   * Verifica a existência de um estudante pelo número de matrícula.
+   *
+   * @param registrationNumber - O número de matrícula do estudante.
+   * @returns Uma instância de `Student` se encontrada, ou `undefined` caso contrário.
+   */
   private async verifyStudentRegistrationNumber(registrationNumber: string): Promise<Student | undefined> {
     const student: Student = await this.studentRepository.findByRegistrationNumber(registrationNumber);
     return student || undefined;
   }
 
+  /**
+   * Verifica a existência de um estudante pelo ID.
+   *
+   * @param id - O identificador único do estudante.
+   * @throws {NotFoundError} Se o estudante não for encontrado.
+   * @returns Uma instância de `Student` se encontrada.
+   */
   private async verifyStudentId(id: number): Promise<Student> {
     const student: Student = await this.studentRepository.findById(id);
     if (!student) throw new NotFoundError('Estudante não encontrado');
     return student;
   }
 
+  /**
+   * Valida e prepara os dados para a atualização de um estudante.
+   *
+   * @param id - O identificador único do estudante.
+   * @param updateStudentDTO - Os dados enviados para atualização do estudante.
+   * @param student - Os dados atuais do estudante.
+   * @throws {ConflictError} Se for detectada duplicidade de documento ou número de matrícula.
+   * @returns Um objeto parcial contendo os dados atualizados do estudante.
+   */
   private async validateStudentUpdate(id: number, updateStudentDTO: UpdateStudentDTO, student: Student): Promise<Partial<Student>> {
     const updatedData: Partial<Student> = {};
     if (updateStudentDTO.fullName && updateStudentDTO.fullName !== student.fullName) {
@@ -97,6 +125,15 @@ export class StudentService {
     return updatedData;
   }
 
+  /**
+   * Atualiza os dados de um estudante no banco de dados.
+   *
+   * @param id - O identificador único do estudante a ser atualizado.
+   * @param updateStudentDTO - Os dados enviados para atualização do estudante.
+   * @throws {NotFoundError} Se o estudante não for encontrado.
+   * @throws {ConflictError} Se for detectada duplicidade de documento ou número de matrícula.
+   * @returns Um objeto contendo uma mensagem de sucesso.
+   */
   public async updateStudent(id: number, updateStudentDTO: UpdateStudentDTO): Promise<IUpdateResponse> {
     const studentToUpdate: Student = await this.verifyStudentId(id);
     const updatedData: Partial<Student> = await this.validateStudentUpdate(id, updateStudentDTO, studentToUpdate);
