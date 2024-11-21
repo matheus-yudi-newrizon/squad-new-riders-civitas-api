@@ -29,7 +29,7 @@ export class Evaluation {
   @Column({ type: 'enum', enum: EvaluationScore, nullable: false })
   autonomy: EvaluationScore;
 
-  @Column({ type: 'text', length: 3000, nullable: false })
+  @Column({ type: 'varchar', length: 3000, nullable: false })
   teacherComments: string;
 
   @CreateDateColumn({ type: 'timestamp' })
