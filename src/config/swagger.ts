@@ -228,6 +228,36 @@ export const swaggerConfig: swaggerJSDoc.OAS3Options = {
               example: ['1', '2', '3']
             }
           }
+        },
+        UpdateStudentDTO: {
+          type: 'object',
+          properties: {
+            fullName: {
+              type: 'string',
+              description: 'Nome completo do estudante',
+              example: 'Maria Oliveira'
+            },
+            document: {
+              type: 'string',
+              description: 'RG ou CPF do estudante',
+              example: '1234567'
+            },
+            registrationNumber: {
+              type: 'string',
+              description: 'Número de matrícula do estudante',
+              example: '20240001'
+            },
+            studentClass: {
+              type: 'string',
+              description: 'ID da turma associada ao estudante',
+              example: '1'
+            },
+            cpfGuardian: {
+              type: 'string',
+              description: 'CPF do responsável pelo estudante',
+              example: '123.456.789-00'
+            }
+          }
         }
       }
     }
