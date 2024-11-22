@@ -1,9 +1,8 @@
 import { cpf } from 'cpf-cnpj-validator';
-import { ICreationSucessResponse, IUpdateResponse } from 'models/interfaces';
 import { Service } from 'typedi';
 import { Class, School, Teacher, TeacherClass, TeacherSchool } from '../entities';
 import { BadRequestError, ConflictError, NotFoundError } from '../errors';
-import { CreateTeacherDTO, UpdateTeacherDTO } from '../models/DTO';
+import { CreateTeacherDTO, ICreationSucessResponse, IUpdateResponse, UpdateTeacherDTO } from '../models';
 import { ClassRepository, SchoolRepository, TeacherRepository } from '../repositories';
 
 @Service()

@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 import { TeacherSchool, User } from '../entities';
-import { ILoginAdminRequest, ILoginResponse, ILoginTeacherRequest, IPayloadLogin } from '../models/interfaces';
+import { ILoginAdminRequest, ILoginResponse, ILoginTeacherRequest, IPayloadLogin } from '../models';
 import { AdminRepository, TeacherRepository } from '../repositories';
 import { JwtService } from './JwTService';
 

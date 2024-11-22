@@ -1,9 +1,7 @@
 import { Service } from 'typedi';
 import { Class, School } from '../entities';
 import { BadRequestError, ConflictError, NotFoundError } from '../errors';
-import { CreateClassDTO } from '../models/DTO';
-import { EducationType, SchoolShift, SchoolYear } from '../models/enums';
-import { ICreationSucessResponse, IUpdateResponse } from '../models/interfaces';
+import { CreateClassDTO, EducationType, ICreationSucessResponse, IUpdateResponse, SchoolShift, SchoolYear } from '../models';
 import { ClassRepository, SchoolRepository } from '../repositories';
 
 @Service()

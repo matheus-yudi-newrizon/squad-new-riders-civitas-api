@@ -2,8 +2,7 @@ import { cpf } from 'cpf-cnpj-validator';
 import { Service } from 'typedi';
 import { Class, School, Student } from '../entities';
 import { ConflictError, NotFoundError } from '../errors';
-import { CreateStudentDTO, UpdateStudentDTO } from '../models/DTO';
-import { ICreationSucessResponse, IUpdateResponse } from '../models/interfaces';
+import { CreateStudentDTO, ICreationSucessResponse, IUpdateResponse, UpdateStudentDTO } from '../models';
 import { ClassRepository, SchoolRepository, StudentRepository } from '../repositories';
 
 @Service()
