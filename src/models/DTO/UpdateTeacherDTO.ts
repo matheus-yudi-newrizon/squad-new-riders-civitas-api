@@ -1,6 +1,5 @@
 import { ArrayNotEmpty, IsArray, IsInt, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
-import { IsValidClass } from '../../utils/validators/classExistsValidator';
-import { IsCPF } from '../../utils/validators/cpfValidator';
+import { IsCPF, IsValidClass } from '../../utils/validators';
 
 export class UpdateTeacherDTO {
   @IsOptional()

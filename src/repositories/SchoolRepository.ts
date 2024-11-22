@@ -1,7 +1,7 @@
 import { Service as Repository } from 'typedi';
 import { Repository as TypeORMRepository } from 'typeorm';
 import { MysqlDataSource } from '../config/database';
-import { School } from '../entities/School';
+import { School } from '../entities';
 
 @Repository()
 export class SchoolRepository {

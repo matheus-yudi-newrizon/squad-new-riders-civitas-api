@@ -1,7 +1,5 @@
 import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
-import { IsValidClass } from '../../utils/validators/classExistsValidator';
-import { IsCPF } from '../../utils/validators/cpfValidator';
-import { IsDocumentValid } from '../../utils/validators/documentValidator';
+import { IsCPF, IsDocumentValid, IsValidClass } from '../../utils/validators';
 
 export class CreateStudentDTO {
   @IsNotEmpty({ message: 'O campo nome é obrigatório.' })

@@ -1,6 +1,4 @@
-import { IADIReviews } from './IADIReviews';
-import { IADIStudent } from './IADIStudent';
-
+import { IADIReviews, IADIStudent } from './index';
 export interface IADIData {
   id: number;
   date: string;

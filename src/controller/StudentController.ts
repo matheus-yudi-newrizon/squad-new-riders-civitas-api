@@ -1,13 +1,10 @@
-import { Class } from 'entities/Class';
-import { School } from 'entities/School';
+import { Class, School } from 'entities';
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
-import { BadRequestError } from '../errors/BadRequestError';
-import { NotFoundError } from '../errors/NotFoundError';
-import { UpdateStudentDTO } from '../models/DTO/UpdateStudentDTO';
-import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
-import { IUpdateResponse } from '../models/interfaces/IUpdateResponse';
-import { StudentService } from '../services/StudentService';
+import { BadRequestError, NotFoundError } from '../errors';
+import { UpdateStudentDTO } from '../models/DTO';
+import { ICreationSucessResponse, IUpdateResponse } from '../models/interfaces';
+import { StudentService } from '../services';
 
 @Controller()
 export class StudentController {

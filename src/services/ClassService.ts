@@ -1,17 +1,10 @@
 import { Service } from 'typedi';
-import { Class } from '../entities/Class';
-import { School } from '../entities/School';
-import { BadRequestError } from '../errors/BadRequestError';
-import { ConflictError } from '../errors/ConflictError';
-import { NotFoundError } from '../errors/NotFoundError';
-import { CreateClassDTO } from '../models/DTO/CreateClassDTO';
-import { EducationType } from '../models/enums/EducationType';
-import { SchoolShift } from '../models/enums/SchoolShift';
-import { SchoolYear } from '../models/enums/SchoolYear';
-import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
-import { IUpdateResponse } from '../models/interfaces/IUpdateResponse';
-import { ClassRepository } from '../repositories/ClassRepository';
-import { SchoolRepository } from '../repositories/SchoolRepository';
+import { Class, School } from '../entities';
+import { BadRequestError, ConflictError, NotFoundError } from '../errors';
+import { CreateClassDTO } from '../models/DTO';
+import { EducationType, SchoolShift, SchoolYear } from '../models/enums';
+import { ICreationSucessResponse, IUpdateResponse } from '../models/interfaces';
+import { ClassRepository, SchoolRepository } from '../repositories';
 
 @Service()
 export class ClassService {

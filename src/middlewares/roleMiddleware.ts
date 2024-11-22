@@ -1,6 +1,6 @@
 import { NextFunction, Request } from 'express';
-import { ForbiddenError } from '../errors/ForbiddenError';
-import { CustomResponse } from '../models/interfaces/ICustomResponse';
+import { ForbiddenError } from '../errors';
+import { ICustomResponse } from '../models/interfaces';
 
 /**
  * @middleware roleMiddleware
@@ -18,7 +18,7 @@ import { CustomResponse } from '../models/interfaces/ICustomResponse';
  *
  */
 export const roleMiddleware = (allowedRoles: string[]) => {
-  return (req: Request, res: CustomResponse, next: NextFunction) => {
+  return (req: Request, res: ICustomResponse, next: NextFunction) => {
     const userRole = res.locals.role;
 
     if (!userRole) throw new ForbiddenError('Usuário não autorizado');

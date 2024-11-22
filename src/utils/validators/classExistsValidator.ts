@@ -1,6 +1,6 @@
 import { registerDecorator, ValidationOptions, ValidatorConstraint, ValidatorConstraintInterface } from 'class-validator';
 import { Container } from 'typedi';
-import { ClassRepository } from '../../repositories/ClassRepository';
+import { ClassRepository } from '../../repositories';
 
 /**
  * Classe de validação que verifica se a turma fornecida é válida.

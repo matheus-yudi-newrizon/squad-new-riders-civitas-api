@@ -1,16 +1,9 @@
 import { Service } from 'typedi';
-import { Class } from '../entities/Class';
-import { School } from '../entities/School';
-import { Student } from '../entities/Student';
-import { ConflictError } from '../errors/ConflictError';
-import { NotFoundError } from '../errors/NotFoundError';
-import { CreateStudentDTO } from '../models/DTO/CreateStudentDTO';
-import { UpdateStudentDTO } from '../models/DTO/UpdateStudentDTO';
-import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
-import { IUpdateResponse } from '../models/interfaces/IUpdateResponse';
-import { ClassRepository } from '../repositories/ClassRepository';
-import { SchoolRepository } from '../repositories/SchoolRepository';
-import { StudentRepository } from '../repositories/StudentRepository';
+import { Class, School, Student } from '../entities';
+import { ConflictError, NotFoundError } from '../errors';
+import { CreateStudentDTO, UpdateStudentDTO } from '../models/DTO';
+import { ICreationSucessResponse, IUpdateResponse } from '../models/interfaces';
+import { ClassRepository, SchoolRepository, StudentRepository } from '../repositories';
 
 @Service()
 export class StudentService {

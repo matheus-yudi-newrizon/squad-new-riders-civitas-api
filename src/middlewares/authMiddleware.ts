@@ -1,9 +1,8 @@
 import { NextFunction, Response } from 'express';
 import { VerifyErrors } from 'jsonwebtoken';
-import { InvalidJWTTokenError } from '../errors/InvalidJWTTokenError';
-import { UnauthorizedError } from '../errors/UnauthorizedError';
-import { IAuthJWTRequest } from '../models/interfaces/IAuthJWTRequest';
-import { JwtService } from '../services/JwTService';
+import { InvalidJWTTokenError, UnauthorizedError } from '../errors';
+import { IAuthJWTRequest } from '../models/interfaces';
+import { JwtService } from '../services';
 
 const jwtService = new JwtService();
 
