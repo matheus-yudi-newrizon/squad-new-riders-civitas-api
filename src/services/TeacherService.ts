@@ -1,3 +1,4 @@
+import { cpf } from 'cpf-cnpj-validator';
 import { ICreationSucessResponse, IUpdateResponse } from 'models/interfaces';
 import { Service } from 'typedi';
 import { Class, School, Teacher, TeacherClass, TeacherSchool } from '../entities';
@@ -90,7 +91,7 @@ export class TeacherService {
     if (updateTeacherDTO.fullName) teacher.fullName = updateTeacherDTO.fullName;
 
     if (updateTeacherDTO.cpf) {
-      const unmaskedCpf: string = updateTeacherDTO.cpf.replace(/[.-]/g, '');
+      const unmaskedCpf: string = cpf.strip(updateTeacherDTO.cpf);
       await this.verifyCPFDuplicate(unmaskedCpf, teacher.id);
       teacher.cpf = updateTeacherDTO.cpf;
     }

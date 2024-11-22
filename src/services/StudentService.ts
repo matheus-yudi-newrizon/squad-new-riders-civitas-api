@@ -1,3 +1,4 @@
+import { cpf } from 'cpf-cnpj-validator';
 import { Service } from 'typedi';
 import { Class, School, Student } from '../entities';
 import { ConflictError, NotFoundError } from '../errors';
@@ -58,7 +59,7 @@ export class StudentService {
    * @returns Uma instância de `Student` se encontrada, ou `undefined` caso contrário.
    */
   private async verifyStudentDocument(document: string): Promise<Student | undefined> {
-    const student: Student = await this.studentRepository.findByDocument(document.replace(/\D/g, ''));
+    const student: Student = await this.studentRepository.findByDocument(cpf.strip(document));
     return student || undefined;
   }
 

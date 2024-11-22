@@ -1,3 +1,4 @@
+import { cpf } from 'cpf-cnpj-validator';
 import {
   AfterLoad,
   BeforeInsert,
@@ -58,6 +59,6 @@ export class Teacher {
    * Ele garante que o campo `cpf` esteja formatado corretamente para exibição.
    */
   public maskCpf(): void {
-    this.cpf = this.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    this.cpf = cpf.format(this.cpf);
   }
 }

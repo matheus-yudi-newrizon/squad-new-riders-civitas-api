@@ -28,7 +28,7 @@ import { cpf } from 'cpf-cnpj-validator';
  */
 class IsCPFConstraint implements ValidatorConstraintInterface {
   validate(value: string): boolean {
-    const strippedValue: string = value.replace(/[.-]/g, '');
+    const strippedValue: string = cpf.strip(value);
     return cpf.isValid(strippedValue);
   }
 
