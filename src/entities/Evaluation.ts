@@ -8,8 +8,14 @@ export class Evaluation {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Teacher, { nullable: false })
+  @ManyToOne(() => Teacher, { nullable: true, onDelete: 'SET NULL' })
   teacher: Teacher;
+
+  @Column({ type: 'int', nullable: true })
+  teacherId: number;
+
+  @Column({ type: 'varchar', nullable: true })
+  teacherName: string;
 
   @ManyToOne(() => Student, { nullable: false })
   student: Student;
