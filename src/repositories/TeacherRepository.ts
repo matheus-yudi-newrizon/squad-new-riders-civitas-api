@@ -159,7 +159,7 @@ export class TeacherRepository {
    * @returns Uma instância de `TeacherSchool` com o relacionamento `School` carregado, se encontrada, ou `undefined` caso contrário.
    */
   public async findByRegistrationNumber(registrationNumber: string): Promise<TeacherSchool | undefined> {
-    return await this.teacherSchoolRepository.findOne({ where: { registrationNumber }, relations: ['school'] });
+    return await this.teacherSchoolRepository.findOne({ where: { registrationNumber }, relations: ['school', 'teacher'] });
   }
 
   /**
