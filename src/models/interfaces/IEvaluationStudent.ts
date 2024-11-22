@@ -1,4 +1,4 @@
-export interface IADIStudent {
+export interface IEvaluationStudent {
   fullName: string;
   studentClass: string;
 }
