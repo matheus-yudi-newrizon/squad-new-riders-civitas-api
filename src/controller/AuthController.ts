@@ -3,7 +3,7 @@ import { Service as Controller } from 'typedi';
 import validator from 'validator';
 import { TeacherSchool, User } from '../entities';
 import { BadRequestError, UnauthorizedError } from '../errors';
-import { ILoginAdminRequest, ILoginResponse, ILoginTeacherRequest, IPayloadLogin } from '../models/interfaces';
+import { ILoginAdminRequest, ILoginResponse, ILoginTeacherRequest, IPayloadLogin } from '../models';
 import { AuthService } from '../services';
 
 @Controller()

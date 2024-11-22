@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { BeforeInsert, Column, CreateDateColumn, Entity, OneToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
-import { School } from './School';
+import { School } from '../entities';
 
 @Entity()
 @Unique(['email'])

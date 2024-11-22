@@ -1,6 +1,6 @@
 import { NextFunction, Request } from 'express';
 import { ForbiddenError } from '../errors';
-import { ICustomResponse } from '../models/interfaces';
+import { ICustomResponse } from '../models';
 
 /**
  * @middleware roleMiddleware

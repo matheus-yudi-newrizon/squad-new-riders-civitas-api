@@ -11,8 +11,7 @@ import {
   Unique,
   UpdateDateColumn
 } from 'typeorm';
-import { TeacherClass } from './TeacherClass';
-import { TeacherSchool } from './TeacherSchool';
+import { TeacherClass, TeacherSchool } from '../entities';
 
 @Entity()
 @Unique(['cpf'])

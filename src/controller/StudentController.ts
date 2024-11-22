@@ -2,8 +2,7 @@ import { Class, School } from 'entities';
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError, NotFoundError } from '../errors';
-import { UpdateStudentDTO } from '../models/DTO';
-import { ICreationSucessResponse, IUpdateResponse } from '../models/interfaces';
+import { ICreationSucessResponse, IUpdateResponse, UpdateStudentDTO } from '../models';
 import { StudentService } from '../services';
 
 @Controller()

@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError, NotFoundError } from '../errors';
-import { CreateTeacherDTO, UpdateTeacherDTO } from '../models/DTO';
-import { ICreationSucessResponse, IUpdateResponse } from '../models/interfaces';
+import { CreateTeacherDTO, ICreationSucessResponse, IUpdateResponse, UpdateTeacherDTO } from '../models';
 import { TeacherService } from '../services';
 
 @Controller()

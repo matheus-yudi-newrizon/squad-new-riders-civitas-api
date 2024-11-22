@@ -11,8 +11,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { Class } from './Class';
-import { School } from './School';
+import { Class, School } from '../entities';
 
 @Entity()
 export class Student {
