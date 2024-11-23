@@ -38,4 +38,32 @@ export class EvaluationRepository {
       relations: ['student', 'student.studentClass']
     });
   }
+
+  /**
+   * Busca todas as avaliações associadas a um estudante pelo ID, ordenadas da mais recente para a mais antiga.
+   *
+   * @param studentId - O ID do estudante cujas avaliações serão buscadas.
+   * @returns Uma lista de avaliações do estudante, ordenadas por data de criação (mais recente primeiro).
+   */
+  public async findAllByStudentId(studentId: number): Promise<Evaluation[]> {
+    return this.repository.find({
+      where: { student: { id: studentId } },
+      relations: ['student', 'student.studentClass'],
+      order: { createdAt: 'ASC' }
+    });
+  }
+
+  /**
+   * Busca a avaliação mais recente de um estudante pelo ID.
+   *
+   * @param studentId - O ID do estudante cuja última avaliação será buscada.
+   * @returns A avaliação mais recente associada ao estudante ou `null` se não houver avaliações.
+   */
+  public async findLatestByStudentId(studentId: number): Promise<Evaluation | null> {
+    return this.repository.findOne({
+      where: { student: { id: studentId } },
+      relations: ['student', 'student.studentClass'],
+      order: { createdAt: 'ASC' }
+    });
+  }
 }

@@ -32,4 +32,15 @@ studentRoutes.get('/evaluations/:evaluationId/show', authMiddleware, roleMiddlew
   evaluationController.getEvaluation(req, res)
 );
 
+/**
+ * @route GET /students/:studentId/details
+ * @description Esta rota retorna os detalhes de um estudante e o histórico de avaliações associadas. Requer autenticação e valida se o usuário tem permissão para acessar a rota.
+ * @param {number} studentId - ID único do estudante fornecido como parâmetro na URL.
+ * @middleware authMiddleware - Garante que o usuário está autenticado.
+ * @middleware roleMiddleware['teacher'] - Restringe acesso a professores.
+ * @access Private
+ */
+studentRoutes.get('/students/:studentId/details', authMiddleware, roleMiddleware(['teacher']), (req, res) =>
+  studentController.getStudentDetails(req, res)
+);
 export default studentRoutes;

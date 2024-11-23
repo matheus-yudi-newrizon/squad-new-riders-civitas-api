@@ -560,4 +560,99 @@ export class StudentController {
 
     return res.status(200).json(students);
   }
+
+  /**
+   * @swagger
+   * /students/{studentId}/details:
+   *   get:
+   *     summary: Obtém detalhes do estudante e histórico de avaliações
+   *     description: "Este endpoint retorna as informações do estudante, incluindo o nome, turma e o histórico de avaliações. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'."
+   *     tags: [Students]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: studentId
+   *         description: ID do estudante para obter informações e histórico
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     responses:
+   *       200:
+   *         description: Informações e histórico do estudante retornados com sucesso
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 studentInfo:
+   *                   type: object
+   *                   properties:
+   *                     fullName:
+   *                       type: string
+   *                       example: "João da Silva"
+   *                     className:
+   *                       type: string
+   *                       example: "Turma A"
+   *                 evaluations:
+   *                   type: array
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       id:
+   *                         type: integer
+   *                         example: 1
+   *                       date:
+   *                         type: string
+   *                         format: date
+   *                         example: "22/11/2024"
+   *                 latestEvaluation:
+   *                   type: object
+   *                   properties:
+   *                     id:
+   *                       type: integer
+   *                       example: 5
+   *                     date:
+   *                       type: string
+   *                       format: date
+   *                       example: "22/11/2024"
+   *       401:
+   *         description: Acesso não autorizado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Token não consta na requisição."
+   *       404:
+   *         description: Estudante ou avaliações não encontrados
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Estudante não encontrado."
+   */
+  public async getStudentDetails(req: Request, res: Response): Promise<Response> {
+    const studentId: number = Number(req.params.studentId);
+
+    const studentInfo = await this.studentService.getStudentInfo(studentId);
+    if (!studentInfo) {
+      throw new NotFoundError('Estudante não encontrado.');
+    }
+
+    const evaluations = await this.studentService.getStudentEvaluations(studentId);
+
+    const latestEvaluation = evaluations.length > 0 ? evaluations[0] : null;
+
+    return res.status(200).json({
+      studentInfo,
+      evaluations,
+      latestEvaluation
+    });
+  }
 }
