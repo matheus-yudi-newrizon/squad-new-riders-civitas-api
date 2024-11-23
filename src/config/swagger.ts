@@ -229,6 +229,53 @@ export const swaggerConfig: swaggerJSDoc.OAS3Options = {
             }
           }
         },
+        CreateEvaluationDTO: {
+          type: 'object',
+          properties: {
+            studentId: {
+              type: 'integer',
+              description: 'ID do estudante avaliado.',
+              example: 1
+            },
+            selfAwareness: {
+              type: 'integer',
+              description: 'Auto percepção do estudante.',
+              enum: [1, 2, 3, 4, 5],
+              example: 4
+            },
+            empathy: {
+              type: 'integer',
+              description: 'Capacidade de empatia do estudante.',
+              enum: [1, 2, 3, 4, 5],
+              example: 5
+            },
+            communication: {
+              type: 'integer',
+              description: 'Habilidade de comunicação do estudante.',
+              enum: [1, 2, 3, 4, 5],
+              example: 3
+            },
+            teamwork: {
+              type: 'integer',
+              description: 'Habilidade de trabalho em equipe.',
+              enum: [1, 2, 3, 4, 5],
+              example: 4
+            },
+            autonomy: {
+              type: 'integer',
+              description: 'Grau de autonomia do estudante.',
+              enum: [1, 2, 3, 4, 5],
+              example: 5
+            },
+            teacherComments: {
+              type: 'string',
+              description: 'Comentários do professor sobre o estudante.',
+              maxLength: 3000,
+              example: 'O estudante demonstrou grande progresso em trabalho em equipe e autonomia.'
+            }
+          },
+          required: ['studentId', 'teacherId', 'teacherName', 'selfAwareness', 'empathy', 'communication', 'teamwork', 'autonomy', 'teacherComments']
+        },
         UpdateStudentDTO: {
           type: 'object',
           properties: {
