@@ -17,7 +17,7 @@ export class Evaluation {
   @Column({ type: 'varchar', nullable: true })
   teacherName: string;
 
-  @ManyToOne(() => Student, { nullable: false })
+  @ManyToOne(() => Student, { nullable: false, onDelete: 'CASCADE' })
   student: Student;
 
   @Column({ type: 'enum', enum: EvaluationScore, nullable: false })
