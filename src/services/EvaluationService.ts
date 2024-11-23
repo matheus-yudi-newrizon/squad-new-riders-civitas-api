@@ -17,6 +17,36 @@ export class EvaluationService {
   ) {}
 
   /**
+   * Verifica a existência de um estudante pelo ID.
+   *
+   * @param studentId - ID do estudante.
+   * @returns A instância do estudante encontrada.
+   * @throws {NotFoundError} Se o estudante não for encontrado.
+   */
+  private async verifyStudent(studentId: number): Promise<Student> {
+    const student = await this.studentRepository.findById(studentId);
+    if (!student) {
+      throw new NotFoundError('Estudante não encontrado.');
+    }
+    return student;
+  }
+
+  /**
+   * Verifica a existência de um professor pelo ID.
+   *
+   * @param teacherId - ID do professor.
+   * @returns A instância do professor encontrada.
+   * @throws {NotFoundError} Se o professor não for encontrado.
+   */
+  private async verifyTeacher(teacherId: number): Promise<Teacher> {
+    const teacher = await this.teacherRepository.findById(teacherId);
+    if (!teacher) {
+      throw new NotFoundError('Professor não encontrado.');
+    }
+    return teacher;
+  }
+
+  /**
    * Cria uma nova avaliação de desempenho individual (ADI).
    *
    * @param createEvaluationDTO - Dados da avaliação a ser criada.
@@ -45,35 +75,5 @@ export class EvaluationService {
     await this.evaluationRepository.saveEvaluation(evaluation);
 
     return { message: 'Avaliação criada com sucesso.' };
-  }
-
-  /**
-   * Verifica a existência de um estudante pelo ID.
-   *
-   * @param studentId - ID do estudante.
-   * @returns A instância do estudante encontrada.
-   * @throws {NotFoundError} Se o estudante não for encontrado.
-   */
-  private async verifyStudent(studentId: number): Promise<Student> {
-    const student = await this.studentRepository.findById(studentId);
-    if (!student) {
-      throw new NotFoundError('Estudante não encontrado.');
-    }
-    return student;
-  }
-
-  /**
-   * Verifica a existência de um professor pelo ID.
-   *
-   * @param teacherId - ID do professor.
-   * @returns A instância do professor encontrada.
-   * @throws {NotFoundError} Se o professor não for encontrado.
-   */
-  private async verifyTeacher(teacherId: number): Promise<Teacher> {
-    const teacher = await this.teacherRepository.findById(teacherId);
-    if (!teacher) {
-      throw new NotFoundError('Professor não encontrado.');
-    }
-    return teacher;
   }
 }
