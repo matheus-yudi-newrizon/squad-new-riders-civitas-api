@@ -83,9 +83,112 @@ export class EvaluationController {
     return res.status(201).json(result);
   }
 
+  /**
+   * @swagger
+   * /students/evaluations/{evaluationId}/show:
+   *   get:
+   *     summary: Obtém os detalhes de uma avaliação específica
+   *     description: "Este endpoint retorna os detalhes de uma avaliação específica associada ao estudante avaliado. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'."
+   *     tags: [Evaluations]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: evaluationId
+   *         description: ID da avaliação para buscar os detalhes
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     responses:
+   *       200:
+   *         description: Detalhes da avaliação encontrados com sucesso
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 id:
+   *                   type: integer
+   *                   example: 1
+   *                 date:
+   *                   type: string
+   *                   format: date
+   *                   example: "22/11/24"
+   *                 student:
+   *                   type: object
+   *                   properties:
+   *                     id:
+   *                       type: integer
+   *                       example: 101
+   *                     fullName:
+   *                       type: string
+   *                       example: "João da Silva"
+   *                     studentClass:
+   *                       type: string
+   *                       example: "Turma A"
+   *                 reviews:
+   *                   type: object
+   *                   properties:
+   *                     selfAwareness:
+   *                       type: integer
+   *                       example: 4
+   *                     empathy:
+   *                       type: integer
+   *                       example: 5
+   *                     communication:
+   *                       type: integer
+   *                       example: 3
+   *                     teamwork:
+   *                       type: integer
+   *                       example: 4
+   *                     autonomy:
+   *                       type: integer
+   *                       example: 3
+   *                 teacherComments:
+   *                   type: string
+   *                   example: "Excelente progresso, mas precisa melhorar na comunicação."
+   *       401:
+   *         description: Acesso não autorizado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *             examples:
+   *               tokenAusente:
+   *                 summary: Token ausente
+   *                 value:
+   *                   message: "Token não consta na requisição."
+   *               tokenInvalidoOuExpirado:
+   *                 summary: Token inválido ou expirado
+   *                 value:
+   *                   message: "Token inválido ou expirado."
+   *       403:
+   *         description: Você não tem permissão para acessar este recurso
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 error:
+   *                   type: string
+   *                   example: "Você não tem permissão para acessar este recurso."
+   *       404:
+   *         description: Avaliação não encontrada
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Avaliação não encontrada."
+   */
   public async getEvaluation(req: Request, res: Response): Promise<Response<IEvaluationData>> {
     const { evaluationId } = req.params;
-    const evaluationNumber = Number(evaluationId);
+    const evaluationNumber: number = Number(evaluationId);
     const evaluation: IEvaluationData = await this.evaluationService.showEvaluation(evaluationNumber);
 
     return res.status(200).json(evaluation);

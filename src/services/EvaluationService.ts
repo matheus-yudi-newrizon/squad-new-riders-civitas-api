@@ -80,13 +80,26 @@ export class EvaluationService {
     return { message: 'Avaliação criada com sucesso.' };
   }
 
+  /**
+   * Busca uma avaliação pelo ID.
+   *
+   * @param {number} id - ID único da avaliação.
+   * @returns {Promise<Evaluation>} - Retorna a avaliação encontrada.
+   * @throws {NotFoundError} - Se a avaliação não for encontrada.
+   */
   public async getEvaluationById(id: number): Promise<Evaluation> {
     const evaluation: Evaluation = await this.evaluationRepository.getEvaluationById(id);
     if (!evaluation) throw new NotFoundError('Esta avaliação não foi encontrada');
     return evaluation;
   }
 
-  public async atributeEvaluationStudent(evaluation: Evaluation): Promise<IEvaluationStudent> {
+  /**
+   * Mapeia os dados do estudante a partir de uma avaliação.
+   *
+   * @param {Evaluation} evaluation - A avaliação contendo os dados do estudante.
+   * @returns {IEvaluationStudent} - Dados do estudante formatados.
+   */
+  public mapEvaluationStudent(evaluation: Evaluation): IEvaluationStudent {
     return {
       id: evaluation.student.id,
       fullName: evaluation.student.fullName,
@@ -94,7 +107,13 @@ export class EvaluationService {
     };
   }
 
-  public async atributeEvaluationReviews(evaluation: Evaluation): Promise<IEvaluationReviews> {
+  /**
+   * Mapeia as pontuações da avaliação para um formato específico.
+   *
+   * @param {Evaluation} evaluation - A avaliação contendo as pontuações.
+   * @returns {IEvaluationReviews} - Dados formatados das pontuações.
+   */
+  public mapEvaluationReviews(evaluation: Evaluation): IEvaluationReviews {
     return {
       selfAwareness: evaluation.selfAwareness,
       empathy: evaluation.empathy,
@@ -104,11 +123,20 @@ export class EvaluationService {
     };
   }
 
+  /**
+   * Retorna os detalhes completos de uma avaliação formatados.
+   *
+   * @param {number} evaluationId - ID único da avaliação.
+   * @returns {Promise<IEvaluationData>} - Detalhes da avaliação no formato esperado.
+   *
+   */
   public async showEvaluation(evaluationId: number): Promise<IEvaluationData> {
     const evaluation: Evaluation = await this.getEvaluationById(evaluationId);
     const formattedDate: string = formatToDDMMYY(evaluation.createdAt);
-    const student: IEvaluationStudent = await this.atributeEvaluationStudent(evaluation);
-    const reviews: IEvaluationReviews = await this.atributeEvaluationReviews(evaluation);
+
+    const student: IEvaluationStudent = this.mapEvaluationStudent(evaluation);
+    const reviews: IEvaluationReviews = this.mapEvaluationReviews(evaluation);
+
     return { id: evaluation.id, date: formattedDate, student, reviews, teacherComments: evaluation.teacherComments };
   }
 }

@@ -25,6 +25,13 @@ export class EvaluationRepository {
   public async saveEvaluation(evaluation: Evaluation): Promise<Evaluation> {
     return await this.repository.save(evaluation);
   }
+
+  /**
+   * Busca uma avaliação pelo ID, incluindo as relações do estudante e sua turma.
+   *
+   * @param {number} id - O ID único da avaliação.
+   * @returns {Promise<Evaluation | null>} - Retorna a avaliação encontrada ou `null` se não existir.
+   */
   public async getEvaluationById(id: number): Promise<Evaluation | null> {
     return this.repository.findOne({
       where: { id },

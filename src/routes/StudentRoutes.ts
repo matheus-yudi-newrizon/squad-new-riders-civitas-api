@@ -21,6 +21,14 @@ studentRoutes.post('/register', authMiddleware, roleMiddleware(['admin']), valid
   studentController.create(req, res)
 );
 
+/**
+ * @route GET /students/evaluations/:evaluationId/show
+ * @description Esta rota retorna os detalhes de uma avaliação específica. Requer autenticação e valida se o usuário tem permissão para acessar a rota.
+ * @param {number} evaluationId - ID único da avaliação fornecido como parâmetro na URL.
+ * @middleware authMiddleware - Garante que o usuário está autenticado.
+ * @middleware roleMiddleware['teacher'] - Restringe acesso a professores.
+ * @access Private
+ */
 studentRoutes.get('/evaluations/:evaluationId/show', authMiddleware, roleMiddleware(['teacher']), (req, res) =>
   evaluationController.getEvaluation(req, res)
 );
