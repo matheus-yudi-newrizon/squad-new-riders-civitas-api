@@ -1,12 +1,15 @@
 import { Service } from 'typedi';
-import { Teacher } from '../entities/Teacher';
+import { Evaluation } from '../entities';
 import { Student } from '../entities/Student';
+import { Teacher } from '../entities/Teacher';
 import { NotFoundError } from '../errors/NotFoundError';
+import { IEvaluationData, IEvaluationReviews, IEvaluationStudent } from '../models';
 import { CreateEvaluationDTO } from '../models/DTO/CreateEvaluationDTO';
 import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
 import { EvaluationRepository } from '../repositories/EvaluationRepository';
-import { TeacherRepository } from '../repositories/TeacherRepository';
 import { StudentRepository } from '../repositories/StudentRepository';
+import { TeacherRepository } from '../repositories/TeacherRepository';
+import { formatToDDMMYY } from '../utils';
 
 @Service()
 export class EvaluationService {
@@ -75,5 +78,37 @@ export class EvaluationService {
     await this.evaluationRepository.saveEvaluation(evaluation);
 
     return { message: 'Avaliação criada com sucesso.' };
+  }
+
+  public async getEvaluationById(id: number): Promise<Evaluation> {
+    const evaluation: Evaluation = await this.evaluationRepository.getEvaluationById(id);
+    if (!evaluation) throw new NotFoundError('Esta avaliação não foi encontrada');
+    return evaluation;
+  }
+
+  public async atributeEvaluationStudent(evaluation: Evaluation): Promise<IEvaluationStudent> {
+    return {
+      id: evaluation.student.id,
+      fullName: evaluation.student.fullName,
+      studentClass: evaluation.student.studentClass.name
+    };
+  }
+
+  public async atributeEvaluationReviews(evaluation: Evaluation): Promise<IEvaluationReviews> {
+    return {
+      selfAwareness: evaluation.selfAwareness,
+      empathy: evaluation.empathy,
+      communication: evaluation.communication,
+      teamwork: evaluation.teamwork,
+      autonomy: evaluation.autonomy
+    };
+  }
+
+  public async showEvaluation(evaluationId: number): Promise<IEvaluationData> {
+    const evaluation: Evaluation = await this.getEvaluationById(evaluationId);
+    const formattedDate: string = formatToDDMMYY(evaluation.createdAt);
+    const student: IEvaluationStudent = await this.atributeEvaluationStudent(evaluation);
+    const reviews: IEvaluationReviews = await this.atributeEvaluationReviews(evaluation);
+    return { id: evaluation.id, date: formattedDate, student, reviews, teacherComments: evaluation.teacherComments };
   }
 }

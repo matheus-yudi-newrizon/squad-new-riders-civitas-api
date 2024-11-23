@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError } from '../errors/BadRequestError';
+import { IEvaluationData } from '../models';
 import { CreateEvaluationDTO } from '../models/DTO/CreateEvaluationDTO';
 import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
 import { EvaluationService } from '../services/EvaluationService';
@@ -80,5 +81,13 @@ export class EvaluationController {
     const result: ICreationSucessResponse = await this.evaluationService.createEvaluation(createEvaluationDTO, teacherId);
 
     return res.status(201).json(result);
+  }
+
+  public async getEvaluation(req: Request, res: Response): Promise<Response<IEvaluationData>> {
+    const { evaluationId } = req.params;
+    const evaluationNumber = Number(evaluationId);
+    const evaluation: IEvaluationData = await this.evaluationService.showEvaluation(evaluationNumber);
+
+    return res.status(200).json(evaluation);
   }
 }
