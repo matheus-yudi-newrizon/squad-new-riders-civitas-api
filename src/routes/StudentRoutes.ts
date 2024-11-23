@@ -1,7 +1,6 @@
 import { Router } from 'express';
 import { Container } from 'typedi';
-import { StudentController } from '../controller';
-import { EvaluationController } from '../controller/EvaluationController';
+import { EvaluationController, StudentController } from '../controller';
 import { authMiddleware, roleMiddleware, validationMiddleware } from '../middlewares';
 import { CreateStudentDTO } from '../models';
 

@@ -1,10 +1,8 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
-import { BadRequestError } from '../errors/BadRequestError';
-import { IEvaluationData } from '../models';
-import { CreateEvaluationDTO } from '../models/DTO/CreateEvaluationDTO';
-import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
-import { EvaluationService } from '../services/EvaluationService';
+import { BadRequestError } from '../errors';
+import { CreateEvaluationDTO, ICreationSucessResponse, IEvaluationData } from '../models';
+import { EvaluationService } from '../services';
 
 @Controller()
 export class EvaluationController {

@@ -1,5 +1,5 @@
-import { IsNotEmpty, IsEnum, IsString, MaxLength, IsInt } from 'class-validator';
-import { EvaluationScore } from '../enums/EvaluationScore';
+import { IsEnum, IsInt, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { EvaluationScore } from '../enums';
 
 export class CreateEvaluationDTO {
   @IsNotEmpty({ message: 'O campo studentId é obrigatório.' })

@@ -1,14 +1,8 @@
 import { Service } from 'typedi';
-import { Evaluation } from '../entities';
-import { Student } from '../entities/Student';
-import { Teacher } from '../entities/Teacher';
-import { NotFoundError } from '../errors/NotFoundError';
-import { IEvaluationData, IEvaluationReviews, IEvaluationStudent } from '../models';
-import { CreateEvaluationDTO } from '../models/DTO/CreateEvaluationDTO';
-import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
-import { EvaluationRepository } from '../repositories/EvaluationRepository';
-import { StudentRepository } from '../repositories/StudentRepository';
-import { TeacherRepository } from '../repositories/TeacherRepository';
+import { Evaluation, Student, Teacher } from '../entities';
+import { NotFoundError } from '../errors';
+import { CreateEvaluationDTO, ICreationSucessResponse, IEvaluationData, IEvaluationReviews, IEvaluationStudent } from '../models';
+import { EvaluationRepository, StudentRepository, TeacherRepository } from '../repositories';
 import { formatToDDMMYY } from '../utils';
 
 @Service()

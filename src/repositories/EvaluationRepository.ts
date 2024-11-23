@@ -1,7 +1,7 @@
 import { Service as Repository } from 'typedi';
 import { Repository as TypeORMRepository } from 'typeorm';
 import { MysqlDataSource } from '../config/database';
-import { Evaluation } from '../entities/Evaluation';
+import { Evaluation } from '../entities';
 @Repository()
 export class EvaluationRepository {
   private repository: TypeORMRepository<Evaluation> = MysqlDataSource.getRepository(Evaluation);
