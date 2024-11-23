@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
-import { IsCPF, IsDocumentValid, IsValidClass } from '../../utils/validators';
+import { IsCPF, IsDocumentValid, IsValidClass } from '../../utils';
 
 export class UpdateStudentDTO {
   @IsOptional()
