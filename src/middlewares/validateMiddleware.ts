@@ -1,6 +1,6 @@
 import { validate } from 'class-validator';
 import { NextFunction, Request, Response } from 'express';
-import { BadRequestError } from '../errors/BadRequestError';
+import { BadRequestError } from '../errors';
 
 /**
  * Middleware para validar dados da requisição usando um DTO específico.

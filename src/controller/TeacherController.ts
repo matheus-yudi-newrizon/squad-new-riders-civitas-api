@@ -1,12 +1,8 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
-import { BadRequestError } from '../errors/BadRequestError';
-import { NotFoundError } from '../errors/NotFoundError';
-import { CreateTeacherDTO } from '../models/DTO/CreateTeacherDTO';
-import { UpdateTeacherDTO } from '../models/DTO/UpdateTeacherDTO';
-import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
-import { IUpdateResponse } from '../models/interfaces/IUpdateResponse';
-import { TeacherService } from '../services/TeacherService';
+import { BadRequestError, NotFoundError } from '../errors';
+import { CreateTeacherDTO, ICreationSucessResponse, IUpdateResponse, UpdateTeacherDTO } from '../models';
+import { TeacherService } from '../services';
 
 @Controller()
 export class TeacherController {

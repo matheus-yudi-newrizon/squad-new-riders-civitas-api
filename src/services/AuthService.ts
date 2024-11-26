@@ -1,12 +1,7 @@
-import { ILoginResponse } from 'models/interfaces/ILoginResponse';
-import { IPayloadLogin } from 'models/interfaces/IPayloadLogin';
 import { Service } from 'typedi';
-import { TeacherSchool } from '../entities/TeacherSchool';
-import { User } from '../entities/User';
-import { ILoginAdminRequest } from '../models/interfaces/ILoginAdminRequest';
-import { ILoginTeacherRequest } from '../models/interfaces/ILoginTeacherRequest';
-import { AdminRepository } from '../repositories/AdminRepository';
-import { TeacherRepository } from '../repositories/TeacherRepository';
+import { TeacherSchool, User } from '../entities';
+import { ILoginAdminRequest, ILoginResponse, ILoginTeacherRequest, IPayloadLogin } from '../models';
+import { AdminRepository, TeacherRepository } from '../repositories';
 import { JwtService } from './JwTService';
 
 @Service()
@@ -61,7 +56,7 @@ export class AuthService {
     if (entity instanceof User)
       return { id: entity.id, email: entity.email, schoolId: entity.school.id, schoolName: entity.school.name, role: 'admin' };
     if (entity instanceof TeacherSchool)
-      return { teacherId: entity.id, registrationNumber: entity.registrationNumber, schoolId: entity.school.id, role: 'teacher' };
+      return { teacherId: entity.teacher.id, registrationNumber: entity.registrationNumber, schoolId: entity.school.id, role: 'teacher' };
   }
 
   /**

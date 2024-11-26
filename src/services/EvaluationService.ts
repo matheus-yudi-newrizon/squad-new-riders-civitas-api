@@ -1,12 +1,10 @@
 import { Service } from 'typedi';
-import { Teacher } from '../entities/Teacher';
-import { Student } from '../entities/Student';
-import { NotFoundError } from '../errors/NotFoundError';
-import { CreateEvaluationDTO } from '../models/DTO/CreateEvaluationDTO';
-import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
-import { EvaluationRepository } from '../repositories/EvaluationRepository';
-import { TeacherRepository } from '../repositories/TeacherRepository';
-import { StudentRepository } from '../repositories/StudentRepository';
+import { Evaluation, Student, Teacher } from '../entities';
+import { NotFoundError } from '../errors';
+import { CreateEvaluationDTO, ICreationSucessResponse, IEvaluationData, IEvaluationReviews, IEvaluationStudent } from '../models';
+import { EvaluationRepository, StudentRepository, TeacherRepository } from '../repositories';
+import { EvaluationMapper } from '../services';
+import { formatToDDMMYY } from '../utils';
 
 @Service()
 export class EvaluationService {
@@ -75,5 +73,35 @@ export class EvaluationService {
     await this.evaluationRepository.saveEvaluation(evaluation);
 
     return { message: 'Avaliação criada com sucesso.' };
+  }
+
+  /**
+   * Busca uma avaliação pelo ID.
+   *
+   * @param id - ID único da avaliação.
+   * @returns - Retorna a avaliação encontrada.
+   * @throws {NotFoundError} - Se a avaliação não for encontrada.
+   */
+  public async getEvaluationById(id: number): Promise<Evaluation> {
+    const evaluation: Evaluation = await this.evaluationRepository.getEvaluationById(id);
+    if (!evaluation) throw new NotFoundError('Esta avaliação não foi encontrada');
+    return evaluation;
+  }
+
+  /**
+   * Retorna os detalhes completos de uma avaliação formatados.
+   *
+   * @param evaluationId - ID único da avaliação.
+   * @returns - Detalhes da avaliação no formato esperado.
+   *
+   */
+  public async showEvaluation(evaluationId: number): Promise<IEvaluationData> {
+    const evaluation: Evaluation = await this.getEvaluationById(evaluationId);
+    const formattedDate: string = formatToDDMMYY(evaluation.createdAt);
+
+    const student: IEvaluationStudent = EvaluationMapper.mapEvaluationStudent(evaluation);
+    const reviews: IEvaluationReviews = EvaluationMapper.mapEvaluationReviews(evaluation);
+
+    return { id: evaluation.id, date: formattedDate, student, reviews, teacherComments: evaluation.teacherComments };
   }
 }

@@ -1,5 +1,5 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
-import { School } from '../entities/School';
+import { School } from '../entities';
 
 export class CreateSchool1730177132877 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {

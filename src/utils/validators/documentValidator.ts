@@ -22,7 +22,7 @@ class IsDocumentValidConstraint implements ValidatorConstraintInterface {
    * @returns `true` se o valor for um CPF ou RG válido; caso contrário, `false`.
    */
   validate(value: string): boolean {
-    const strippedValue: string = value.replace(/[.-]/g, '');
+    const strippedValue: string = cpf.strip(value);
     const isValidCPF: boolean = cpf.isValid(strippedValue);
     const isValidRG = /^([A-Z]{2})?\d{7,9}[A-Z0-9]?$/.test(strippedValue);
 

@@ -1,7 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, CreateDateColumn } from 'typeorm';
-import { Teacher } from './Teacher';
-import { Student } from './Student';
-import { EvaluationScore } from '../models/enums/EvaluationScore';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Student, Teacher } from '../entities';
+import { EvaluationScore } from '../models';
 
 @Entity()
 export class Evaluation {

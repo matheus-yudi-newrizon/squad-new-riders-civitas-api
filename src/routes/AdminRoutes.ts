@@ -1,13 +1,8 @@
 import { Router } from 'express';
 import { Container } from 'typedi';
-import { AuthController } from '../controller/AuthController';
-import { StudentController } from '../controller/StudentController';
-import { TeacherController } from '../controller/TeacherController';
-import { authMiddleware } from '../middlewares/authMiddleware';
-import { roleMiddleware } from '../middlewares/roleMiddleware';
-import { validationMiddleware } from '../middlewares/validateMiddleware';
-import { UpdateStudentDTO } from '../models/DTO/UpdateStudentDTO';
-import { UpdateTeacherDTO } from '../models/DTO/UpdateTeacherDTO';
+import { AuthController, StudentController, TeacherController } from '../controller';
+import { authMiddleware, roleMiddleware, validationMiddleware } from '../middlewares';
+import { UpdateStudentDTO, UpdateTeacherDTO } from '../models';
 
 const adminRouter = Router();
 const adminController: AuthController = Container.get(AuthController);

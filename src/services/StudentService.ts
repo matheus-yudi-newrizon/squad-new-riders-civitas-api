@@ -1,16 +1,9 @@
+import { cpf } from 'cpf-cnpj-validator';
 import { Service } from 'typedi';
-import { Class } from '../entities/Class';
-import { School } from '../entities/School';
-import { Student } from '../entities/Student';
-import { ConflictError } from '../errors/ConflictError';
-import { NotFoundError } from '../errors/NotFoundError';
-import { CreateStudentDTO } from '../models/DTO/CreateStudentDTO';
-import { UpdateStudentDTO } from '../models/DTO/UpdateStudentDTO';
-import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
-import { IUpdateResponse } from '../models/interfaces/IUpdateResponse';
-import { ClassRepository } from '../repositories/ClassRepository';
-import { SchoolRepository } from '../repositories/SchoolRepository';
-import { StudentRepository } from '../repositories/StudentRepository';
+import { Class, School, Student } from '../entities';
+import { ConflictError, NotFoundError } from '../errors';
+import { CreateStudentDTO, ICreationSucessResponse, IUpdateResponse, UpdateStudentDTO } from '../models';
+import { ClassRepository, SchoolRepository, StudentRepository } from '../repositories';
 
 @Service()
 export class StudentService {
@@ -65,7 +58,7 @@ export class StudentService {
    * @returns Uma instância de `Student` se encontrada, ou `undefined` caso contrário.
    */
   private async verifyStudentDocument(document: string): Promise<Student | undefined> {
-    const student: Student = await this.studentRepository.findByDocument(document.replace(/\D/g, ''));
+    const student: Student = await this.studentRepository.findByDocument(cpf.strip(document));
     return student || undefined;
   }
 
@@ -178,10 +171,10 @@ export class StudentService {
   /**
    * Recupera uma lista de estudantes com base nos filtros fornecidos.
    *
-   * @param {object} filters - Um objeto contendo os filtros para a consulta.
-   * @param {number} filters.schoolId - O ID da escola para filtrar os estudantes.
-   * @param {string} filters.fullName - O nome completo para filtrar os estudantes.
-   * @returns {Promise<Student[]>} Uma promessa que resolve para um array de estudantes que correspondem aos filtros.
+   * @param filters - Um objeto contendo os filtros para a consulta.
+   * @param filters.schoolId - O ID da escola para filtrar os estudantes.
+   * @param filters.fullName - O nome completo para filtrar os estudantes.
+   * @returns Uma promessa que resolve para um array de estudantes que correspondem aos filtros.
    */
   public async listStudents(filters: object): Promise<Student[]> {
     const schoolId: number = filters['schoolId'];
@@ -192,11 +185,11 @@ export class StudentService {
   /**
    * Lista estudantes por turma com base nos filtros fornecidos.
    *
-   * @param {object} filters - Os filtros a serem aplicados ao listar os estudantes.
-   * @param {number} filters.classId - O ID da turma para filtrar os estudantes.
-   * @param {number} filters.schoolId - O ID da escola para filtrar os estudantes.
-   * @param {string} filters.fullName - O nome completo para filtrar os estudantes.
-   * @returns {Promise<Student[]>} Uma promessa que resolve para um array de estudantes.
+   * @param filters - Os filtros a serem aplicados ao listar os estudantes.
+   * @param filters.classId - O ID da turma para filtrar os estudantes.
+   * @param filters.schoolId - O ID da escola para filtrar os estudantes.
+   * @param filters.fullName - O nome completo para filtrar os estudantes.
+   * @returns Uma promessa que resolve para um array de estudantes.
    */
   public async listStudentsByClass(filters: object): Promise<Student[]> {
     const classId: number = filters['classId'];

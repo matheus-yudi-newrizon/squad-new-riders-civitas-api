@@ -1,19 +1,9 @@
-import { IUpdateResponse } from 'models/interfaces/IUpdateResponse';
+import { cpf } from 'cpf-cnpj-validator';
 import { Service } from 'typedi';
-import { Class } from '../entities/Class';
-import { School } from '../entities/School';
-import { Teacher } from '../entities/Teacher';
-import { TeacherClass } from '../entities/TeacherClass';
-import { TeacherSchool } from '../entities/TeacherSchool';
-import { BadRequestError } from '../errors/BadRequestError';
-import { ConflictError } from '../errors/ConflictError';
-import { NotFoundError } from '../errors/NotFoundError';
-import { CreateTeacherDTO } from '../models/DTO/CreateTeacherDTO';
-import { UpdateTeacherDTO } from '../models/DTO/UpdateTeacherDTO';
-import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
-import { ClassRepository } from '../repositories/ClassRepository';
-import { SchoolRepository } from '../repositories/SchoolRepository';
-import { TeacherRepository } from '../repositories/TeacherRepository';
+import { Class, School, Teacher, TeacherClass, TeacherSchool } from '../entities';
+import { BadRequestError, ConflictError, NotFoundError } from '../errors';
+import { CreateTeacherDTO, ICreationSucessResponse, IUpdateResponse, UpdateTeacherDTO } from '../models';
+import { ClassRepository, SchoolRepository, TeacherRepository } from '../repositories';
 
 @Service()
 export class TeacherService {
@@ -100,7 +90,7 @@ export class TeacherService {
     if (updateTeacherDTO.fullName) teacher.fullName = updateTeacherDTO.fullName;
 
     if (updateTeacherDTO.cpf) {
-      const unmaskedCpf: string = updateTeacherDTO.cpf.replace(/[.-]/g, '');
+      const unmaskedCpf: string = cpf.strip(updateTeacherDTO.cpf);
       await this.verifyCPFDuplicate(unmaskedCpf, teacher.id);
       teacher.cpf = updateTeacherDTO.cpf;
     }

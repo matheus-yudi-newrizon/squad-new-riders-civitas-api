@@ -1,17 +1,8 @@
 import { Service } from 'typedi';
-import { Class } from '../entities/Class';
-import { School } from '../entities/School';
-import { BadRequestError } from '../errors/BadRequestError';
-import { ConflictError } from '../errors/ConflictError';
-import { NotFoundError } from '../errors/NotFoundError';
-import { CreateClassDTO } from '../models/DTO/CreateClassDTO';
-import { EducationType } from '../models/enums/EducationType';
-import { SchoolShift } from '../models/enums/SchoolShift';
-import { SchoolYear } from '../models/enums/SchoolYear';
-import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
-import { IUpdateResponse } from '../models/interfaces/IUpdateResponse';
-import { ClassRepository } from '../repositories/ClassRepository';
-import { SchoolRepository } from '../repositories/SchoolRepository';
+import { Class, School } from '../entities';
+import { BadRequestError, ConflictError, NotFoundError } from '../errors';
+import { CreateClassDTO, EducationType, ICreationSucessResponse, IUpdateResponse, SchoolShift, SchoolYear } from '../models';
+import { ClassRepository, SchoolRepository } from '../repositories';
 
 @Service()
 export class ClassService {
@@ -82,7 +73,7 @@ export class ClassService {
    * @param classId - O ID da turma a ser excluída.
    * @throws {NotFoundError} Se a turma com o ID fornecido não for encontrada.
    * @throws {ConflictError} Se a turma estiver associada a estudantes ou professores.
-   * @returns {Promise<void>} Uma promessa que é resolvida quando a turma é excluída.
+   * @returns Uma promessa que é resolvida quando a turma é excluída.
    */
   public async deleteClass(classId: number): Promise<void> {
     const classEntity: Class = await this.getClassById(classId);

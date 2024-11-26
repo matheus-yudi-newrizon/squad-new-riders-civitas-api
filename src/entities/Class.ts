@@ -1,10 +1,6 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
-import { EducationType } from '../models/enums/EducationType';
-import { SchoolShift } from '../models/enums/SchoolShift';
-import { SchoolYear } from '../models/enums/SchoolYear';
-import { School } from './School';
-import { Student } from './Student';
-import { TeacherClass } from './TeacherClass';
+import { School, Student, TeacherClass } from '../entities';
+import { EducationType, SchoolShift, SchoolYear } from '../models';
 
 @Entity()
 @Unique(['school', 'schoolYear', 'schoolShift', 'educationType', 'name'])

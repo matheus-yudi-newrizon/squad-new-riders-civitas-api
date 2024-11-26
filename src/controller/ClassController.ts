@@ -1,11 +1,8 @@
 import { Request, Response } from 'express';
-import { IUpdateResponse } from 'models/interfaces/IUpdateResponse';
 import { Service as Controller } from 'typedi';
-import { BadRequestError } from '../errors/BadRequestError';
-import { NotFoundError } from '../errors/NotFoundError';
-import { CreateClassDTO } from '../models/DTO/CreateClassDTO';
-import { ICreationSucessResponse } from '../models/interfaces/ICreationSucessResponse';
-import { ClassService } from '../services/ClassService';
+import { BadRequestError, NotFoundError } from '../errors';
+import { CreateClassDTO, ICreationSucessResponse, IUpdateResponse } from '../models';
+import { ClassService } from '../services';
 
 @Controller()
 export class ClassController {
