@@ -3,6 +3,7 @@ import { Evaluation, Student, Teacher } from '../entities';
 import { NotFoundError } from '../errors';
 import { CreateEvaluationDTO, ICreationSucessResponse, IEvaluationData, IEvaluationReviews, IEvaluationStudent } from '../models';
 import { EvaluationRepository, StudentRepository, TeacherRepository } from '../repositories';
+import { EvaluationMapper } from '../services';
 import { formatToDDMMYY } from '../utils';
 
 @Service()
@@ -88,36 +89,6 @@ export class EvaluationService {
   }
 
   /**
-   * Mapeia os dados do estudante a partir de uma avaliação.
-   *
-   * @param evaluation - A avaliação contendo os dados do estudante.
-   * @returns {IEvaluationStudent} - Dados do estudante formatados.
-   */
-  public mapEvaluationStudent(evaluation: Evaluation): IEvaluationStudent {
-    return {
-      id: evaluation.student.id,
-      fullName: evaluation.student.fullName,
-      studentClass: evaluation.student.studentClass.name
-    };
-  }
-
-  /**
-   * Mapeia as pontuações da avaliação para um formato específico.
-   *
-   * @param evaluation - A avaliação contendo as pontuações.
-   * @returns {IEvaluationReviews} - Dados formatados das pontuações.
-   */
-  public mapEvaluationReviews(evaluation: Evaluation): IEvaluationReviews {
-    return {
-      selfAwareness: evaluation.selfAwareness,
-      empathy: evaluation.empathy,
-      communication: evaluation.communication,
-      teamwork: evaluation.teamwork,
-      autonomy: evaluation.autonomy
-    };
-  }
-
-  /**
    * Retorna os detalhes completos de uma avaliação formatados.
    *
    * @param evaluationId - ID único da avaliação.
@@ -128,8 +99,8 @@ export class EvaluationService {
     const evaluation: Evaluation = await this.getEvaluationById(evaluationId);
     const formattedDate: string = formatToDDMMYY(evaluation.createdAt);
 
-    const student: IEvaluationStudent = this.mapEvaluationStudent(evaluation);
-    const reviews: IEvaluationReviews = this.mapEvaluationReviews(evaluation);
+    const student: IEvaluationStudent = EvaluationMapper.mapEvaluationStudent(evaluation);
+    const reviews: IEvaluationReviews = EvaluationMapper.mapEvaluationReviews(evaluation);
 
     return { id: evaluation.id, date: formattedDate, student, reviews, teacherComments: evaluation.teacherComments };
   }
