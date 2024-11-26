@@ -77,8 +77,8 @@ export class EvaluationService {
   /**
    * Busca uma avaliação pelo ID.
    *
-   * @param {number} id - ID único da avaliação.
-   * @returns {Promise<Evaluation>} - Retorna a avaliação encontrada.
+   * @param id - ID único da avaliação.
+   * @returns - Retorna a avaliação encontrada.
    * @throws {NotFoundError} - Se a avaliação não for encontrada.
    */
   public async getEvaluationById(id: number): Promise<Evaluation> {
@@ -90,7 +90,7 @@ export class EvaluationService {
   /**
    * Mapeia os dados do estudante a partir de uma avaliação.
    *
-   * @param {Evaluation} evaluation - A avaliação contendo os dados do estudante.
+   * @param evaluation - A avaliação contendo os dados do estudante.
    * @returns {IEvaluationStudent} - Dados do estudante formatados.
    */
   public mapEvaluationStudent(evaluation: Evaluation): IEvaluationStudent {
@@ -104,7 +104,7 @@ export class EvaluationService {
   /**
    * Mapeia as pontuações da avaliação para um formato específico.
    *
-   * @param {Evaluation} evaluation - A avaliação contendo as pontuações.
+   * @param evaluation - A avaliação contendo as pontuações.
    * @returns {IEvaluationReviews} - Dados formatados das pontuações.
    */
   public mapEvaluationReviews(evaluation: Evaluation): IEvaluationReviews {
@@ -120,8 +120,8 @@ export class EvaluationService {
   /**
    * Retorna os detalhes completos de uma avaliação formatados.
    *
-   * @param {number} evaluationId - ID único da avaliação.
-   * @returns {Promise<IEvaluationData>} - Detalhes da avaliação no formato esperado.
+   * @param evaluationId - ID único da avaliação.
+   * @returns - Detalhes da avaliação no formato esperado.
    *
    */
   public async showEvaluation(evaluationId: number): Promise<IEvaluationData> {

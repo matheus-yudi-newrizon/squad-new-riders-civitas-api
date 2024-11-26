@@ -73,7 +73,7 @@ export class ClassService {
    * @param classId - O ID da turma a ser excluída.
    * @throws {NotFoundError} Se a turma com o ID fornecido não for encontrada.
    * @throws {ConflictError} Se a turma estiver associada a estudantes ou professores.
-   * @returns {Promise<void>} Uma promessa que é resolvida quando a turma é excluída.
+   * @returns Uma promessa que é resolvida quando a turma é excluída.
    */
   public async deleteClass(classId: number): Promise<void> {
     const classEntity: Class = await this.getClassById(classId);

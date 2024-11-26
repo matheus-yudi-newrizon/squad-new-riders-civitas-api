@@ -171,10 +171,10 @@ export class StudentService {
   /**
    * Recupera uma lista de estudantes com base nos filtros fornecidos.
    *
-   * @param {object} filters - Um objeto contendo os filtros para a consulta.
-   * @param {number} filters.schoolId - O ID da escola para filtrar os estudantes.
-   * @param {string} filters.fullName - O nome completo para filtrar os estudantes.
-   * @returns {Promise<Student[]>} Uma promessa que resolve para um array de estudantes que correspondem aos filtros.
+   * @param filters - Um objeto contendo os filtros para a consulta.
+   * @param filters.schoolId - O ID da escola para filtrar os estudantes.
+   * @param filters.fullName - O nome completo para filtrar os estudantes.
+   * @returns Uma promessa que resolve para um array de estudantes que correspondem aos filtros.
    */
   public async listStudents(filters: object): Promise<Student[]> {
     const schoolId: number = filters['schoolId'];
@@ -185,11 +185,11 @@ export class StudentService {
   /**
    * Lista estudantes por turma com base nos filtros fornecidos.
    *
-   * @param {object} filters - Os filtros a serem aplicados ao listar os estudantes.
-   * @param {number} filters.classId - O ID da turma para filtrar os estudantes.
-   * @param {number} filters.schoolId - O ID da escola para filtrar os estudantes.
-   * @param {string} filters.fullName - O nome completo para filtrar os estudantes.
-   * @returns {Promise<Student[]>} Uma promessa que resolve para um array de estudantes.
+   * @param filters - Os filtros a serem aplicados ao listar os estudantes.
+   * @param filters.classId - O ID da turma para filtrar os estudantes.
+   * @param filters.schoolId - O ID da escola para filtrar os estudantes.
+   * @param filters.fullName - O nome completo para filtrar os estudantes.
+   * @returns Uma promessa que resolve para um array de estudantes.
    */
   public async listStudentsByClass(filters: object): Promise<Student[]> {
     const classId: number = filters['classId'];

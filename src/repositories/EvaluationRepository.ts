@@ -29,10 +29,10 @@ export class EvaluationRepository {
   /**
    * Busca uma avaliação pelo ID, incluindo as relações do estudante e sua turma.
    *
-   * @param {number} id - O ID único da avaliação.
-   * @returns {Promise<Evaluation | null>} - Retorna a avaliação encontrada ou `null` se não existir.
+   * @param id - O ID único da avaliação.
+   * @returns - Retorna a avaliação encontrada ou `null` se não existir.
    */
-  public async getEvaluationById(id: number): Promise<Evaluation | null> {
+  public getEvaluationById(id: number): Promise<Evaluation | null> {
     return this.repository.findOne({
       where: { id },
       relations: ['student', 'student.studentClass']
