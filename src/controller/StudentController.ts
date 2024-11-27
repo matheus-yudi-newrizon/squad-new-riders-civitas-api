@@ -647,8 +647,7 @@ export class StudentController {
 
     const evaluations = await this.studentService.getStudentEvaluations(studentId);
 
-    const latestEvaluation = evaluations.length > 0 ? evaluations[0] : null;
-
+    const latestEvaluation = evaluations.length > 0 ? await this.studentService.getLatestEvaluation(studentId) : null;
     return res.status(200).json({
       studentInfo,
       evaluations,

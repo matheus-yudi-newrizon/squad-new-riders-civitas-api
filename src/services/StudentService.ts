@@ -1,9 +1,9 @@
 import { cpf } from 'cpf-cnpj-validator';
 import { Service } from 'typedi';
-import { Class, School, Student, Evaluation } from '../entities';
+import { Class, Evaluation, School, Student } from '../entities';
 import { ConflictError, NotFoundError } from '../errors';
-import { CreateStudentDTO, ICreationSucessResponse, IUpdateResponse, UpdateStudentDTO } from '../models';
-import { ClassRepository, SchoolRepository, StudentRepository, EvaluationRepository } from '../repositories';
+import { CreateStudentDTO, ICreationSucessResponse, IEvaluationData, IEvaluationReviews, IUpdateResponse, UpdateStudentDTO } from '../models';
+import { ClassRepository, EvaluationRepository, SchoolRepository, StudentRepository } from '../repositories';
 import { formatToDDMMYY } from '../utils/formatDate';
 
 @Service()
@@ -227,7 +227,6 @@ export class StudentService {
     const student: Student = await this.verifyStudentId(studentId);
 
     const evaluations: Evaluation[] = await this.evaluationRepository.findAllByStudentId(student.id);
-
     if (evaluations.length === 0) {
       throw new NotFoundError('Nenhuma avaliação encontrada para este estudante.');
     }
@@ -245,18 +244,26 @@ export class StudentService {
    * @returns Um objeto contendo o ID e a data formatada da avaliação mais recente.
    * @throws {NotFoundError} Se nenhuma avaliação for encontrada para o estudante.
    */
-  public async getLatestEvaluation(studentId: number): Promise<{ id: number; date: string } | null> {
+  public async getLatestEvaluation(studentId: number): Promise<IEvaluationData> {
     const student: Student = await this.verifyStudentId(studentId);
-
     const latestEvaluation: Evaluation | null = await this.evaluationRepository.findLatestByStudentId(student.id);
 
     if (!latestEvaluation) {
       return null;
     }
 
+    const reviews: IEvaluationReviews = {
+      selfAwareness: latestEvaluation.selfAwareness,
+      empathy: latestEvaluation.empathy,
+      communication: latestEvaluation.communication,
+      teamwork: latestEvaluation.teamwork,
+      autonomy: latestEvaluation.autonomy
+    };
+
     return {
       id: latestEvaluation.id,
-      date: formatToDDMMYY(latestEvaluation.createdAt)
+      date: formatToDDMMYY(latestEvaluation.createdAt),
+      reviews
     };
   }
 }

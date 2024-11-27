@@ -2,6 +2,8 @@ import { Service as Repository } from 'typedi';
 import { Repository as TypeORMRepository } from 'typeorm';
 import { MysqlDataSource } from '../config/database';
 import { Evaluation } from '../entities';
+import { NotFoundError } from '../errors';
+
 @Repository()
 export class EvaluationRepository {
   private repository: TypeORMRepository<Evaluation> = MysqlDataSource.getRepository(Evaluation);
@@ -29,23 +31,30 @@ export class EvaluationRepository {
   /**
    * Busca uma avaliação pelo ID, incluindo as relações do estudante e sua turma.
    *
-   * @param {number} id - O ID único da avaliação.
-   * @returns {Promise<Evaluation | null>} - Retorna a avaliação encontrada ou `null` se não existir.
+   * @param id - O ID único da avaliação.
+   * @returns A avaliação encontrada ou lança um erro caso não exista.
+   * @throws {NotFoundError} Se a avaliação não for encontrada.
    */
-  public async getEvaluationById(id: number): Promise<Evaluation | null> {
-    return this.repository.findOne({
+  public async getEvaluationById(id: number): Promise<Evaluation> {
+    const evaluation = await this.repository.findOne({
       where: { id },
       relations: ['student', 'student.studentClass']
     });
+
+    if (!evaluation) {
+      throw new NotFoundError('Avaliação não encontrada.');
+    }
+
+    return evaluation;
   }
 
   /**
-   * Busca todas as avaliações associadas a um estudante pelo ID, ordenadas da mais recente para a mais antiga.
+   * Busca todas as avaliações de um estudante.
    *
-   * @param studentId - O ID do estudante cujas avaliações serão buscadas.
-   * @returns Uma lista de avaliações do estudante, ordenadas por data de criação (mais recente primeiro).
+   * @param studentId - ID do estudante para buscar as avaliações.
+   * @returns Uma promise que resolve para uma lista de avaliações ordenadas pela data de criação em ordem ascendente.
    */
-  public async findAllByStudentId(studentId: number): Promise<Evaluation[]> {
+  public findAllByStudentId(studentId: number): Promise<Evaluation[]> {
     return this.repository.find({
       where: { student: { id: studentId } },
       relations: ['student', 'student.studentClass'],
@@ -54,16 +63,16 @@ export class EvaluationRepository {
   }
 
   /**
-   * Busca a avaliação mais recente de um estudante pelo ID.
+   * Busca a última avaliação de um estudante.
    *
-   * @param studentId - O ID do estudante cuja última avaliação será buscada.
-   * @returns A avaliação mais recente associada ao estudante ou `null` se não houver avaliações.
+   * @param studentId - ID do estudante para buscar a última avaliação.
+   * @returns Uma promise que resolve para a última avaliação encontrada ou null caso o estudante não tenha avaliações.
    */
-  public async findLatestByStudentId(studentId: number): Promise<Evaluation | null> {
+  public findLatestByStudentId(studentId: number): Promise<Evaluation | null> {
     return this.repository.findOne({
       where: { student: { id: studentId } },
       relations: ['student', 'student.studentClass'],
-      order: { createdAt: 'ASC' }
+      order: { createdAt: 'DESC' }
     });
   }
 }

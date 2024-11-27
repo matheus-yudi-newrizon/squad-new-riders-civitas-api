@@ -2,7 +2,7 @@ import { IEvaluationReviews, IEvaluationStudent } from './index';
 export interface IEvaluationData {
   id: number;
   date: string;
-  student: IEvaluationStudent;
+  student?: IEvaluationStudent;
   reviews: IEvaluationReviews;
-  teacherComments: string;
+  teacherComments?: string;
 }
