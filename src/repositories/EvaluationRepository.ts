@@ -58,7 +58,7 @@ export class EvaluationRepository {
     return this.repository.find({
       where: { student: { id: studentId } },
       relations: ['student', 'student.studentClass'],
-      order: { createdAt: 'ASC' }
+      order: { createdAt: 'DESC' }
     });
   }
 
