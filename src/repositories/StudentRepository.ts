@@ -71,7 +71,7 @@ export class StudentRepository {
    *
    * @param schoolId - O ID da escola para recuperar os estudantes.
    * @param fullName - (Opcional) O nome completo do estudante para filtrar.
-   * @returns Uma promessa que resolve para um array de estudantes.
+   * @returns Uma promessa que resolve para um array de estudantes em ordem alfabética.
    */
   public async listStudents(schoolId: number, fullName?: string): Promise<Student[]> {
     const query = this.repository
@@ -79,7 +79,8 @@ export class StudentRepository {
       .innerJoin('student.studentClass', 'class')
       .innerJoin('class.school', 'school')
       .where('school.id = :schoolId', { schoolId })
-      .select(['student', 'class.name']);
+      .select(['student', 'class.name'])
+      .orderBy('student.fullName', 'ASC');
 
     if (fullName) {
       query.andWhere('student.fullName LIKE :fullName COLLATE utf8mb4_general_ci', { fullName: `%${fullName}%` });
@@ -94,7 +95,7 @@ export class StudentRepository {
    * @param classId - O ID da turma.
    * @param schoolId - O ID da escola.
    * @param fullName - O nome completo do estudante (opcional).
-   * @returns Um array contendo todos os estudantes da turma especificada.
+   * @returns Um array contendo todos os estudantes da turma especificada em ordem alfabética.
    */
   public async listStudentsByClass(classId: number, schoolId: number, fullName?: string): Promise<Student[]> {
     const query = this.repository
@@ -102,7 +103,8 @@ export class StudentRepository {
       .innerJoin('student.studentClass', 'class')
       .where('class.id = :classId', { classId })
       .andWhere('class.schoolId = :schoolId', { schoolId })
-      .select(['student']);
+      .select(['student'])
+      .orderBy('student.fullName', 'ASC');
 
     if (fullName) {
       query.andWhere('student.fullName LIKE :fullName COLLATE utf8mb4_general_ci', { fullName: `%${fullName}%` });
