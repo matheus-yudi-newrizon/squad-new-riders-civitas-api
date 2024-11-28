@@ -165,12 +165,11 @@ export class TeacherService {
    */
   public async getTeacherById(teacherId: number): Promise<Teacher> {
     const teacher = await this.teacherRepository.findById(teacherId);
-    if (!teacher) throw new NotFoundError('Professor não encontrado.');
     return teacher;
   }
 
-  public async getTeacherInfo(teacherId: number, schoolId: number): Promise<ITeacherMap> {
-    const teacher = await this.getTeacherById(teacherId);
+  public async getTeacherInfo(teacherId: number, schoolId?: number): Promise<ITeacherMap> {
+    const teacher = await this.teacherRepository.findById(teacherId);
     const registrationNumber: string = await this.getRegistrationNumber(teacherId, schoolId);
     const mappedTeacher: ITeacherMap = EntityMapper.mapTeacher(teacher);
     return { ...mappedTeacher, registrationNumber };

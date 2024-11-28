@@ -328,7 +328,7 @@ export class TeacherController {
   public async getTeacherById(req: Request, res: Response): Promise<Response> {
     const teacherId: number = res.locals.teacherId;
 
-    const teacher = await this.teacherService.getTeacherById(teacherId);
+    const teacher = await this.teacherService.getTeacherInfo(teacherId);
     if (!teacher) throw new NotFoundError('Professor não encontrado.');
     return res.status(200).json(teacher);
   }
@@ -399,9 +399,10 @@ export class TeacherController {
   }
 
   public async getTeacherInfo(req: Request, res: Response): Promise<Response<ITeacherMap>> {
-    if (!req.params.id) throw new BadRequestError('ID do professor não fornecido.');
     const teacherId: number = Number(req.params.id);
+    if (!teacherId) throw new BadRequestError('ID do professor não fornecido.');
     const schoolId: number = res.locals.schoolId;
+    if (!schoolId) throw new BadRequestError('ID da escola não encontrado no token.');
     const teacher: ITeacherMap = await this.teacherService.getTeacherInfo(teacherId, schoolId);
     return res.status(200).json(teacher);
   }
