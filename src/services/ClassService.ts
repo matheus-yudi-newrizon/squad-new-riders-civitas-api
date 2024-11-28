@@ -123,6 +123,12 @@ export class ClassService {
     return classEntity;
   }
 
+  /**
+   * Retorna os detalhes de uma turma pelo ID.
+   *
+   * @param classId - ID da turma.
+   * @returns Um objeto mapeado contendo os detalhes da turma.
+   */
   public async getClassInfoById(classId: number): Promise<IClassMap> {
     const classEntity: Class = await this.getClassById(classId);
     const classMap: IClassMap = EntityMapper.mapClass(classEntity);

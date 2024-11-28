@@ -168,6 +168,13 @@ export class TeacherService {
     return teacher;
   }
 
+  /**
+   * Busca um professor específico pelo ID e retorna os dados mapeados.
+   *
+   * @param teacherId - ID do professor a ser buscado.
+   * @param schoolId - ID da escola associada ao professor.
+   * @returns Os dados mapeados do professor.
+   */
   public async getTeacherInfo(teacherId: number, schoolId?: number): Promise<ITeacherMap> {
     const teacher = await this.teacherRepository.findById(teacherId);
     const registrationNumber: string = await this.getRegistrationNumber(teacherId, schoolId);
@@ -175,6 +182,13 @@ export class TeacherService {
     return { ...mappedTeacher, registrationNumber };
   }
 
+  /**
+   * Busca o número de registro de um professor na escola.
+   *
+   * @param cpf - CPF do professor a ser buscado.
+   * @returns A instância de `Teacher` encontrada.
+   * @throws NotFoundError - Se o professor não for encontrado.
+   */
   private async getRegistrationNumber(teacherId: number, schoolId: number): Promise<string> {
     const teacherSchool: TeacherSchool = await this.teacherRepository.findTeacherSchoolByTeacherAndSchool(teacherId, schoolId);
     if (!teacherSchool) throw new NotFoundError('Professor não encontrado nesta escola.');

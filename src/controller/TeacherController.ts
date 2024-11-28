@@ -398,6 +398,99 @@ export class TeacherController {
     return res.status(200).json(formattedTeachers);
   }
 
+  /**
+   * @swagger
+   * /teachers/{id}:
+   *   get:
+   *     summary: Busca um professor pelo token
+   *     description: "Este endpoint permite buscar as informações de um professor específico pelo seu token JWT. O token é decodificado, e o `teacherId` é extraído para realizar a busca."
+   *     tags: [Teachers]
+   *     security:
+   *       - bearerAuth: []
+   *     responses:
+   *       200:
+   *         description: Informações do professor.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 id:
+   *                   type: integer
+   *                   example: 2
+   *                 fullName:
+   *                   type: string
+   *                   example: "Maria da Silva"
+   *                 cpf:
+   *                   type: string
+   *                   example: "446.354.320-76"
+   *                 teacherClasses:
+   *                   type: array
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       class:
+   *                         type: object
+   *                         properties:
+   *                           id:
+   *                             type: integer
+   *                             example: 1
+   *                 registrationNumber:
+   *                   type: string
+   *                   example: "REG123"
+   *       401:
+   *         description: Acesso não autorizado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *             examples:
+   *               tokenAusente:
+   *                 summary: Token ausente
+   *                 value:
+   *                   message: "Token não consta na requisição."
+   *               tokenInvalidoOuExpirado:
+   *                 summary: Token inválido ou expirado
+   *                 value:
+   *                   message: "Token inválido ou expirado."
+   *               tokenInvalido:
+   *                 summary: Token inválido
+   *                 value:
+   *                   message: "Token inválido."
+   *       403:
+   *         description: "Você não tem permissão para acessar este recurso"
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 error:
+   *                   type: string
+   *                   example: "Você não tem permissão para acessar este recurso"
+   *       400:
+   *         description: ID do professor não fornecido
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "ID do professor não fornecido."
+   *       404:
+   *         description: Professor não encontrado.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Professor não encontrado."
+   */
   public async getTeacherInfo(req: Request, res: Response): Promise<Response<ITeacherMap>> {
     const teacherId: number = Number(req.params.id);
     if (!teacherId) throw new BadRequestError('ID do professor não fornecido.');

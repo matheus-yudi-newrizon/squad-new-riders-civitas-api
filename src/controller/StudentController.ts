@@ -655,6 +655,115 @@ export class StudentController {
     });
   }
 
+  /**
+   * @swagger
+   * /students/{id}:
+   *   get:
+   *     summary: Busca as informações de um estudante pelo ID
+   *     description: "Este endpoint permite buscar as informações de um estudante específico utilizando seu ID."
+   *     tags: [Students]
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         description: O ID do estudante a ser buscado
+   *         schema:
+   *           type: integer
+   *           example: 1
+   *     responses:
+   *       200:
+   *         description: Informações do estudante.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 id:
+   *                   type: integer
+   *                   example: 1
+   *                 fullName:
+   *                   type: string
+   *                   example: "Lolla"
+   *                 document:
+   *                   type: string
+   *                   example: "343.669.810-50"
+   *                 registrationNumber:
+   *                   type: string
+   *                   example: "20242299999"
+   *                 cpfGuardian:
+   *                   type: string
+   *                   example: "987.654.321-00"
+   *                 studentClass:
+   *                   type: object
+   *                   properties:
+   *                     id:
+   *                       type: integer
+   *                       example: 1
+   *                     name:
+   *                       type: string
+   *                       example: "1 ano 32"
+   *                     schoolYear:
+   *                       type: string
+   *                       example: "3rd year"
+   *                     schoolShift:
+   *                       type: string
+   *                       example: "Morning"
+   *                     educationType:
+   *                       type: string
+   *                       example: "Nursery"
+   *       401:
+   *         description: Acesso não autorizado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *             examples:
+   *               tokenAusente:
+   *                 summary: Token ausente
+   *                 value:
+   *                   message: "Token não consta na requisição."
+   *               tokenInvalidoOuExpirado:
+   *                 summary: Token inválido ou expirado
+   *                 value:
+   *                   message: "Token inválido ou expirado."
+   *               tokenInvalido:
+   *                 summary: Token inválido
+   *                 value:
+   *                   message: "Token inválido."
+   *       403:
+   *         description: "Você não tem permissão para acessar este recurso"
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 error:
+   *                   type: string
+   *                   example: "Você não tem permissão para acessar este recurso"
+   *       400:
+   *         description: ID do estudante não fornecido
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "ID do estudante não fornecido."
+   *       404:
+   *         description: Estudante não encontrado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Estudante não encontrado."
+   */
   public async getStudentInfo(req: Request, res: Response): Promise<Response<IStudentMap>> {
     if (!req.params.id) throw new BadRequestError('ID do estudante não fornecido.');
     const studentId: number = Number(req.params.id);

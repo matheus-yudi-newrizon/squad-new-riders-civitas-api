@@ -93,10 +93,15 @@ export class StudentService {
    */
   private async verifyStudentId(id: number): Promise<Student> {
     const student: Student = await this.studentRepository.findById(id);
-    if (!student) throw new NotFoundError('Estudante não encontrado');
     return student;
   }
 
+  /**
+   * Recupera um estudante com base no ID fornecido.
+   *
+   * @param id - O identificador único do estudante.
+   * @returns Um objeto mapeado contendo os dados do estudante.
+   */
   public async getStudentById(id: number): Promise<IStudentMap> {
     const student: Student = await this.verifyStudentId(id);
     const studentMapped: IStudentMap = EntityMapper.mapStudent(student);

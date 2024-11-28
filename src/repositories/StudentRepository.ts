@@ -2,6 +2,7 @@ import { Service as Repository } from 'typedi';
 import { Repository as TypeORMRepository } from 'typeorm';
 import { MysqlDataSource } from '../config/database';
 import { Student } from '../entities';
+import { NotFoundError } from '../errors';
 
 @Repository()
 export class StudentRepository {
@@ -63,7 +64,9 @@ export class StudentRepository {
    * Inclui as relações com a classe do estudante (`studentClass`).
    */
   public async findById(id: number): Promise<Student | undefined> {
-    return await this.repository.findOne({ where: { id }, relations: ['studentClass'] });
+    const student: Student = await this.repository.findOne({ where: { id }, relations: ['studentClass'] });
+    if (!student) throw new NotFoundError('Estudante não encontrado');
+    return student;
   }
 
   /**
