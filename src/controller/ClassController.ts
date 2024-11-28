@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError, NotFoundError } from '../errors';
-import { CreateClassDTO, ICreationSucessResponse, IUpdateResponse } from '../models';
+import { CreateClassDTO, IClassMap, ICreationSucessResponse, IUpdateResponse } from '../models';
 import { ClassService } from '../services';
 
 @Controller()
@@ -291,5 +291,13 @@ export class ClassController {
 
     await this.classService.deleteClass(classId);
     return res.status(204).send();
+  }
+
+  public async getClassInfo(req: Request, res: Response): Promise<Response<IClassMap>> {
+    if (!req.params.id) throw new BadRequestError('ID da turma não fornecido.');
+    const classId: number = Number(req.params.id);
+
+    const result = await this.classService.getClassInfoById(classId);
+    return res.status(200).json(result);
   }
 }

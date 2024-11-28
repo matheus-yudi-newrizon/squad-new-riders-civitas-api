@@ -1,4 +1,5 @@
 export * from './IAuthJWTRequest';
+export * from './IClassMap';
 export * from './ICreationSucessResponse';
 export * from './ICustomResponse';
 export * from './IEvaluationData';

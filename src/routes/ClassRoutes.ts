@@ -51,4 +51,5 @@ classRoutes.put('/:id', authMiddleware, roleMiddleware(['admin']), validationMid
  */
 classRoutes.delete('/:id', authMiddleware, roleMiddleware(['admin']), (req, res) => classController.deleteClass(req, res));
 
+classRoutes.get('/:id', authMiddleware, roleMiddleware(['admin', 'teacher']), (req, res) => classController.getClassInfo(req, res));
 export default classRoutes;
