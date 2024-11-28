@@ -4,7 +4,7 @@ import { Class, Evaluation, School, Student } from '../entities';
 import { ConflictError, NotFoundError } from '../errors';
 import { CreateStudentDTO, ICreationSucessResponse, IEvaluationData, IEvaluationReviews, IUpdateResponse, UpdateStudentDTO } from '../models';
 import { ClassRepository, EvaluationRepository, SchoolRepository, StudentRepository } from '../repositories';
-import { formatToDDMMYY } from '../utils/formatDate';
+import { formatToDDMMYY } from '../utils/formatToDDMMYY';
 
 @Service()
 export class StudentService {
@@ -233,7 +233,8 @@ export class StudentService {
 
     return evaluations.map(evaluation => ({
       id: evaluation.id,
-      date: formatToDDMMYY(evaluation.createdAt)
+      date: formatToDDMMYY(evaluation.createdAt),
+      label: evaluation.label
     }));
   }
 
@@ -263,6 +264,7 @@ export class StudentService {
     return {
       id: latestEvaluation.id,
       date: formatToDDMMYY(latestEvaluation.createdAt),
+      label: latestEvaluation.label,
       reviews
     };
   }

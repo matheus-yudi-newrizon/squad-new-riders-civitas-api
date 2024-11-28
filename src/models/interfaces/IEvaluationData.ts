@@ -5,4 +5,5 @@ export interface IEvaluationData {
   student?: IEvaluationStudent;
   reviews: IEvaluationReviews;
   teacherComments?: string;
+  label: string;
 }
