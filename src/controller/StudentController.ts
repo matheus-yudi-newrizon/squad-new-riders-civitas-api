@@ -2,7 +2,7 @@ import { Class, School } from 'entities';
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError, NotFoundError } from '../errors';
-import { ICreationSucessResponse, IUpdateResponse, UpdateStudentDTO } from '../models';
+import { ICreationSucessResponse, IStudentMap, IUpdateResponse, UpdateStudentDTO } from '../models';
 import { StudentService } from '../services';
 
 @Controller()
@@ -653,5 +653,13 @@ export class StudentController {
       evaluations,
       latestEvaluation
     });
+  }
+
+  public async getStudentInfo(req: Request, res: Response): Promise<Response<IStudentMap>> {
+    if (!req.params.id) throw new BadRequestError('ID do estudante não fornecido.');
+    const studentId: number = Number(req.params.id);
+
+    const studentInfo: IStudentMap = await this.studentService.getStudentById(studentId);
+    return res.status(200).json(studentInfo);
   }
 }

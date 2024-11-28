@@ -2,9 +2,18 @@ import { cpf } from 'cpf-cnpj-validator';
 import { Service } from 'typedi';
 import { Class, Evaluation, School, Student } from '../entities';
 import { ConflictError, NotFoundError } from '../errors';
-import { CreateStudentDTO, ICreationSucessResponse, IEvaluationData, IEvaluationReviews, IUpdateResponse, UpdateStudentDTO } from '../models';
+import {
+  CreateStudentDTO,
+  ICreationSucessResponse,
+  IEvaluationData,
+  IEvaluationReviews,
+  IStudentMap,
+  IUpdateResponse,
+  UpdateStudentDTO
+} from '../models';
 import { ClassRepository, EvaluationRepository, SchoolRepository, StudentRepository } from '../repositories';
-import { formatToDDMMYY } from '../utils/formatDate';
+import { EntityMapper } from '../services';
+import { formatToDDMMYY } from '../utils';
 
 @Service()
 export class StudentService {
@@ -86,6 +95,12 @@ export class StudentService {
     const student: Student = await this.studentRepository.findById(id);
     if (!student) throw new NotFoundError('Estudante não encontrado');
     return student;
+  }
+
+  public async getStudentById(id: number): Promise<IStudentMap> {
+    const student: Student = await this.verifyStudentId(id);
+    const studentMapped: IStudentMap = EntityMapper.mapStudent(student);
+    return studentMapped;
   }
 
   /**

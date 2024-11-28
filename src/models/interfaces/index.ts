@@ -8,4 +8,5 @@ export * from './ILoginAdminRequest';
 export * from './ILoginResponse';
 export * from './ILoginTeacherRequest';
 export * from './IPayloadLogin';
+export * from './IStudentMap';
 export * from './IUpdateResponse';

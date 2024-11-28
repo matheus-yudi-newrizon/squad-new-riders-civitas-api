@@ -43,4 +43,6 @@ studentRoutes.get('/evaluations/:evaluationId/show', authMiddleware, roleMiddlew
 studentRoutes.get('/students/:studentId/details', authMiddleware, roleMiddleware(['teacher']), (req, res) =>
   studentController.getStudentDetails(req, res)
 );
+
+studentRoutes.get('/:id', authMiddleware, roleMiddleware(['teacher', 'admin']), (req, res) => studentController.getStudentInfo(req, res));
 export default studentRoutes;

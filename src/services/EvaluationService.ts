@@ -3,7 +3,7 @@ import { Evaluation, Student, Teacher } from '../entities';
 import { NotFoundError } from '../errors';
 import { CreateEvaluationDTO, ICreationSucessResponse, IEvaluationData, IEvaluationReviews, IEvaluationStudent } from '../models';
 import { EvaluationRepository, StudentRepository, TeacherRepository } from '../repositories';
-import { EvaluationMapper } from '../services';
+import { EntityMapper } from '../services';
 import { formatToDDMMYY } from '../utils';
 
 @Service()
@@ -99,8 +99,8 @@ export class EvaluationService {
     const evaluation: Evaluation = await this.getEvaluationById(evaluationId);
     const formattedDate: string = formatToDDMMYY(evaluation.createdAt);
 
-    const student: IEvaluationStudent = EvaluationMapper.mapEvaluationStudent(evaluation);
-    const reviews: IEvaluationReviews = EvaluationMapper.mapEvaluationReviews(evaluation);
+    const student: IEvaluationStudent = EntityMapper.mapEvaluationStudent(evaluation);
+    const reviews: IEvaluationReviews = EntityMapper.mapEvaluationReviews(evaluation);
 
     return { id: evaluation.id, date: formattedDate, student, reviews, teacherComments: evaluation.teacherComments };
   }
