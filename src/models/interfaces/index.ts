@@ -10,4 +10,5 @@ export * from './ILoginResponse';
 export * from './ILoginTeacherRequest';
 export * from './IPayloadLogin';
 export * from './IStudentMap';
+export * from './ITeacherMap';
 export * from './IUpdateResponse';

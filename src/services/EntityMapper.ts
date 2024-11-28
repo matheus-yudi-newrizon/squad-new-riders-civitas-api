@@ -1,5 +1,5 @@
-import { Class, Evaluation, Student } from '../entities';
-import { IClassMap, IEvaluationReviews, IEvaluationStudent, IStudentMap } from '../models';
+import { Class, Evaluation, Student, Teacher } from '../entities';
+import { IClassMap, IEvaluationReviews, IEvaluationStudent, IStudentMap, ITeacherMap } from '../models';
 
 export class EntityMapper {
   public static mapEvaluationStudent(evaluation: Evaluation): IEvaluationStudent {
@@ -43,11 +43,6 @@ export class EntityMapper {
       schoolYear: Class.schoolYear,
       schoolShift: Class.schoolShift,
       educationType: Class.educationType,
-      school: {
-        id: Class.school.id,
-        name: Class.school.name,
-        address: Class.school.address
-      },
       students: Class.students.map(student => ({
         id: student.id,
         fullName: student.fullName,
@@ -60,6 +55,19 @@ export class EntityMapper {
           id: teacherClass.teacher.id,
           fullName: teacherClass.teacher.fullName,
           cpf: teacherClass.teacher.cpf
+        }
+      }))
+    };
+  }
+
+  public static mapTeacher(teacher: Teacher): ITeacherMap {
+    return {
+      id: teacher.id,
+      fullName: teacher.fullName,
+      cpf: teacher.cpf,
+      teacherClasses: teacher.teacherClasses.map(teacherClass => ({
+        class: {
+          id: teacherClass.class.id
         }
       }))
     };

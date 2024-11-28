@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError, NotFoundError } from '../errors';
-import { CreateTeacherDTO, ICreationSucessResponse, IUpdateResponse, UpdateTeacherDTO } from '../models';
+import { CreateTeacherDTO, ICreationSucessResponse, ITeacherMap, IUpdateResponse, UpdateTeacherDTO } from '../models';
 import { TeacherService } from '../services';
 
 @Controller()
@@ -396,5 +396,17 @@ export class TeacherController {
     }));
 
     return res.status(200).json(formattedTeachers);
+  }
+
+  public async getTeacherInfo(req: Request, res: Response): Promise<Response<ITeacherMap>> {
+    try {
+      if (!req.params.id) throw new BadRequestError('ID do professor não fornecido.');
+      const teacherId: number = Number(req.params.id);
+      const schoolId: number = res.locals.schoolId;
+      const teacher: ITeacherMap = await this.teacherService.getTeacherInfo(teacherId, schoolId);
+      return res.status(200).json(teacher);
+    } catch (error) {
+      return res.status(400).json({ message: error.message });
+    }
   }
 }

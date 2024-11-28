@@ -4,11 +4,6 @@ export interface IClassMap {
   schoolYear: string;
   schoolShift: string;
   educationType: string;
-  school: {
-    id: number;
-    name: string;
-    address: string;
-  };
   students: {
     id: number;
     fullName: string;

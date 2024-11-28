@@ -16,7 +16,7 @@ export class TeacherRepository {
    * @returns Uma instância de `Teacher` se encontrada, ou `undefined` caso contrário.
    */
   public async findById(teacherId: number): Promise<Teacher | undefined> {
-    return await this.repository.findOne({ where: { id: teacherId } });
+    return await this.repository.findOne({ where: { id: teacherId }, relations: ['teacherClasses.class', 'teacherSchools'] });
   }
 
   /**

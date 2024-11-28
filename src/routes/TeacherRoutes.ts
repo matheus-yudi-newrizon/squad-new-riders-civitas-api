@@ -66,4 +66,5 @@ teacherRoutes.get('/me/classes/:classId/students', authMiddleware, roleMiddlewar
   studentController.listStudentsByClass(req, res)
 );
 
+teacherRoutes.get('/:id', authMiddleware, roleMiddleware(['admin']), (req, res) => teacherController.getTeacherInfo(req, res));
 export default teacherRoutes;
