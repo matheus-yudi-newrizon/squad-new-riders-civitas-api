@@ -399,14 +399,10 @@ export class TeacherController {
   }
 
   public async getTeacherInfo(req: Request, res: Response): Promise<Response<ITeacherMap>> {
-    try {
-      if (!req.params.id) throw new BadRequestError('ID do professor não fornecido.');
-      const teacherId: number = Number(req.params.id);
-      const schoolId: number = res.locals.schoolId;
-      const teacher: ITeacherMap = await this.teacherService.getTeacherInfo(teacherId, schoolId);
-      return res.status(200).json(teacher);
-    } catch (error) {
-      return res.status(400).json({ message: error.message });
-    }
+    if (!req.params.id) throw new BadRequestError('ID do professor não fornecido.');
+    const teacherId: number = Number(req.params.id);
+    const schoolId: number = res.locals.schoolId;
+    const teacher: ITeacherMap = await this.teacherService.getTeacherInfo(teacherId, schoolId);
+    return res.status(200).json(teacher);
   }
 }
