@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError, NotFoundError } from '../errors';
-import { CreateTeacherDTO, ICreationSucessResponse, ITeacherMap, IUpdateResponse, UpdateTeacherDTO } from '../models';
+import { CreateTeacherDTO, ISuccessResponse, ITeacherMap, UpdateTeacherDTO } from '../models';
 import { TeacherService } from '../services';
 
 @Controller()
@@ -55,7 +55,7 @@ export class TeacherController {
    *                   type: string
    *                   example: "O professor já está cadastrado com este CPF ou número de matrícula nesta escola."
    */
-  public async create(req: Request, res: Response): Promise<Response<ICreationSucessResponse>> {
+  public async create(req: Request, res: Response): Promise<Response<ISuccessResponse>> {
     const schoolId: number = res.locals.schoolId;
     const createTeacherDTO: CreateTeacherDTO = req.body;
 
@@ -167,14 +167,14 @@ export class TeacherController {
    *                   type: string
    *                   example: "O número de matrícula já está em uso para esta escola."
    */
-  public async updateTeacher(req: Request, res: Response): Promise<Response<IUpdateResponse>> {
+  public async updateTeacher(req: Request, res: Response): Promise<Response<ISuccessResponse>> {
     const teacherId: number = Number(req.params.id);
     const schoolId: number = res.locals.schoolId;
     const updateTeacherDTO: UpdateTeacherDTO = req.body;
 
     if (!teacherId) throw new BadRequestError('ID do professor não fornecido.');
 
-    const result: IUpdateResponse = await this.teacherService.updateTeacher(teacherId, schoolId, updateTeacherDTO);
+    const result: ISuccessResponse = await this.teacherService.updateTeacher(teacherId, schoolId, updateTeacherDTO);
     return res.status(200).json(result);
   }
 

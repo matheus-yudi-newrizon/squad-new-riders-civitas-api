@@ -2,7 +2,7 @@ import { cpf } from 'cpf-cnpj-validator';
 import { Service } from 'typedi';
 import { Class, School, Teacher, TeacherClass, TeacherSchool } from '../entities';
 import { BadRequestError, ConflictError, NotFoundError } from '../errors';
-import { CreateTeacherDTO, ICreationSucessResponse, ITeacherMap, IUpdateResponse, UpdateTeacherDTO } from '../models';
+import { CreateTeacherDTO, ISuccessResponse, ITeacherMap, UpdateTeacherDTO } from '../models';
 import { ClassRepository, SchoolRepository, TeacherRepository } from '../repositories';
 import { EntityMapper } from './EntityMapper';
 
@@ -26,7 +26,7 @@ export class TeacherService {
    * @throws BadRequestError - Se a escola não for encontrada.
    * @throws ConflictError - Se o número de matrícula já estiver em uso na escola.
    */
-  public async createTeacherWithValidation(createTeacherDTO: CreateTeacherDTO, schoolId: number): Promise<ICreationSucessResponse> {
+  public async createTeacherWithValidation(createTeacherDTO: CreateTeacherDTO, schoolId: number): Promise<ISuccessResponse> {
     const school = await this.verifySchool(schoolId);
 
     const isDuplicateRegistrationNumber = await this.verifyRegistrationNumberDuplicate(createTeacherDTO.registrationNumber, schoolId);
@@ -70,7 +70,7 @@ export class TeacherService {
    * @throws {NotFoundError} Se o professor não for encontrado.
    * @throws {ConflictError} Se o CPF ou número de matrícula já estiver em uso.
    */
-  public async updateTeacher(teacherId: number, schoolId: number, updateTeacherDTO: UpdateTeacherDTO): Promise<IUpdateResponse> {
+  public async updateTeacher(teacherId: number, schoolId: number, updateTeacherDTO: UpdateTeacherDTO): Promise<ISuccessResponse> {
     const teacher: Teacher = await this.getTeacherById(teacherId);
     await this.updateTeacherData(teacher, updateTeacherDTO);
 

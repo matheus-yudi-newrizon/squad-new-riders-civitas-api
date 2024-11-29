@@ -2,7 +2,7 @@ import { Class, School } from 'entities';
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError, NotFoundError } from '../errors';
-import { ICreationSucessResponse, IStudentMap, IUpdateResponse, UpdateStudentDTO } from '../models';
+import { IStudentMap, ISuccessResponse, UpdateStudentDTO } from '../models';
 import { StudentService } from '../services';
 
 @Controller()
@@ -116,7 +116,7 @@ export class StudentController {
    *                   type: string
    *                   example: "Estudante já cadastrado"
    */
-  public async create(req: Request, res: Response): Promise<Response<ICreationSucessResponse>> {
+  public async create(req: Request, res: Response): Promise<Response<ISuccessResponse>> {
     const schoolId: number = res.locals.schoolId;
     const { body: createStudentDTO } = req;
 
@@ -130,7 +130,7 @@ export class StudentController {
     const studentClass: Class = await this.studentService.stringToClass(createStudentDTO.studentClass);
     if (!studentClass) throw new BadRequestError('Turma não encontrada');
 
-    const result: ICreationSucessResponse = await this.studentService.create(createStudentDTO, studentClass, school);
+    const result: ISuccessResponse = await this.studentService.create(createStudentDTO, studentClass, school);
     return res.status(201).json(result);
   }
 
@@ -243,13 +243,13 @@ export class StudentController {
    *                   type: string
    *                   example: "Estudante já cadastrado."
    */
-  public async updateStudent(req: Request, res: Response): Promise<Response<IUpdateResponse>> {
+  public async updateStudent(req: Request, res: Response): Promise<Response<ISuccessResponse>> {
     const studentId: number = Number(req.params.id);
     const updateStudentDTO: UpdateStudentDTO = req.body;
 
     if (!studentId) throw new BadRequestError('ID do estudante não fornecido.');
 
-    const result: IUpdateResponse = await this.studentService.updateStudent(studentId, updateStudentDTO);
+    const result: ISuccessResponse = await this.studentService.updateStudent(studentId, updateStudentDTO);
     return res.status(200).json(result);
   }
 

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError, NotFoundError } from '../errors';
-import { CreateClassDTO, IClassMap, ICreationSucessResponse, IUpdateResponse } from '../models';
+import { CreateClassDTO, IClassMap, ISuccessResponse } from '../models';
 import { ClassService } from '../services';
 
 @Controller()
@@ -35,7 +35,7 @@ export class ClassController {
    *       409:
    *         description: "O apelido da turma já existe para as seleções feitas."
    */
-  public async create(req: Request, res: Response): Promise<Response<ICreationSucessResponse>> {
+  public async create(req: Request, res: Response): Promise<Response<ISuccessResponse>> {
     const schoolId = res.locals.schoolId;
     const createClassDTO: CreateClassDTO = req.body;
 
@@ -205,11 +205,11 @@ export class ClassController {
    *                   example: "Verifique as informações digitadas ou cadastre novos dados."
    */
 
-  public async updateClass(req: Request, res: Response): Promise<Response<IUpdateResponse>> {
+  public async updateClass(req: Request, res: Response): Promise<Response<ISuccessResponse>> {
     const classId: number = Number(req.params.id);
     const updateClassDTO: CreateClassDTO = req.body;
 
-    const result: IUpdateResponse = await this.classService.updateClass(classId, updateClassDTO);
+    const result: ISuccessResponse = await this.classService.updateClass(classId, updateClassDTO);
     return res.status(200).json(result);
   }
 

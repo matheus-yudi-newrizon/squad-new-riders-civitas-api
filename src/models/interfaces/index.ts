@@ -1,6 +1,5 @@
 export * from './IAuthJWTRequest';
 export * from './IClassMap';
-export * from './ICreationSucessResponse';
 export * from './ICustomResponse';
 export * from './IEvaluationData';
 export * from './IEvaluationReviews';
@@ -10,5 +9,5 @@ export * from './ILoginResponse';
 export * from './ILoginTeacherRequest';
 export * from './IPayloadLogin';
 export * from './IStudentMap';
+export * from './ISuccessResponse';
 export * from './ITeacherMap';
-export * from './IUpdateResponse';

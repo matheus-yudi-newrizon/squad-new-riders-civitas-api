@@ -2,15 +2,7 @@ import { cpf } from 'cpf-cnpj-validator';
 import { Service } from 'typedi';
 import { Class, Evaluation, School, Student } from '../entities';
 import { ConflictError, NotFoundError } from '../errors';
-import {
-  CreateStudentDTO,
-  ICreationSucessResponse,
-  IEvaluationData,
-  IEvaluationReviews,
-  IStudentMap,
-  IUpdateResponse,
-  UpdateStudentDTO
-} from '../models';
+import { CreateStudentDTO, IEvaluationData, IEvaluationReviews, IStudentMap, ISuccessResponse, UpdateStudentDTO } from '../models';
 import { ClassRepository, EvaluationRepository, SchoolRepository, StudentRepository } from '../repositories';
 import { EntityMapper } from '../services';
 import { formatToDDMMYY } from '../utils';
@@ -149,7 +141,7 @@ export class StudentService {
    * @throws {ConflictError} Se for detectada duplicidade de documento ou número de matrícula.
    * @returns Um objeto contendo uma mensagem de sucesso.
    */
-  public async updateStudent(id: number, updateStudentDTO: UpdateStudentDTO): Promise<IUpdateResponse> {
+  public async updateStudent(id: number, updateStudentDTO: UpdateStudentDTO): Promise<ISuccessResponse> {
     const studentToUpdate: Student = await this.verifyStudentId(id);
     const updatedData: Partial<Student> = await this.validateStudentUpdate(id, updateStudentDTO, studentToUpdate);
     const updatedStudent: Student = Object.assign(studentToUpdate, updatedData);
@@ -165,7 +157,7 @@ export class StudentService {
    * @param school - Escola do estudante.
    * @returns Um objeto contendo uma mensagem de sucesso.
    */
-  public async create(createStudentDTO: CreateStudentDTO, studentClass: Class, school: School): Promise<ICreationSucessResponse> {
+  public async create(createStudentDTO: CreateStudentDTO, studentClass: Class, school: School): Promise<ISuccessResponse> {
     const student: Student = this.studentRepository.createStudent({
       ...createStudentDTO,
       school,
