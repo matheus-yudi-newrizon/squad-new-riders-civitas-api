@@ -72,6 +72,7 @@ export class AuthService {
         studentId: entity.id,
         registrationNumber: entity.registrationNumber,
         classId: entity.studentClass.id,
+        className: entity.studentClass.name,
         schoolId: entity.school.id,
         role: 'guardian'
       };

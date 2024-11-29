@@ -15,11 +15,11 @@ studentRoutes.post('/register', authMiddleware, roleMiddleware(['admin']), valid
 
 studentRoutes.post('/guardian-login', (req, res) => authController.guardianLogin(req, res));
 
-studentRoutes.get('/evaluations/:evaluationId/show', authMiddleware, roleMiddleware(['teacher', 'admin']), (req, res) =>
+studentRoutes.get('/evaluations/:evaluationId/show', authMiddleware, roleMiddleware(['teacher', 'admin', 'guardian']), (req, res) =>
   evaluationController.getEvaluation(req, res)
 );
 
-studentRoutes.get('/students/:studentId/details', authMiddleware, roleMiddleware(['teacher', 'admin']), (req, res) =>
+studentRoutes.get('/students/:studentId/details', authMiddleware, roleMiddleware(['teacher', 'admin', 'guardian']), (req, res) =>
   studentController.getStudentDetails(req, res)
 );
 
