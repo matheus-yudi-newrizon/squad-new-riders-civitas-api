@@ -35,7 +35,7 @@ export class EvaluationController {
    *                   type: string
    *                   example: "Avaliação criada com sucesso."
    *                 label:
-   *                     type: string
+   *                    type: string
    *                    example: "PDI23_11_2024_10h15"
    *       400:
    *         description: Dados faltando ou incorretos.
