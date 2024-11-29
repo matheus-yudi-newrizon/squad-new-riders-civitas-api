@@ -165,6 +165,61 @@ export class AuthController {
     return res.status(200).json(responseLoginDTO);
   }
 
+  /**
+   * @swagger
+   * /students/guardian-login:
+   *   post:
+   *     summary: Login de responsável
+   *     description: "Este endpoint permite que o responsável de um estudante faça login utilizando o número de matrícula do estudante. Retorna um token JWT para autenticação."
+   *     tags: [Students]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - registrationNumber
+   *             properties:
+   *               registrationNumber:
+   *                 type: string
+   *                 description: O número de matrícula do estudante.
+   *                 example: "202422299999"
+   *     responses:
+   *       200:
+   *         description: Login bem-sucedido
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Login bem-sucedido"
+   *                 token:
+   *                   type: string
+   *                   example: "seu_jwt_token"
+   *       400:
+   *         description: Campos obrigatórios não preenchidos
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Por favor, preencha os campos corretamente"
+   *       404:
+   *         description: Estudante não encontrado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Estudante não encontrado"
+   */
   public async guardianLogin(req: Request, res: Response): Promise<Response<ILoginResponse>> {
     const { registrationNumber } = req.body;
     if (!registrationNumber) throw new BadRequestError('Por favor, preencha os campos corretamente');

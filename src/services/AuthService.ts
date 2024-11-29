@@ -39,7 +39,7 @@ export class AuthService {
   /**
    * Busca o número de matrícula de um professor.
    *
-   * @param teacherDTO - Objeto contendo o número de matrícula do professor (`ILoginTeacherRequest`).
+   * @param teacherDTO - Objeto contendo o número de matrícula do professor (`ILoginRequest`).
    * @returns A entidade `TeacherSchool` correspondente ao número de matrícula ou `undefined` caso não encontre.
    */
   public async findTeacherByRegistrationNumber(teacherDTO: ILoginRequest): Promise<TeacherSchool | undefined> {
@@ -47,13 +47,19 @@ export class AuthService {
     return teacher || undefined;
   }
 
+  /**
+   * Busca o número de matrícula de um professor.
+   *
+   * @param teacherDTO - Objeto contendo o número de matrícula do professor (`ILoginRequest`).
+   * @returns A entidade `Student` correspondente ao número de matrícula.
+   */
   public async findStudentByRegistrationNumber(studentDTO: ILoginRequest): Promise<Student> {
     return await this.studentRepository.findByRegistrationNumber(studentDTO.registrationNumber);
   }
   /**
    * Gera o payload necessário para autenticação, com base na entidade fornecida.
    *
-   * @param entity - Instância de `User` ou `TeacherSchool`.
+   * @param entity - Instância de `User, `TeacherSchool` ou `Student`.
    * @returns Um objeto `IPayloadLogin` com os dados necessários para o payload JWT.
    */
   public generatePayload(entity: User | TeacherSchool | Student): IPayloadLogin {
