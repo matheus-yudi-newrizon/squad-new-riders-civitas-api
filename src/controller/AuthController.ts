@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import validator from 'validator';
-import { TeacherSchool, User } from '../entities';
+import { Student, TeacherSchool, User } from '../entities';
 import { BadRequestError, UnauthorizedError } from '../errors';
-import { ILoginAdminRequest, ILoginResponse, ILoginTeacherRequest, IPayloadLogin } from '../models';
+import { ILoginAdminRequest, ILoginRequest, ILoginResponse, IPayloadLogin } from '../models';
 import { AuthService } from '../services';
 
 @Controller()
@@ -152,15 +152,28 @@ export class AuthController {
    */
   public async teacherLogin(req: Request, res: Response): Promise<Response<ILoginResponse>> {
     const { registrationNumber } = req.body;
-    const loginRequestDTO: ILoginTeacherRequest = { registrationNumber };
+    const loginRequestDTO: ILoginRequest = { registrationNumber };
 
     if (!registrationNumber) throw new BadRequestError('Por favor, preencha os campos corretamente');
 
-    const teacher: TeacherSchool = await this.authService.findRegistrationNumber(loginRequestDTO);
+    const teacher: TeacherSchool = await this.authService.findTeacherByRegistrationNumber(loginRequestDTO);
     if (!teacher) throw new UnauthorizedError('Matrícula não encontrada. Verifique seus dados e tente novamente');
 
     const teacherPayload: IPayloadLogin = this.authService.generatePayload(teacher);
     const responseLoginDTO: ILoginResponse = await this.authService.generateAccessToken(teacherPayload);
+
+    return res.status(200).json(responseLoginDTO);
+  }
+
+  public async guardianLogin(req: Request, res: Response): Promise<Response<ILoginResponse>> {
+    const { registrationNumber } = req.body;
+    if (!registrationNumber) throw new BadRequestError('Por favor, preencha os campos corretamente');
+    const loginRequestDTO: ILoginRequest = { registrationNumber };
+
+    const student: Student = await this.authService.findStudentByRegistrationNumber(loginRequestDTO);
+
+    const studentPayload: IPayloadLogin = this.authService.generatePayload(student);
+    const responseLoginDTO: ILoginResponse = await this.authService.generateAccessToken(studentPayload);
 
     return res.status(200).json(responseLoginDTO);
   }

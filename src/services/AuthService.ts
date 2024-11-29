@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
-import { TeacherSchool, User } from '../entities';
-import { ILoginAdminRequest, ILoginResponse, ILoginTeacherRequest, IPayloadLogin } from '../models';
-import { AdminRepository, TeacherRepository } from '../repositories';
+import { Student, TeacherSchool, User } from '../entities';
+import { ILoginAdminRequest, ILoginRequest, ILoginResponse, IPayloadLogin } from '../models';
+import { AdminRepository, StudentRepository, TeacherRepository } from '../repositories';
 import { JwtService } from './JwTService';
 
 @Service()
@@ -9,7 +9,8 @@ export class AuthService {
   constructor(
     private readonly adminRepository: AdminRepository,
     private readonly jwtService: JwtService,
-    private readonly teacherRepository: TeacherRepository
+    private readonly teacherRepository: TeacherRepository,
+    private readonly studentRepository: StudentRepository
   ) {}
 
   /**
@@ -41,22 +42,27 @@ export class AuthService {
    * @param teacherDTO - Objeto contendo o número de matrícula do professor (`ILoginTeacherRequest`).
    * @returns A entidade `TeacherSchool` correspondente ao número de matrícula ou `undefined` caso não encontre.
    */
-  public async findRegistrationNumber(teacherDTO: ILoginTeacherRequest): Promise<TeacherSchool | undefined> {
+  public async findTeacherByRegistrationNumber(teacherDTO: ILoginRequest): Promise<TeacherSchool | undefined> {
     const teacher: TeacherSchool = await this.teacherRepository.findByRegistrationNumber(teacherDTO.registrationNumber);
     return teacher || undefined;
   }
 
+  public async findStudentByRegistrationNumber(studentDTO: ILoginRequest): Promise<Student> {
+    return await this.studentRepository.findByRegistrationNumber(studentDTO.registrationNumber);
+  }
   /**
    * Gera o payload necessário para autenticação, com base na entidade fornecida.
    *
    * @param entity - Instância de `User` ou `TeacherSchool`.
    * @returns Um objeto `IPayloadLogin` com os dados necessários para o payload JWT.
    */
-  public generatePayload(entity: User | TeacherSchool): IPayloadLogin {
+  public generatePayload(entity: User | TeacherSchool | Student): IPayloadLogin {
     if (entity instanceof User)
       return { id: entity.id, email: entity.email, schoolId: entity.school.id, schoolName: entity.school.name, role: 'admin' };
     if (entity instanceof TeacherSchool)
       return { teacherId: entity.teacher.id, registrationNumber: entity.registrationNumber, schoolId: entity.school.id, role: 'teacher' };
+    if (entity instanceof Student)
+      return { studentId: entity.id, registrationNumber: entity.registrationNumber, schoolId: entity.school.id, role: 'guardian' };
   }
 
   /**
