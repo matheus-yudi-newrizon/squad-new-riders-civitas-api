@@ -253,7 +253,8 @@ export class StudentService {
 
     return evaluations.map(evaluation => ({
       id: evaluation.id,
-      date: formatToDDMMYY(evaluation.createdAt)
+      date: formatToDDMMYY(evaluation.createdAt),
+      label: evaluation.label
     }));
   }
 
@@ -283,6 +284,7 @@ export class StudentService {
     return {
       id: latestEvaluation.id,
       date: formatToDDMMYY(latestEvaluation.createdAt),
+      label: latestEvaluation.label,
       reviews
     };
   }

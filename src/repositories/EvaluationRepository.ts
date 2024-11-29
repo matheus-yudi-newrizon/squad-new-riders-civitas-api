@@ -3,29 +3,22 @@ import { Repository as TypeORMRepository } from 'typeorm';
 import { MysqlDataSource } from '../config/database';
 import { Evaluation } from '../entities';
 import { NotFoundError } from '../errors';
+import { generateLabel } from '../utils/generateLabel';
 
 @Repository()
 export class EvaluationRepository {
   private repository: TypeORMRepository<Evaluation> = MysqlDataSource.getRepository(Evaluation);
 
   /**
-   * Cria uma instância de avaliação com os dados fornecidos, mas não a salva no banco de dados.
+   * Cria e salva uma avaliação no banco de dados em uma única operação.
    *
-   * @param evaluationData - Dados parciais da avaliação que será criada.
-   * @returns Uma instância de `Evaluation` criada, mas não persistida.
+   * @param evaluationData - Dados parciais da avaliação que será criada e salva.
+   * @returns Uma `Promise` contendo a instância de `Evaluation` após ser salva no banco de dados.
    */
-  public createEvaluation(evaluationData: Partial<Evaluation>): Evaluation {
-    return this.repository.create(evaluationData);
-  }
-
-  /**
-   * Salva uma avaliação no banco de dados.
-   *
-   * @param evaluation - A instância da avaliação a ser salva.
-   * @returns A instância de `Evaluation` após ser salva no banco de dados.
-   */
-  public async saveEvaluation(evaluation: Evaluation): Promise<Evaluation> {
-    return await this.repository.save(evaluation);
+  public createAndSaveEvaluation(evaluationData: Partial<Evaluation>): Promise<Evaluation> {
+    evaluationData.label = generateLabel(new Date());
+    const evaluation = this.repository.create(evaluationData);
+    return this.repository.save(evaluation);
   }
 
   /**

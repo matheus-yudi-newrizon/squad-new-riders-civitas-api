@@ -52,12 +52,14 @@ export class EvaluationService {
    * @returns Um objeto contendo uma mensagem de sucesso.
    * @throws {NotFoundError} Se o estudante ou professor não forem encontrados.
    */
-  public async createEvaluation(createEvaluationDTO: CreateEvaluationDTO, teacherId: number): Promise<ICreationSucessResponse> {
+  public async createEvaluation(
+    createEvaluationDTO: CreateEvaluationDTO,
+    teacherId: number
+  ): Promise<ICreationSucessResponse & { label: string; id: number }> {
     const student = await this.verifyStudent(createEvaluationDTO.studentId);
-
     const teacher = await this.verifyTeacher(teacherId);
 
-    const evaluation = this.evaluationRepository.createEvaluation({
+    const evaluation = await this.evaluationRepository.createAndSaveEvaluation({
       student,
       teacher,
       teacherId: teacher.id,
@@ -70,9 +72,7 @@ export class EvaluationService {
       teacherComments: createEvaluationDTO.teacherComments
     });
 
-    await this.evaluationRepository.saveEvaluation(evaluation);
-
-    return { message: 'Avaliação criada com sucesso.' };
+    return { message: 'Avaliação criada com sucesso.', label: evaluation.label, id: evaluation.id };
   }
 
   /**
@@ -102,6 +102,6 @@ export class EvaluationService {
     const student: IEvaluationStudent = EntityMapper.mapEvaluationStudent(evaluation);
     const reviews: IEvaluationReviews = EntityMapper.mapEvaluationReviews(evaluation);
 
-    return { id: evaluation.id, date: formattedDate, student, reviews, teacherComments: evaluation.teacherComments };
+    return { id: evaluation.id, date: formattedDate, label: evaluation.label, student, reviews, teacherComments: evaluation.teacherComments };
   }
 }

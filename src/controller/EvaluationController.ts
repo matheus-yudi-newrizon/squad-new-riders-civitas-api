@@ -34,6 +34,9 @@ export class EvaluationController {
    *                 message:
    *                   type: string
    *                   example: "Avaliação criada com sucesso."
+   *                 label:
+   *                     type: string
+   *                    example: "PDI23_11_2024_10h15"
    *       400:
    *         description: Dados faltando ou incorretos.
    *         content:
@@ -112,6 +115,9 @@ export class EvaluationController {
    *                   type: string
    *                   format: date
    *                   example: "22/11/24"
+   *                 label:
+   *                   type: string
+   *                   example: "PDI22_11_2024_10h15"
    *                 student:
    *                   type: object
    *                   properties:

@@ -37,6 +37,9 @@ export class Evaluation {
   @Column({ type: 'varchar', length: 3000, nullable: false })
   teacherComments: string;
 
+  @Column({ type: 'varchar', nullable: false })
+  label: string;
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 }
