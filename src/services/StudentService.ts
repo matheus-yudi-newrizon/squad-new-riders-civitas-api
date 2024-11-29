@@ -273,13 +273,7 @@ export class StudentService {
       return null;
     }
 
-    const reviews: IEvaluationReviews = {
-      selfAwareness: latestEvaluation.selfAwareness,
-      empathy: latestEvaluation.empathy,
-      communication: latestEvaluation.communication,
-      teamwork: latestEvaluation.teamwork,
-      autonomy: latestEvaluation.autonomy
-    };
+    const reviews: IEvaluationReviews = EntityMapper.mapEvaluationReviews(latestEvaluation);
 
     return {
       id: latestEvaluation.id,
