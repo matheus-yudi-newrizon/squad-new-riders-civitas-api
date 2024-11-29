@@ -68,7 +68,13 @@ export class AuthService {
     if (entity instanceof TeacherSchool)
       return { teacherId: entity.teacher.id, registrationNumber: entity.registrationNumber, schoolId: entity.school.id, role: 'teacher' };
     if (entity instanceof Student)
-      return { studentId: entity.id, registrationNumber: entity.registrationNumber, schoolId: entity.school.id, role: 'guardian' };
+      return {
+        studentId: entity.id,
+        registrationNumber: entity.registrationNumber,
+        classId: entity.studentClass.id,
+        schoolId: entity.school.id,
+        role: 'guardian'
+      };
   }
 
   /**
