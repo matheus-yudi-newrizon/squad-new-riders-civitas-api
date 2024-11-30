@@ -1,5 +1,6 @@
 import { Service } from 'typedi';
 import { Student, TeacherSchool, User } from '../entities';
+import { NotFoundError } from '../errors';
 import { ILoginAdminRequest, ILoginRequest, ILoginResponse, IPayloadLogin } from '../models';
 import { AdminRepository, StudentRepository, TeacherRepository } from '../repositories';
 import { JwtService } from './JwTService';
@@ -54,7 +55,9 @@ export class AuthService {
    * @returns A entidade `Student` correspondente ao número de matrícula.
    */
   public async findStudentByRegistrationNumber(studentDTO: ILoginRequest): Promise<Student> {
-    return await this.studentRepository.findByRegistrationNumber(studentDTO.registrationNumber);
+    const student: Student = await this.studentRepository.findByRegistrationNumber(studentDTO.registrationNumber);
+    if (!student) throw new NotFoundError('Estudante não encontrado');
+    return student;
   }
   /**
    * Gera o payload necessário para autenticação, com base na entidade fornecida.

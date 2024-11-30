@@ -50,13 +50,10 @@ export class StudentRepository {
    * Busca um estudante pelo número de matrícula.
    *
    * @param registrationNumber - O número de matrícula do estudante.
-   * @throws NotFoundError se o estudante não for encontrado.
    * @returns Uma instância de `Student` se encontrada, ou `undefined` caso contrário.
    */
-  public async findByRegistrationNumber(registrationNumber: string): Promise<Student | undefined> {
-    const student = await this.repository.findOne({ where: { registrationNumber }, relations: ['school', 'studentClass'] });
-    if (!student) throw new NotFoundError('Estudante não encontrado');
-    return student;
+  public findByRegistrationNumber(registrationNumber: string): Promise<Student | undefined> {
+    return this.repository.findOne({ where: { registrationNumber } });
   }
 
   /**

@@ -226,7 +226,6 @@ export class AuthController {
     const loginRequestDTO: ILoginRequest = { registrationNumber };
 
     const student: Student = await this.authService.findStudentByRegistrationNumber(loginRequestDTO);
-
     const studentPayload: IPayloadLogin = this.authService.generatePayload(student);
     const responseLoginDTO: ILoginResponse = await this.authService.generateAccessToken(studentPayload);
 
