@@ -1,10 +1,11 @@
-import { ArrayNotEmpty, IsAlphanumeric, IsArray, IsInt, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { ArrayNotEmpty, IsAlphanumeric, IsArray, IsInt, IsNotEmpty, IsString, Matches, MaxLength } from 'class-validator';
 import { IsCPF, IsValidClass } from '../../utils';
 
 export class CreateTeacherDTO {
   @IsNotEmpty({ message: 'O campo nome é obrigatório.' })
   @IsString({ message: 'O campo nome deve ser uma string.' })
   @MaxLength(50, { message: 'O campo nome deve ter no máximo 50 caracteres.' })
+  @Matches(/^[a-zA-ZÀ-ÿ\s]+$/, { message: 'Por favor, insira um nome válido' })
   readonly fullName: string;
 
   @IsNotEmpty({ message: 'O campo CPF é obrigatório.' })

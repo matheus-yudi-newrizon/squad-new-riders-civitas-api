@@ -50,9 +50,15 @@ export class ClassController {
    * /classes:
    *   get:
    *     summary: Lista todas as turmas associadas a uma escola com filtros opcionais
-   *     description: "Permite listar todas as turmas associadas à escola do administrador com filtros opcionais por ano, turno e tipo de ensino."
+   *     description: "Permite listar todas as turmas associadas à escola do administrador com filtros opcionais por nome, ano, turno e tipo de ensino."
    *     tags: [Classes]
    *     parameters:
+   *       - in: query
+   *         name: name
+   *         required: false
+   *         schema:
+   *           type: string
+   *         description: "Nome para filtrar as turmas"
    *       - in: query
    *         name: schoolYear
    *         required: false
@@ -78,13 +84,14 @@ export class ClassController {
    *         description: "Nenhuma turma encontrada com os critérios fornecidos."
    */
   public async listClasses(req: Request, res: Response): Promise<Response> {
-    const { schoolYear, educationType, schoolShift } = req.query;
+    const { schoolYear, educationType, schoolShift, name } = req.query;
     const schoolId = res.locals.schoolId;
 
     const classes = await this.classService.listClasses({
       schoolYear: schoolYear as string,
       educationType: educationType as string,
       schoolShift: schoolShift as string,
+      name: name as string,
       schoolId
     });
 

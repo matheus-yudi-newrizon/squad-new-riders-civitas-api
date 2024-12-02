@@ -106,7 +106,13 @@ export class ClassService {
    * @param filters - Filtros opcionais para listar as turmas.
    * @returns Uma lista de turmas que atendem aos filtros fornecidos.
    */
-  public async listClasses(filters: { schoolYear?: string; educationType?: string; schoolShift?: string; schoolId: number }): Promise<Class[]> {
+  public async listClasses(filters: {
+    schoolYear?: string;
+    educationType?: string;
+    schoolShift?: string;
+    name?: string;
+    schoolId: number;
+  }): Promise<Class[]> {
     return await this.classRepository.findClassesWithFilters(filters);
   }
 
