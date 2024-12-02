@@ -228,11 +228,12 @@ export class TeacherService {
    * associados à escola com as turmas em que cada professor foi cadastrado.
    *
    * @param schoolId - ID da escola.
+   * @param fullName - Nome do professor a ser buscado.
    * @returns Uma lista de professores com suas turmas associadas.
    * @throws NotFoundError - Se nenhum professor for encontrado para a escola.
    */
-  public async listTeachersBySchoolWithClasses(schoolId: number): Promise<Teacher[]> {
-    const teachers = await this.teacherRepository.findTeachersBySchoolIdWithClasses(schoolId);
+  public async listTeachersBySchoolWithClasses(schoolId: number, fullName?: string): Promise<Teacher[]> {
+    const teachers = await this.teacherRepository.findTeachersBySchoolIdWithClasses(schoolId, fullName);
     if (!teachers.length) throw new NotFoundError('Nenhum professor encontrado para a escola especificada.');
     return teachers;
   }

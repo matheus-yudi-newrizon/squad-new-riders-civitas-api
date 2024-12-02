@@ -300,7 +300,7 @@ export class TeacherController {
 
   /**
    * @swagger
-   * /teachers:
+   * /teachers/:
    *   get:
    *     summary: Busca um professor pelo token
    *     description: "Este endpoint permite buscar as informações de um professor específico pelo seu token JWT. O token é decodificado, e o `teacherId` é extraído para realizar a busca."
@@ -342,6 +342,13 @@ export class TeacherController {
    *     tags: [Teachers]
    *     security:
    *       - bearerAuth: []
+   *     parameters:
+   *       - in: query
+   *         name: fullName
+   *         required: false
+   *         schema:
+   *           type: string
+   *         description: "Filtra os professores pelo nome. Se fornecido, apenas os professores cujo nome contém o valor especificado serão retornados."
    *     responses:
    *       200:
    *         description: Lista de professores com suas turmas.
@@ -380,10 +387,10 @@ export class TeacherController {
    */
   public async listTeachersBySchool(req: Request, res: Response): Promise<Response> {
     const schoolId = res.locals.schoolId;
-
+    const fullName = req.query.fullName as string;
     if (!schoolId) throw new BadRequestError('ID da escola não encontrado no token.');
 
-    const teachers = await this.teacherService.listTeachersBySchoolWithClasses(schoolId);
+    const teachers = await this.teacherService.listTeachersBySchoolWithClasses(schoolId, fullName);
 
     const formattedTeachers = teachers.map(teacher => ({
       id: teacher.id,
@@ -402,8 +409,8 @@ export class TeacherController {
    * @swagger
    * /teachers/{id}:
    *   get:
-   *     summary: Busca um professor pelo token
-   *     description: "Este endpoint permite buscar as informações de um professor específico pelo seu token JWT. O token é decodificado, e o `teacherId` é extraído para realizar a busca."
+   *     summary: Busca um professor pelo id
+   *     description: "Este endpoint permite buscar as informações de um professor específico pelo seu id."
    *     tags: [Teachers]
    *     security:
    *       - bearerAuth: []
