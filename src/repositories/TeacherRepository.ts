@@ -2,6 +2,7 @@ import { Service as Repository } from 'typedi';
 import { Repository as TypeORMRepository } from 'typeorm';
 import { MysqlDataSource } from '../config/database';
 import { Teacher, TeacherClass, TeacherSchool } from '../entities';
+import { NotFoundError } from '../errors';
 
 @Repository()
 export class TeacherRepository {
@@ -15,8 +16,10 @@ export class TeacherRepository {
    * @param teacherId - ID do professor a ser buscado.
    * @returns Uma instância de `Teacher` se encontrada, ou `undefined` caso contrário.
    */
-  public async findById(teacherId: number): Promise<Teacher | undefined> {
-    return await this.repository.findOne({ where: { id: teacherId } });
+  public findById(teacherId: number): Promise<Teacher | undefined> {
+    const teacher = this.repository.findOne({ where: { id: teacherId }, relations: ['teacherClasses.class', 'teacherSchools'] });
+    if (!teacher) throw new NotFoundError('Professor não encontrado.');
+    return teacher;
   }
 
   /**
@@ -65,8 +68,8 @@ export class TeacherRepository {
    * @param cpf - O CPF do professor.
    * @returns Uma instância de `Teacher` se encontrada, ou `undefined` caso contrário.
    */
-  public async findByCpf(cpf: string): Promise<Teacher | undefined> {
-    return await this.repository.findOne({ where: { cpf } });
+  public findByCpf(cpf: string): Promise<Teacher | undefined> {
+    return this.repository.findOne({ where: { cpf } });
   }
 
   /**

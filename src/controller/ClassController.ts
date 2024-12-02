@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError, NotFoundError } from '../errors';
-import { CreateClassDTO, ICreationSucessResponse, IUpdateResponse } from '../models';
+import { CreateClassDTO, IClassMap, ICreationSucessResponse, IUpdateResponse } from '../models';
 import { ClassService } from '../services';
 
 @Controller()
@@ -291,5 +291,141 @@ export class ClassController {
 
     await this.classService.deleteClass(classId);
     return res.status(204).send();
+  }
+
+  /**
+   * @swagger
+   * /classes/{id}:
+   *   get:
+   *     summary: Busca as informações de uma turma pelo ID
+   *     description: "Este endpoint permite buscar as informações de uma turma específica utilizando seu ID."
+   *     tags: [Classes]
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         description: O ID da turma a ser buscada
+   *         schema:
+   *           type: integer
+   *           example: 3
+   *     responses:
+   *       200:
+   *         description: Informações da turma.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 id:
+   *                   type: integer
+   *                   example: 3
+   *                 name:
+   *                   type: string
+   *                   example: "1 ano 45"
+   *                 schoolYear:
+   *                   type: string
+   *                   example: "2nd year"
+   *                 schoolShift:
+   *                   type: string
+   *                   example: "Afternoon"
+   *                 educationType:
+   *                   type: string
+   *                   example: "Preschool"
+   *                 students:
+   *                   type: array
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       id:
+   *                         type: integer
+   *                         example: 21
+   *                       fullName:
+   *                         type: string
+   *                         example: "Amora"
+   *                       document:
+   *                         type: string
+   *                         example: "864.786.880-38"
+   *                       registrationNumber:
+   *                         type: string
+   *                         example: "55422"
+   *                       cpfGuardian:
+   *                         type: string
+   *                         example: "987.654.321-00"
+   *                 teacherClasses:
+   *                   type: array
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       teacher:
+   *                         type: object
+   *                         properties:
+   *                           id:
+   *                             type: integer
+   *                             example: 12
+   *                           fullName:
+   *                             type: string
+   *                             example: "Prof teste"
+   *                           cpf:
+   *                             type: string
+   *                             example: "477.075.130-37"
+   *       400:
+   *         description: ID da turma não fornecido
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "ID da turma não fornecido."
+   *       404:
+   *         description: Turma não encontrada
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Turma não encontrada."
+   *       401:
+   *         description: Acesso não autorizado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *             examples:
+   *               tokenAusente:
+   *                 summary: Token ausente
+   *                 value:
+   *                   message: "Token não consta na requisição."
+   *               tokenInvalidoOuExpirado:
+   *                 summary: Token inválido ou expirado
+   *                 value:
+   *                   message: "Token inválido ou expirado."
+   *               tokenInvalido:
+   *                 summary: Token inválido
+   *                 value:
+   *                   message: "Token inválido."
+   *       403:
+   *         description: "Você não tem permissão para acessar este recurso"
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 error:
+   *                   type: string
+   *                   example: "Você não tem permissão para acessar este recurso"
+   */
+  public async getClassInfo(req: Request, res: Response): Promise<Response<IClassMap>> {
+    if (!req.params.id) throw new BadRequestError('ID da turma não fornecido.');
+    const classId: number = Number(req.params.id);
+
+    const result = await this.classService.getClassInfoById(classId);
+    return res.status(200).json(result);
   }
 }

@@ -2,7 +2,7 @@ import { Class, School } from 'entities';
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError, NotFoundError } from '../errors';
-import { ICreationSucessResponse, IUpdateResponse, UpdateStudentDTO } from '../models';
+import { ICreationSucessResponse, IStudentMap, IUpdateResponse, UpdateStudentDTO } from '../models';
 import { StudentService } from '../services';
 
 @Controller()
@@ -559,5 +559,216 @@ export class StudentController {
     if (students.length === 0) throw new NotFoundError('Nenhum estudante encontrado com os critérios fornecidos.');
 
     return res.status(200).json(students);
+  }
+
+  /**
+   * @swagger
+   * /students/{studentId}/details:
+   *   get:
+   *     summary: Obtém detalhes do estudante e histórico de avaliações
+   *     description: "Este endpoint retorna as informações do estudante, incluindo o nome, turma e o histórico de avaliações. Requer um token JWT no cabeçalho Authorization no formato 'Bearer {token}'."
+   *     tags: [Students]
+   *     security:
+   *       - bearerAuth: []
+   *     parameters:
+   *       - in: path
+   *         name: studentId
+   *         description: ID do estudante para obter informações e histórico
+   *         required: true
+   *         schema:
+   *           type: integer
+   *     responses:
+   *       200:
+   *         description: Informações e histórico do estudante retornados com sucesso
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 studentInfo:
+   *                   type: object
+   *                   properties:
+   *                     fullName:
+   *                       type: string
+   *                       example: "João da Silva"
+   *                     className:
+   *                       type: string
+   *                       example: "Turma A"
+   *                 evaluations:
+   *                   type: array
+   *                   items:
+   *                     type: object
+   *                     properties:
+   *                       id:
+   *                         type: integer
+   *                         example: 1
+   *                       date:
+   *                         type: string
+   *                         format: date
+   *                         example: "22/11/2024"
+   *                 latestEvaluation:
+   *                   type: object
+   *                   properties:
+   *                     id:
+   *                       type: integer
+   *                       example: 5
+   *                     date:
+   *                       type: string
+   *                       format: date
+   *                       example: "22/11/2024"
+   *       401:
+   *         description: Acesso não autorizado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Token não consta na requisição."
+   *       404:
+   *         description: Estudante ou avaliações não encontrados
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Estudante não encontrado."
+   */
+  public async getStudentDetails(req: Request, res: Response): Promise<Response> {
+    const studentId: number = Number(req.params.studentId);
+
+    const studentInfo = await this.studentService.getStudentInfo(studentId);
+    if (!studentInfo) {
+      throw new NotFoundError('Estudante não encontrado.');
+    }
+
+    const evaluations = await this.studentService.getStudentEvaluations(studentId);
+
+    const latestEvaluation = evaluations.length > 0 ? await this.studentService.getLatestEvaluation(studentId) : null;
+    return res.status(200).json({
+      studentInfo,
+      evaluations,
+      latestEvaluation
+    });
+  }
+
+  /**
+   * @swagger
+   * /students/{id}:
+   *   get:
+   *     summary: Busca as informações de um estudante pelo ID
+   *     description: "Este endpoint permite buscar as informações de um estudante específico utilizando seu ID."
+   *     tags: [Students]
+   *     parameters:
+   *       - in: path
+   *         name: id
+   *         required: true
+   *         description: O ID do estudante a ser buscado
+   *         schema:
+   *           type: integer
+   *           example: 1
+   *     responses:
+   *       200:
+   *         description: Informações do estudante.
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 id:
+   *                   type: integer
+   *                   example: 1
+   *                 fullName:
+   *                   type: string
+   *                   example: "Lolla"
+   *                 document:
+   *                   type: string
+   *                   example: "343.669.810-50"
+   *                 registrationNumber:
+   *                   type: string
+   *                   example: "20242299999"
+   *                 cpfGuardian:
+   *                   type: string
+   *                   example: "987.654.321-00"
+   *                 studentClass:
+   *                   type: object
+   *                   properties:
+   *                     id:
+   *                       type: integer
+   *                       example: 1
+   *                     name:
+   *                       type: string
+   *                       example: "1 ano 32"
+   *                     schoolYear:
+   *                       type: string
+   *                       example: "3rd year"
+   *                     schoolShift:
+   *                       type: string
+   *                       example: "Morning"
+   *                     educationType:
+   *                       type: string
+   *                       example: "Nursery"
+   *       401:
+   *         description: Acesso não autorizado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *             examples:
+   *               tokenAusente:
+   *                 summary: Token ausente
+   *                 value:
+   *                   message: "Token não consta na requisição."
+   *               tokenInvalidoOuExpirado:
+   *                 summary: Token inválido ou expirado
+   *                 value:
+   *                   message: "Token inválido ou expirado."
+   *               tokenInvalido:
+   *                 summary: Token inválido
+   *                 value:
+   *                   message: "Token inválido."
+   *       403:
+   *         description: "Você não tem permissão para acessar este recurso"
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 error:
+   *                   type: string
+   *                   example: "Você não tem permissão para acessar este recurso"
+   *       400:
+   *         description: ID do estudante não fornecido
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "ID do estudante não fornecido."
+   *       404:
+   *         description: Estudante não encontrado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Estudante não encontrado."
+   */
+  public async getStudentInfo(req: Request, res: Response): Promise<Response<IStudentMap>> {
+    if (!req.params.id) throw new BadRequestError('ID do estudante não fornecido.');
+    const studentId: number = Number(req.params.id);
+
+    const studentInfo: IStudentMap = await this.studentService.getStudentById(studentId);
+    return res.status(200).json(studentInfo);
   }
 }

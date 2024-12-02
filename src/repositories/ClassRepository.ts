@@ -100,7 +100,7 @@ export class ClassRepository {
   public async findById(id: number): Promise<Class | undefined> {
     return await this.repository.findOne({
       where: { id },
-      relations: ['school', 'students', 'teacherClasses']
+      relations: ['school', 'students', 'teacherClasses', 'teacherClasses.teacher']
     });
   }
 

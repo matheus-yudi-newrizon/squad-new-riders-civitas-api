@@ -1,16 +1,27 @@
 import { cpf } from 'cpf-cnpj-validator';
 import { Service } from 'typedi';
-import { Class, School, Student } from '../entities';
+import { Class, Evaluation, School, Student } from '../entities';
 import { ConflictError, NotFoundError } from '../errors';
-import { CreateStudentDTO, ICreationSucessResponse, IUpdateResponse, UpdateStudentDTO } from '../models';
-import { ClassRepository, SchoolRepository, StudentRepository } from '../repositories';
+import {
+  CreateStudentDTO,
+  ICreationSucessResponse,
+  IEvaluationData,
+  IEvaluationReviews,
+  IStudentMap,
+  IUpdateResponse,
+  UpdateStudentDTO
+} from '../models';
+import { ClassRepository, EvaluationRepository, SchoolRepository, StudentRepository } from '../repositories';
+import { EntityMapper } from '../services';
+import { formatToDDMMYY } from '../utils';
 
 @Service()
 export class StudentService {
   constructor(
     private readonly studentRepository: StudentRepository,
     private readonly schoolRepository: SchoolRepository,
-    private readonly classRepository: ClassRepository
+    private readonly classRepository: ClassRepository,
+    private readonly evaluationRepository: EvaluationRepository
   ) {}
 
   /**
@@ -82,8 +93,19 @@ export class StudentService {
    */
   private async verifyStudentId(id: number): Promise<Student> {
     const student: Student = await this.studentRepository.findById(id);
-    if (!student) throw new NotFoundError('Estudante não encontrado');
     return student;
+  }
+
+  /**
+   * Recupera um estudante com base no ID fornecido.
+   *
+   * @param id - O identificador único do estudante.
+   * @returns Um objeto mapeado contendo os dados do estudante.
+   */
+  public async getStudentById(id: number): Promise<IStudentMap> {
+    const student: Student = await this.verifyStudentId(id);
+    const studentMapped: IStudentMap = EntityMapper.mapStudent(student);
+    return studentMapped;
   }
 
   /**
@@ -196,5 +218,68 @@ export class StudentService {
     const schoolId: number = filters['schoolId'];
     const fullName: string = filters['fullName'];
     return this.studentRepository.listStudentsByClass(classId, schoolId, fullName);
+  }
+
+  /**
+   * Recupera informações detalhadas de um estudante com base no ID fornecido.
+   *
+   * @param studentId - ID do estudante.
+   * @returns Um objeto contendo o nome completo do estudante e o nome da turma.
+   * @throws {NotFoundError} Se o estudante não for encontrado.
+   */
+  public async getStudentInfo(studentId: number): Promise<{ fullName: string; className: string }> {
+    const student: Student = await this.verifyStudentId(studentId);
+
+    return {
+      fullName: student.fullName,
+      className: student.studentClass.name
+    };
+  }
+
+  /**
+   * Recupera o histórico de avaliações de um estudante com base no ID fornecido.
+   *
+   * @param studentId - ID do estudante.
+   * @returns Uma lista de avaliações associadas ao estudante, com a data formatada.
+   * @throws {NotFoundError} Se nenhuma avaliação for encontrada para o estudante.
+   */
+  public async getStudentEvaluations(studentId: number): Promise<Array<{ id: number; date: string }>> {
+    const student: Student = await this.verifyStudentId(studentId);
+
+    const evaluations: Evaluation[] = await this.evaluationRepository.findAllByStudentId(student.id);
+    if (evaluations.length === 0) {
+      throw new NotFoundError('Nenhuma avaliação encontrada para este estudante.');
+    }
+
+    return evaluations.map(evaluation => ({
+      id: evaluation.id,
+      date: formatToDDMMYY(evaluation.createdAt),
+      label: evaluation.label
+    }));
+  }
+
+  /**
+   * Recupera a última avaliação de um estudante com base no ID fornecido.
+   *
+   * @param studentId - ID do estudante.
+   * @returns Um objeto contendo o ID e a data formatada da avaliação mais recente.
+   * @throws {NotFoundError} Se nenhuma avaliação for encontrada para o estudante.
+   */
+  public async getLatestEvaluation(studentId: number): Promise<IEvaluationData> {
+    const student: Student = await this.verifyStudentId(studentId);
+    const latestEvaluation: Evaluation | null = await this.evaluationRepository.findLatestByStudentId(student.id);
+
+    if (!latestEvaluation) {
+      return null;
+    }
+
+    const reviews: IEvaluationReviews = EntityMapper.mapEvaluationReviews(latestEvaluation);
+
+    return {
+      id: latestEvaluation.id,
+      date: formatToDDMMYY(latestEvaluation.createdAt),
+      label: latestEvaluation.label,
+      reviews
+    };
   }
 }
