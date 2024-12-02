@@ -1,8 +1,9 @@
 import { Service } from 'typedi';
 import { Class, School } from '../entities';
 import { BadRequestError, ConflictError, NotFoundError } from '../errors';
-import { CreateClassDTO, EducationType, ICreationSucessResponse, IUpdateResponse, SchoolShift, SchoolYear } from '../models';
+import { CreateClassDTO, EducationType, IClassMap, ICreationSucessResponse, IUpdateResponse, SchoolShift, SchoolYear } from '../models';
 import { ClassRepository, SchoolRepository } from '../repositories';
+import { EntityMapper } from './EntityMapper';
 
 @Service()
 export class ClassService {
@@ -120,6 +121,18 @@ export class ClassService {
     const classEntity = await this.classRepository.findById(classId);
     if (!classEntity) throw new NotFoundError('Turma não encontrada.');
     return classEntity;
+  }
+
+  /**
+   * Retorna os detalhes de uma turma pelo ID.
+   *
+   * @param classId - ID da turma.
+   * @returns Um objeto mapeado contendo os detalhes da turma.
+   */
+  public async getClassInfoById(classId: number): Promise<IClassMap> {
+    const classEntity: Class = await this.getClassById(classId);
+    const classMap: IClassMap = EntityMapper.mapClass(classEntity);
+    return classMap;
   }
 
   /**

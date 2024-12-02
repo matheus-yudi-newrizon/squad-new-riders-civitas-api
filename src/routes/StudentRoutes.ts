@@ -12,11 +12,13 @@ studentRoutes.post('/register', authMiddleware, roleMiddleware(['admin']), valid
   studentController.create(req, res)
 );
 
-studentRoutes.get('/evaluations/:evaluationId/show', authMiddleware, roleMiddleware(['teacher']), (req, res) =>
+studentRoutes.get('/evaluations/:evaluationId/show', authMiddleware, roleMiddleware(['teacher', 'admin']), (req, res) =>
   evaluationController.getEvaluation(req, res)
 );
 
-studentRoutes.get('/students/:studentId/details', authMiddleware, roleMiddleware(['teacher']), (req, res) =>
+studentRoutes.get('/students/:studentId/details', authMiddleware, roleMiddleware(['teacher', 'admin']), (req, res) =>
   studentController.getStudentDetails(req, res)
 );
+
+studentRoutes.get('/:id', authMiddleware, roleMiddleware(['teacher', 'admin']), (req, res) => studentController.getStudentInfo(req, res));
 export default studentRoutes;

@@ -2,9 +2,18 @@ import { cpf } from 'cpf-cnpj-validator';
 import { Service } from 'typedi';
 import { Class, Evaluation, School, Student } from '../entities';
 import { ConflictError, NotFoundError } from '../errors';
-import { CreateStudentDTO, ICreationSucessResponse, IEvaluationData, IEvaluationReviews, IUpdateResponse, UpdateStudentDTO } from '../models';
+import {
+  CreateStudentDTO,
+  ICreationSucessResponse,
+  IEvaluationData,
+  IEvaluationReviews,
+  IStudentMap,
+  IUpdateResponse,
+  UpdateStudentDTO
+} from '../models';
 import { ClassRepository, EvaluationRepository, SchoolRepository, StudentRepository } from '../repositories';
-import { formatToDDMMYY } from '../utils/formatToDDMMYY';
+import { EntityMapper } from '../services';
+import { formatToDDMMYY } from '../utils';
 
 @Service()
 export class StudentService {
@@ -84,8 +93,19 @@ export class StudentService {
    */
   private async verifyStudentId(id: number): Promise<Student> {
     const student: Student = await this.studentRepository.findById(id);
-    if (!student) throw new NotFoundError('Estudante não encontrado');
     return student;
+  }
+
+  /**
+   * Recupera um estudante com base no ID fornecido.
+   *
+   * @param id - O identificador único do estudante.
+   * @returns Um objeto mapeado contendo os dados do estudante.
+   */
+  public async getStudentById(id: number): Promise<IStudentMap> {
+    const student: Student = await this.verifyStudentId(id);
+    const studentMapped: IStudentMap = EntityMapper.mapStudent(student);
+    return studentMapped;
   }
 
   /**
@@ -253,13 +273,7 @@ export class StudentService {
       return null;
     }
 
-    const reviews: IEvaluationReviews = {
-      selfAwareness: latestEvaluation.selfAwareness,
-      empathy: latestEvaluation.empathy,
-      communication: latestEvaluation.communication,
-      teamwork: latestEvaluation.teamwork,
-      autonomy: latestEvaluation.autonomy
-    };
+    const reviews: IEvaluationReviews = EntityMapper.mapEvaluationReviews(latestEvaluation);
 
     return {
       id: latestEvaluation.id,

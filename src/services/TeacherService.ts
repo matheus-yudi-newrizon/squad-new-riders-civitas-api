@@ -2,8 +2,9 @@ import { cpf } from 'cpf-cnpj-validator';
 import { Service } from 'typedi';
 import { Class, School, Teacher, TeacherClass, TeacherSchool } from '../entities';
 import { BadRequestError, ConflictError, NotFoundError } from '../errors';
-import { CreateTeacherDTO, ICreationSucessResponse, IUpdateResponse, UpdateTeacherDTO } from '../models';
+import { CreateTeacherDTO, ICreationSucessResponse, ITeacherMap, IUpdateResponse, UpdateTeacherDTO } from '../models';
 import { ClassRepository, SchoolRepository, TeacherRepository } from '../repositories';
+import { EntityMapper } from './EntityMapper';
 
 @Service()
 export class TeacherService {
@@ -164,8 +165,34 @@ export class TeacherService {
    */
   public async getTeacherById(teacherId: number): Promise<Teacher> {
     const teacher = await this.teacherRepository.findById(teacherId);
-    if (!teacher) throw new NotFoundError('Professor não encontrado.');
     return teacher;
+  }
+
+  /**
+   * Busca um professor específico pelo ID e retorna os dados mapeados.
+   *
+   * @param teacherId - ID do professor a ser buscado.
+   * @param schoolId - ID da escola associada ao professor.
+   * @returns Os dados mapeados do professor.
+   */
+  public async getTeacherInfo(teacherId: number, schoolId?: number): Promise<ITeacherMap> {
+    const teacher = await this.teacherRepository.findById(teacherId);
+    const registrationNumber: string = await this.getRegistrationNumber(teacherId, schoolId);
+    const mappedTeacher: ITeacherMap = EntityMapper.mapTeacher(teacher);
+    return { ...mappedTeacher, registrationNumber };
+  }
+
+  /**
+   * Busca o número de registro de um professor na escola.
+   *
+   * @param cpf - CPF do professor a ser buscado.
+   * @returns A instância de `Teacher` encontrada.
+   * @throws NotFoundError - Se o professor não for encontrado.
+   */
+  private async getRegistrationNumber(teacherId: number, schoolId: number): Promise<string> {
+    const teacherSchool: TeacherSchool = await this.teacherRepository.findTeacherSchoolByTeacherAndSchool(teacherId, schoolId);
+    if (!teacherSchool) throw new NotFoundError('Professor não encontrado nesta escola.');
+    return teacherSchool.registrationNumber;
   }
 
   /**
