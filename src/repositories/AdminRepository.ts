@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import { Service as Repository } from 'typedi';
 import { Repository as TypeORMRepository } from 'typeorm';
 import { MysqlDataSource } from '../config/database';
-import { User } from '../entities/User';
+import { User } from '../entities';
 
 @Repository()
 export class AdminRepository {

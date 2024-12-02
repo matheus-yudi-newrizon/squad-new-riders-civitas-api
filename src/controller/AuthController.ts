@@ -1,15 +1,10 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import validator from 'validator';
-import { TeacherSchool } from '../entities/TeacherSchool';
-import { User } from '../entities/User';
-import { BadRequestError } from '../errors/BadRequestError';
-import { UnauthorizedError } from '../errors/UnauthorizedError';
-import { ILoginAdminRequest } from '../models/interfaces/ILoginAdminRequest';
-import { ILoginResponse } from '../models/interfaces/ILoginResponse';
-import { ILoginTeacherRequest } from '../models/interfaces/ILoginTeacherRequest';
-import { IPayloadLogin } from '../models/interfaces/IPayloadLogin';
-import { AuthService } from '../services/AuthService';
+import { TeacherSchool, User } from '../entities';
+import { BadRequestError, UnauthorizedError } from '../errors';
+import { ILoginAdminRequest, ILoginResponse, ILoginTeacherRequest, IPayloadLogin } from '../models';
+import { AuthService } from '../services';
 
 @Controller()
 export class AuthController {

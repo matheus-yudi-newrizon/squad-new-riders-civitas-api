@@ -11,24 +11,24 @@ import { cpf } from 'cpf-cnpj-validator';
  * @method validate
  * Valida se o valor fornecido é um número de CPF válido.
  *
- * @param {string} value - O valor a ser validado.
- * @returns {boolean} - Retorna true se o valor for um CPF válido, false caso contrário.
+ * @param value - O valor a ser validado.
+ * @returns - Retorna true se o valor for um CPF válido, false caso contrário.
  *
  * @method defaultMessage
  * Fornece uma mensagem de erro padrão quando a validação falha.
  *
- * @returns {string} - A mensagem de erro padrão.
+ * @returns - A mensagem de erro padrão.
  */
 @ValidatorConstraint({ async: false })
 /**
  * Remove a máscara do valor fornecido e valida se é um CPF válido usando a biblioteca cpf-cnpj-validator.
  *
- * @param {string} value - O valor a ser validado.
- * @returns {boolean} - Retorna `true` se o valor for um CPF válido, `false` caso contrário.
+ * @param value - O valor a ser validado.
+ * @returns - Retorna `true` se o valor for um CPF válido, `false` caso contrário.
  */
 class IsCPFConstraint implements ValidatorConstraintInterface {
   validate(value: string): boolean {
-    const strippedValue: string = value.replace(/[.-]/g, '');
+    const strippedValue: string = cpf.strip(value);
     return cpf.isValid(strippedValue);
   }
 

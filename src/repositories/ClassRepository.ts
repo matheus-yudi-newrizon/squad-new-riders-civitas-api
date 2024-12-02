@@ -1,10 +1,8 @@
 import { Service as Repository } from 'typedi';
 import { In, Repository as TypeORMRepository } from 'typeorm';
 import { MysqlDataSource } from '../config/database';
-import { Class } from '../entities/Class';
-import { EducationType } from '../models/enums/EducationType';
-import { SchoolShift } from '../models/enums/SchoolShift';
-import { SchoolYear } from '../models/enums/SchoolYear';
+import { Class } from '../entities';
+import { EducationType, SchoolShift, SchoolYear } from '../models';
 
 @Repository()
 export class ClassRepository {
@@ -110,7 +108,7 @@ export class ClassRepository {
    * Busca todas as turmas associadas a um professor específico com base no ID do professor.
    *
    * @param teacherId - ID do professor.
-   * @returns Uma lista de instâncias de `Class` associadas ao professor.
+   * @returns Uma lista de instâncias de `Class` associadas ao professor em ordem alfabética.
    */
   public async findByTeacherId(teacherId: number): Promise<Class[]> {
     return await this.repository
@@ -118,6 +116,7 @@ export class ClassRepository {
       .innerJoin('class.teacherClasses', 'teacherClass')
       .where('teacherClass.teacherId = :teacherId', { teacherId })
       .leftJoinAndSelect('class.school', 'school')
+      .orderBy('class.name', 'ASC')
       .getMany();
   }
 
@@ -136,7 +135,8 @@ export class ClassRepository {
     const queryBuilder = this.repository
       .createQueryBuilder('class')
       .leftJoinAndSelect('class.school', 'school')
-      .where('school.id = :schoolId', { schoolId: filters.schoolId });
+      .where('school.id = :schoolId', { schoolId: filters.schoolId })
+      .orderBy('class.name', 'ASC');
 
     if (filters.schoolYear) {
       queryBuilder.andWhere('class.schoolYear = :schoolYear', { schoolYear: filters.schoolYear });

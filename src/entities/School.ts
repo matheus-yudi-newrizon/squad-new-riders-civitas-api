@@ -1,8 +1,5 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { Class } from './Class';
-import { Student } from './Student';
-import { TeacherSchool } from './TeacherSchool';
-import { User } from './User';
+import { Class, Student, TeacherSchool, User } from '../entities';
 
 @Entity()
 export class School {

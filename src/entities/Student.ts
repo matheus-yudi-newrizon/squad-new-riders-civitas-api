@@ -11,8 +11,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { Class } from './Class';
-import { School } from './School';
+import { Class, School } from '../entities';
 
 @Entity()
 export class Student {
@@ -56,8 +55,8 @@ export class Student {
    *
    */
   public unmaskFields(): void {
-    this.document = this.document.replace(/[.-]/g, '');
-    this.cpfGuardian = this.cpfGuardian.replace(/[.-]/g, '');
+    this.document = cpf.strip(this.document);
+    this.cpfGuardian = cpf.strip(this.cpfGuardian);
   }
 
   @AfterLoad()
@@ -71,8 +70,8 @@ export class Student {
    */
   public maskFields(): void {
     if (cpf.isValid(this.document)) {
-      this.document = this.document.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+      this.document = cpf.format(this.document);
     } else this.document = this.document;
-    this.cpfGuardian = this.cpfGuardian.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    this.cpfGuardian = cpf.format(this.cpfGuardian);
   }
 }

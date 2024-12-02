@@ -1,17 +1,22 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, CreateDateColumn } from 'typeorm';
-import { Teacher } from './Teacher';
-import { Student } from './Student';
-import { EvaluationScore } from '../models/enums/EvaluationScore';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Student, Teacher } from '../entities';
+import { EvaluationScore } from '../models';
 
 @Entity()
 export class Evaluation {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Teacher, { nullable: false })
+  @ManyToOne(() => Teacher, { nullable: true, onDelete: 'SET NULL' })
   teacher: Teacher;
 
-  @ManyToOne(() => Student, { nullable: false })
+  @Column({ type: 'int', nullable: true })
+  teacherId: number;
+
+  @Column({ type: 'varchar', nullable: true })
+  teacherName: string;
+
+  @ManyToOne(() => Student, { nullable: false, onDelete: 'CASCADE' })
   student: Student;
 
   @Column({ type: 'enum', enum: EvaluationScore, nullable: false })
@@ -29,7 +34,7 @@ export class Evaluation {
   @Column({ type: 'enum', enum: EvaluationScore, nullable: false })
   autonomy: EvaluationScore;
 
-  @Column({ type: 'text', length: 3000, nullable: false })
+  @Column({ type: 'varchar', length: 3000, nullable: false })
   teacherComments: string;
 
   @CreateDateColumn({ type: 'timestamp' })

@@ -1,6 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column, Unique, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { Teacher } from './Teacher';
-import { School } from './School';
+import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, Unique, UpdateDateColumn } from 'typeorm';
+import { School, Teacher } from '../entities';
 
 @Entity()
 @Unique(['teacher', 'school'])

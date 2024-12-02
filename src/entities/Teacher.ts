@@ -1,3 +1,4 @@
+import { cpf } from 'cpf-cnpj-validator';
 import {
   AfterLoad,
   BeforeInsert,
@@ -10,8 +11,7 @@ import {
   Unique,
   UpdateDateColumn
 } from 'typeorm';
-import { TeacherClass } from './TeacherClass';
-import { TeacherSchool } from './TeacherSchool';
+import { TeacherClass, TeacherSchool } from '../entities';
 
 @Entity()
 @Unique(['cpf'])
@@ -58,6 +58,6 @@ export class Teacher {
    * Ele garante que o campo `cpf` esteja formatado corretamente para exibição.
    */
   public maskCpf(): void {
-    this.cpf = this.cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+    this.cpf = cpf.format(this.cpf);
   }
 }

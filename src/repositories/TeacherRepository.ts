@@ -1,9 +1,7 @@
 import { Service as Repository } from 'typedi';
 import { Repository as TypeORMRepository } from 'typeorm';
 import { MysqlDataSource } from '../config/database';
-import { Teacher } from '../entities/Teacher';
-import { TeacherClass } from '../entities/TeacherClass';
-import { TeacherSchool } from '../entities/TeacherSchool';
+import { Teacher, TeacherClass, TeacherSchool } from '../entities';
 
 @Repository()
 export class TeacherRepository {
@@ -161,19 +159,20 @@ export class TeacherRepository {
    * @returns Uma instância de `TeacherSchool` com o relacionamento `School` carregado, se encontrada, ou `undefined` caso contrário.
    */
   public async findByRegistrationNumber(registrationNumber: string): Promise<TeacherSchool | undefined> {
-    return await this.teacherSchoolRepository.findOne({ where: { registrationNumber }, relations: ['school'] });
+    return await this.teacherSchoolRepository.findOne({ where: { registrationNumber }, relations: ['school', 'teacher'] });
   }
 
   /**
    * Busca todos os professores associados a uma escola específica.
    *
    * @param schoolId - ID da escola.
-   * @returns Uma lista de instâncias de `Teacher` associadas à escola.
+   * @returns Uma lista de instâncias de `Teacher` associadas à escola em ordem alfabética.
    */
   public async findTeachersBySchoolId(schoolId: number): Promise<Teacher[]> {
     return await this.repository
       .createQueryBuilder('teacher')
       .innerJoin('teacher.teacherSchools', 'teacherSchool', 'teacherSchool.schoolId = :schoolId', { schoolId })
+      .orderBy('teacher.fullName', 'ASC')
       .getMany();
   }
 
@@ -182,7 +181,7 @@ export class TeacherRepository {
    * e a associação `TeacherSchool`, que contém o número de matrícula (`registrationNumber`).
    *
    * @param schoolId - ID da escola.
-   * @returns Uma lista de instâncias de `Teacher` associadas à escola, com suas turmas e números de matrícula.
+   * @returns Uma lista de instâncias de `Teacher` associadas à escola, com suas turmas e números de matrícula em ordem alfabética.
    */
   public async findTeachersBySchoolIdWithClasses(schoolId: number): Promise<Teacher[]> {
     return await this.repository
@@ -191,6 +190,7 @@ export class TeacherRepository {
       .leftJoinAndSelect('teacher.teacherClasses', 'teacherClass')
       .leftJoinAndSelect('teacherClass.class', 'class')
       .leftJoinAndSelect('teacher.teacherSchools', 'teacherSchoolRelation')
+      .orderBy('teacher.fullName', 'ASC')
       .getMany();
   }
 }
