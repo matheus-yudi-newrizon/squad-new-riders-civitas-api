@@ -82,7 +82,7 @@ export class StudentRepository {
       .innerJoin('student.studentClass', 'class')
       .innerJoin('class.school', 'school')
       .where('school.id = :schoolId', { schoolId })
-      .select(['student', 'class.name'])
+      .select(['student', 'class.id', 'class.name'])
       .orderBy('student.fullName', 'ASC');
 
     if (fullName) {
