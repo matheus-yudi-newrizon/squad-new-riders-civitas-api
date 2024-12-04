@@ -3,9 +3,9 @@ import { School, User } from '../entities';
 
 export class CreateAdmin1730178021740 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    const school = await queryRunner.manager.findOne(School, { where: { name: 'Escola exemplo' } });
+    const school = await queryRunner.manager.findOne(School, { where: { name: 'Escola New Riders' } });
 
-    const email = 'email@example.com';
+    const email = 'administracao@newriders.com';
     const admin = new User();
     admin.email = email;
     admin.school = school;
@@ -14,6 +14,6 @@ export class CreateAdmin1730178021740 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.manager.delete(User, { email: 'admin@example.com' });
+    await queryRunner.manager.delete(User, { email: 'administracao@newriders.com' });
   }
 }
