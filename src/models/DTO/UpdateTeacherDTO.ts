@@ -17,8 +17,8 @@ export class UpdateTeacherDTO {
 
   @IsOptional()
   @IsAlphanumeric(undefined, { message: 'O campo número de matrícula deve conter apenas letras e números.' })
-  @IsString({ message: 'O campo registro do professor deve ser uma string.' })
-  @IsNotEmpty({ message: 'O campo registro do professor é obrigatório.' })
+  @IsString({ message: 'O campo deve ser uma string.' })
+  @IsNotEmpty({ message: 'O campo é obrigatório.' })
   @MaxLength(20, { message: 'O campo registro deve ter no máximo 20 caracteres.' })
   readonly registrationNumber?: string;
 

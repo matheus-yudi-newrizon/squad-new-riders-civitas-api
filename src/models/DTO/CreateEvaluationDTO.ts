@@ -26,8 +26,8 @@ export class CreateEvaluationDTO {
   @IsEnum(EvaluationScore, { message: 'O campo autonomy deve ser um valor válido do enum EvaluationScore.' })
   readonly autonomy: EvaluationScore;
 
-  @IsNotEmpty({ message: 'O campo teacherComments é obrigatório.' })
-  @IsString({ message: 'O campo teacherComments deve ser uma string.' })
-  @MaxLength(3000, { message: 'O campo teacherComments deve ter no máximo 3000 caracteres.' })
+  @IsNotEmpty({ message: 'O campo de comentários é obrigatório.' })
+  @IsString({ message: 'O campo de comentários deve ser uma string.' })
+  @MaxLength(3000, { message: 'O campo de comentários deve ter no máximo 3000 caracteres.' })
   readonly teacherComments: string;
 }

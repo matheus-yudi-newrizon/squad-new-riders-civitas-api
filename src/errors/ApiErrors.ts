@@ -7,6 +7,7 @@ export class ApiError extends Error {
    * O código de status HTTP associado ao erro.
    */
   public readonly statusCode: number;
+  public readonly studentInfo: object;
 
   /**
    * Constrói uma nova instância de `ApiError`.

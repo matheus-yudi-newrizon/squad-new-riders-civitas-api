@@ -6,4 +6,5 @@ export * from './InternalServerError';
 export * from './InvalidJWTTokenError';
 export * from './MissingRequiredFieldsError';
 export * from './NotFoundError';
+export * from './NotFoundWithDataError';
 export * from './UnauthorizedError';
