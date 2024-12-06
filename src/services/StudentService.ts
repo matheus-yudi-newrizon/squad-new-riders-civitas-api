@@ -1,7 +1,7 @@
 import { cpf } from 'cpf-cnpj-validator';
 import { Service } from 'typedi';
 import { Class, Evaluation, School, Student } from '../entities';
-import { ConflictError, NotFoundWithDataError } from '../errors';
+import { ConflictError } from '../errors';
 import { CreateStudentDTO, IEvaluationData, IEvaluationReviews, IStudentMap, ISuccessResponse, UpdateStudentDTO } from '../models';
 import { ClassRepository, EvaluationRepository, SchoolRepository, StudentRepository } from '../repositories';
 import { EntityMapper } from '../services';
@@ -239,14 +239,6 @@ export class StudentService {
     const student: Student = await this.verifyStudentId(studentId);
 
     const evaluations: Evaluation[] = await this.evaluationRepository.findAllByStudentId(student.id);
-    if (evaluations.length === 0) {
-      throw new NotFoundWithDataError('Nenhuma avaliação encontrada para este estudante.', {
-        id: student.id,
-        fullName: student.fullName,
-        className: student.studentClass.name,
-        classId: student.studentClass.id
-      });
-    }
 
     return evaluations.map(evaluation => ({
       id: evaluation.id,

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { ApiError, NotFoundWithDataError } from '../errors';
+import { ApiError } from '../errors';
 
 /**
  * Middleware para tratar erros na aplicação.
@@ -14,6 +14,5 @@ import { ApiError, NotFoundWithDataError } from '../errors';
 export const errorMiddleware = (error: Error & Partial<ApiError>, req: Request, res: Response, _next: NextFunction) => {
   const statusCode: number = error.statusCode ?? 500;
   const message: string = error.statusCode ? error.message : 'Erro interno no servidor. Tente novamente mais tarde.';
-  const studentInfo = NotFoundWithDataError ? error.studentInfo : undefined;
-  return res.status(statusCode).json({ message, studentInfo });
+  return res.status(statusCode).json({ message });
 };
