@@ -1,9 +1,15 @@
 export function generateLabel(date: Date): string {
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const year = date.getFullYear();
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
+  const formatter = new Intl.DateTimeFormat('pt-BR', {
+    timeZone: 'America/Sao_Paulo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
 
-  return `PDI${day}_${month}_${year}_${hours}h${minutes}`;
+  const [{ value: day }, , { value: month }, , { value: year }, , { value: hours }, , { value: minutes }] = formatter.formatToParts(date);
+
+  return `ADI${day}_${month}_${year}_${hours}h${minutes}`;
 }

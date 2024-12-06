@@ -27,11 +27,11 @@ export class Student {
   @Column({ nullable: false, length: 20, unique: true })
   registrationNumber: string;
 
-  @ManyToOne(() => Class, { nullable: false })
+  @ManyToOne(() => Class, { nullable: false, eager: true })
   @JoinColumn({ name: 'studentClassId' })
   studentClass: Class;
 
-  @ManyToOne(() => School, { nullable: false })
+  @ManyToOne(() => School, { nullable: false, eager: true })
   @JoinColumn({ name: 'schoolId' })
   school: School;
 

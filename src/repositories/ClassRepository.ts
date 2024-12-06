@@ -123,13 +123,14 @@ export class ClassRepository {
   /**
    * Busca turmas com base nos filtros opcionais fornecidos.
    *
-   * @param filters - Filtros opcionais para listar as turmas, incluindo ano, turno, tipo de educação e escola.
+   * @param filters - Filtros opcionais para listar as turmas, incluindo nome, ano, turno, tipo de educação e escola.
    * @returns Uma lista de instâncias de `Class` que atendem aos critérios fornecidos.
    */
   public async findClassesWithFilters(filters: {
     schoolYear?: string;
     educationType?: string;
     schoolShift?: string;
+    name?: string;
     schoolId: number;
   }): Promise<Class[]> {
     const queryBuilder = this.repository
@@ -148,6 +149,10 @@ export class ClassRepository {
 
     if (filters.schoolShift) {
       queryBuilder.andWhere('class.schoolShift = :schoolShift', { schoolShift: filters.schoolShift });
+    }
+
+    if (filters.name) {
+      queryBuilder.andWhere('class.name LIKE :name COLLATE utf8mb4_general_ci', { name: `%${filters.name}%` });
     }
 
     return await queryBuilder.getMany();

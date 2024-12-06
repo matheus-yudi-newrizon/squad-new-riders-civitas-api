@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError } from '../errors';
-import { CreateEvaluationDTO, ICreationSucessResponse, IEvaluationData } from '../models';
+import { CreateEvaluationDTO, IEvaluationData, ISuccessResponse } from '../models';
 import { EvaluationService } from '../services';
 
 @Controller()
@@ -68,7 +68,7 @@ export class EvaluationController {
    *                   type: string
    *                   example: "Estudante não encontrado."
    */
-  public async create(req: Request, res: Response): Promise<Response<ICreationSucessResponse>> {
+  public async create(req: Request, res: Response): Promise<Response<ISuccessResponse>> {
     const teacherId: number | undefined = res.locals.teacherId;
     const createEvaluationDTO: CreateEvaluationDTO = req.body;
 
@@ -79,7 +79,7 @@ export class EvaluationController {
       throw new BadRequestError('Token inválido ou professor não identificado.');
     }
 
-    const result: ICreationSucessResponse = await this.evaluationService.createEvaluation(createEvaluationDTO, teacherId);
+    const result: ISuccessResponse = await this.evaluationService.createEvaluation(createEvaluationDTO, teacherId);
 
     return res.status(201).json(result);
   }

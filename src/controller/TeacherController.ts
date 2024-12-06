@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import { BadRequestError, NotFoundError } from '../errors';
-import { CreateTeacherDTO, ICreationSucessResponse, ITeacherMap, IUpdateResponse, UpdateTeacherDTO } from '../models';
+import { CreateTeacherDTO, ISuccessResponse, ITeacherMap, UpdateTeacherDTO } from '../models';
 import { TeacherService } from '../services';
 
 @Controller()
@@ -55,7 +55,7 @@ export class TeacherController {
    *                   type: string
    *                   example: "O professor já está cadastrado com este CPF ou número de matrícula nesta escola."
    */
-  public async create(req: Request, res: Response): Promise<Response<ICreationSucessResponse>> {
+  public async create(req: Request, res: Response): Promise<Response<ISuccessResponse>> {
     const schoolId: number = res.locals.schoolId;
     const createTeacherDTO: CreateTeacherDTO = req.body;
 
@@ -167,14 +167,14 @@ export class TeacherController {
    *                   type: string
    *                   example: "O número de matrícula já está em uso para esta escola."
    */
-  public async updateTeacher(req: Request, res: Response): Promise<Response<IUpdateResponse>> {
+  public async updateTeacher(req: Request, res: Response): Promise<Response<ISuccessResponse>> {
     const teacherId: number = Number(req.params.id);
     const schoolId: number = res.locals.schoolId;
     const updateTeacherDTO: UpdateTeacherDTO = req.body;
 
     if (!teacherId) throw new BadRequestError('ID do professor não fornecido.');
 
-    const result: IUpdateResponse = await this.teacherService.updateTeacher(teacherId, schoolId, updateTeacherDTO);
+    const result: ISuccessResponse = await this.teacherService.updateTeacher(teacherId, schoolId, updateTeacherDTO);
     return res.status(200).json(result);
   }
 
@@ -300,7 +300,7 @@ export class TeacherController {
 
   /**
    * @swagger
-   * /teachers:
+   * /teachers/:
    *   get:
    *     summary: Busca um professor pelo token
    *     description: "Este endpoint permite buscar as informações de um professor específico pelo seu token JWT. O token é decodificado, e o `teacherId` é extraído para realizar a busca."
@@ -342,6 +342,13 @@ export class TeacherController {
    *     tags: [Teachers]
    *     security:
    *       - bearerAuth: []
+   *     parameters:
+   *       - in: query
+   *         name: fullName
+   *         required: false
+   *         schema:
+   *           type: string
+   *         description: "Filtra os professores pelo nome. Se fornecido, apenas os professores cujo nome contém o valor especificado serão retornados."
    *     responses:
    *       200:
    *         description: Lista de professores com suas turmas.
@@ -380,10 +387,10 @@ export class TeacherController {
    */
   public async listTeachersBySchool(req: Request, res: Response): Promise<Response> {
     const schoolId = res.locals.schoolId;
-
+    const fullName = req.query.fullName as string;
     if (!schoolId) throw new BadRequestError('ID da escola não encontrado no token.');
 
-    const teachers = await this.teacherService.listTeachersBySchoolWithClasses(schoolId);
+    const teachers = await this.teacherService.listTeachersBySchoolWithClasses(schoolId, fullName);
 
     const formattedTeachers = teachers.map(teacher => ({
       id: teacher.id,
@@ -402,8 +409,8 @@ export class TeacherController {
    * @swagger
    * /teachers/{id}:
    *   get:
-   *     summary: Busca um professor pelo token
-   *     description: "Este endpoint permite buscar as informações de um professor específico pelo seu token JWT. O token é decodificado, e o `teacherId` é extraído para realizar a busca."
+   *     summary: Busca um professor pelo id
+   *     description: "Este endpoint permite buscar as informações de um professor específico pelo seu id."
    *     tags: [Teachers]
    *     security:
    *       - bearerAuth: []

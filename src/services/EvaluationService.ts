@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import { Evaluation, Student, Teacher } from '../entities';
 import { NotFoundError } from '../errors';
-import { CreateEvaluationDTO, ICreationSucessResponse, IEvaluationData, IEvaluationReviews, IEvaluationStudent } from '../models';
+import { CreateEvaluationDTO, IEvaluationData, IEvaluationReviews, IEvaluationStudent, ISuccessResponse } from '../models';
 import { EvaluationRepository, StudentRepository, TeacherRepository } from '../repositories';
 import { EntityMapper } from '../services';
 import { formatToDDMMYY } from '../utils';
@@ -55,7 +55,7 @@ export class EvaluationService {
   public async createEvaluation(
     createEvaluationDTO: CreateEvaluationDTO,
     teacherId: number
-  ): Promise<ICreationSucessResponse & { label: string; id: number }> {
+  ): Promise<ISuccessResponse & { label: string; id: number }> {
     const student = await this.verifyStudent(createEvaluationDTO.studentId);
     const teacher = await this.verifyTeacher(teacherId);
 

@@ -47,7 +47,7 @@ export class Teacher {
    * formatação antes de ser salvo.
    */
   public unmaskCpf(): void {
-    this.cpf = this.cpf.replace(/[.-]/g, '');
+    this.cpf = cpf.strip(this.cpf);
   }
 
   @AfterLoad()

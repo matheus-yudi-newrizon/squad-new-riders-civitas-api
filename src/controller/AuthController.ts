@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { Service as Controller } from 'typedi';
 import validator from 'validator';
-import { TeacherSchool, User } from '../entities';
+import { Student, TeacherSchool, User } from '../entities';
 import { BadRequestError, UnauthorizedError } from '../errors';
-import { ILoginAdminRequest, ILoginResponse, ILoginTeacherRequest, IPayloadLogin } from '../models';
+import { ILoginAdminRequest, ILoginRequest, ILoginResponse, IPayloadLogin } from '../models';
 import { AuthService } from '../services';
 
 @Controller()
@@ -152,15 +152,82 @@ export class AuthController {
    */
   public async teacherLogin(req: Request, res: Response): Promise<Response<ILoginResponse>> {
     const { registrationNumber } = req.body;
-    const loginRequestDTO: ILoginTeacherRequest = { registrationNumber };
+    const loginRequestDTO: ILoginRequest = { registrationNumber };
 
     if (!registrationNumber) throw new BadRequestError('Por favor, preencha os campos corretamente');
 
-    const teacher: TeacherSchool = await this.authService.findRegistrationNumber(loginRequestDTO);
+    const teacher: TeacherSchool = await this.authService.findTeacherByRegistrationNumber(loginRequestDTO);
     if (!teacher) throw new UnauthorizedError('Matrícula não encontrada. Verifique seus dados e tente novamente');
 
     const teacherPayload: IPayloadLogin = this.authService.generatePayload(teacher);
     const responseLoginDTO: ILoginResponse = await this.authService.generateAccessToken(teacherPayload);
+
+    return res.status(200).json(responseLoginDTO);
+  }
+
+  /**
+   * @swagger
+   * /students/guardian-login:
+   *   post:
+   *     summary: Login de responsável
+   *     description: "Este endpoint permite que o responsável de um estudante faça login utilizando o número de matrícula do estudante. Retorna um token JWT para autenticação."
+   *     tags: [Students]
+   *     requestBody:
+   *       required: true
+   *       content:
+   *         application/json:
+   *           schema:
+   *             type: object
+   *             required:
+   *               - registrationNumber
+   *             properties:
+   *               registrationNumber:
+   *                 type: string
+   *                 description: O número de matrícula do estudante.
+   *                 example: "202422299999"
+   *     responses:
+   *       200:
+   *         description: Login bem-sucedido
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Login bem-sucedido"
+   *                 token:
+   *                   type: string
+   *                   example: "seu_jwt_token"
+   *       400:
+   *         description: Campos obrigatórios não preenchidos
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Por favor, preencha os campos corretamente"
+   *       404:
+   *         description: Estudante não encontrado
+   *         content:
+   *           application/json:
+   *             schema:
+   *               type: object
+   *               properties:
+   *                 message:
+   *                   type: string
+   *                   example: "Estudante não encontrado"
+   */
+  public async guardianLogin(req: Request, res: Response): Promise<Response<ILoginResponse>> {
+    const { registrationNumber } = req.body;
+    if (!registrationNumber) throw new BadRequestError('Por favor, preencha os campos corretamente');
+    const loginRequestDTO: ILoginRequest = { registrationNumber };
+
+    const student: Student = await this.authService.findStudentByRegistrationNumber(loginRequestDTO);
+    const studentPayload: IPayloadLogin = this.authService.generatePayload(student);
+    const responseLoginDTO: ILoginResponse = await this.authService.generateAccessToken(studentPayload);
 
     return res.status(200).json(responseLoginDTO);
   }

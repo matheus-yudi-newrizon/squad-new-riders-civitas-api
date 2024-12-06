@@ -184,16 +184,21 @@ export class TeacherRepository {
    * e a associação `TeacherSchool`, que contém o número de matrícula (`registrationNumber`).
    *
    * @param schoolId - ID da escola.
+   * @param fullName - Nome do professor a ser buscado.
    * @returns Uma lista de instâncias de `Teacher` associadas à escola, com suas turmas e números de matrícula em ordem alfabética.
    */
-  public async findTeachersBySchoolIdWithClasses(schoolId: number): Promise<Teacher[]> {
-    return await this.repository
+  public async findTeachersBySchoolIdWithClasses(schoolId: number, fullName?: string): Promise<Teacher[]> {
+    const query = this.repository
       .createQueryBuilder('teacher')
       .innerJoin('teacher.teacherSchools', 'teacherSchool', 'teacherSchool.schoolId = :schoolId', { schoolId })
       .leftJoinAndSelect('teacher.teacherClasses', 'teacherClass')
       .leftJoinAndSelect('teacherClass.class', 'class')
       .leftJoinAndSelect('teacher.teacherSchools', 'teacherSchoolRelation')
-      .orderBy('teacher.fullName', 'ASC')
-      .getMany();
+      .orderBy('teacher.fullName', 'ASC');
+
+    if (fullName) {
+      query.andWhere('teacher.fullName LIKE :fullName COLLATE utf8mb4_general_ci', { fullName: `%${fullName}%` });
+    }
+    return query.getMany();
   }
 }

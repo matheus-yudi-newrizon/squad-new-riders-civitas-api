@@ -1,7 +1,8 @@
 import { Service } from 'typedi';
-import { TeacherSchool, User } from '../entities';
-import { ILoginAdminRequest, ILoginResponse, ILoginTeacherRequest, IPayloadLogin } from '../models';
-import { AdminRepository, TeacherRepository } from '../repositories';
+import { Student, TeacherSchool, User } from '../entities';
+import { NotFoundError } from '../errors';
+import { ILoginAdminRequest, ILoginRequest, ILoginResponse, IPayloadLogin } from '../models';
+import { AdminRepository, StudentRepository, TeacherRepository } from '../repositories';
 import { JwtService } from './JwTService';
 
 @Service()
@@ -9,7 +10,8 @@ export class AuthService {
   constructor(
     private readonly adminRepository: AdminRepository,
     private readonly jwtService: JwtService,
-    private readonly teacherRepository: TeacherRepository
+    private readonly teacherRepository: TeacherRepository,
+    private readonly studentRepository: StudentRepository
   ) {}
 
   /**
@@ -38,25 +40,45 @@ export class AuthService {
   /**
    * Busca o número de matrícula de um professor.
    *
-   * @param teacherDTO - Objeto contendo o número de matrícula do professor (`ILoginTeacherRequest`).
+   * @param teacherDTO - Objeto contendo o número de matrícula do professor (`ILoginRequest`).
    * @returns A entidade `TeacherSchool` correspondente ao número de matrícula ou `undefined` caso não encontre.
    */
-  public async findRegistrationNumber(teacherDTO: ILoginTeacherRequest): Promise<TeacherSchool | undefined> {
+  public async findTeacherByRegistrationNumber(teacherDTO: ILoginRequest): Promise<TeacherSchool | undefined> {
     const teacher: TeacherSchool = await this.teacherRepository.findByRegistrationNumber(teacherDTO.registrationNumber);
     return teacher || undefined;
   }
 
   /**
+   * Busca o número de matrícula de um professor.
+   *
+   * @param teacherDTO - Objeto contendo o número de matrícula do professor (`ILoginRequest`).
+   * @returns A entidade `Student` correspondente ao número de matrícula.
+   */
+  public async findStudentByRegistrationNumber(studentDTO: ILoginRequest): Promise<Student> {
+    const student: Student = await this.studentRepository.findByRegistrationNumber(studentDTO.registrationNumber);
+    if (!student) throw new NotFoundError('Estudante não encontrado');
+    return student;
+  }
+  /**
    * Gera o payload necessário para autenticação, com base na entidade fornecida.
    *
-   * @param entity - Instância de `User` ou `TeacherSchool`.
+   * @param entity - Instância de `User, `TeacherSchool` ou `Student`.
    * @returns Um objeto `IPayloadLogin` com os dados necessários para o payload JWT.
    */
-  public generatePayload(entity: User | TeacherSchool): IPayloadLogin {
+  public generatePayload(entity: User | TeacherSchool | Student): IPayloadLogin {
     if (entity instanceof User)
       return { id: entity.id, email: entity.email, schoolId: entity.school.id, schoolName: entity.school.name, role: 'admin' };
     if (entity instanceof TeacherSchool)
       return { teacherId: entity.teacher.id, registrationNumber: entity.registrationNumber, schoolId: entity.school.id, role: 'teacher' };
+    if (entity instanceof Student)
+      return {
+        studentId: entity.id,
+        registrationNumber: entity.registrationNumber,
+        classId: entity.studentClass.id,
+        className: entity.studentClass.name,
+        schoolId: entity.school.id,
+        role: 'guardian'
+      };
   }
 
   /**

@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import { Class, School } from '../entities';
 import { BadRequestError, ConflictError, NotFoundError } from '../errors';
-import { CreateClassDTO, EducationType, IClassMap, ICreationSucessResponse, IUpdateResponse, SchoolShift, SchoolYear } from '../models';
+import { CreateClassDTO, EducationType, IClassMap, ISuccessResponse, SchoolShift, SchoolYear } from '../models';
 import { ClassRepository, SchoolRepository } from '../repositories';
 import { EntityMapper } from './EntityMapper';
 
@@ -21,7 +21,7 @@ export class ClassService {
    * @throws BadRequestError - Se a escola não for encontrada.
    * @throws ConflictError - Se já existir uma turma com a mesma combinação de dados.
    */
-  public async createClassWithValidation(createClassDTO: CreateClassDTO, schoolId: number): Promise<ICreationSucessResponse> {
+  public async createClassWithValidation(createClassDTO: CreateClassDTO, schoolId: number): Promise<ISuccessResponse> {
     const school = await this.verifySchool(schoolId);
 
     const isDuplicate = await this.verifyClassDuplicate(
@@ -49,7 +49,7 @@ export class ClassService {
    * @throws NotFoundError - Se a turma com o ID especificado não for encontrada.
    * @throws ConflictError - Se os detalhes atualizados da turma entrarem em conflito com uma turma existente.
    */
-  public async updateClass(classId: number, updateClassDTO: CreateClassDTO): Promise<IUpdateResponse> {
+  public async updateClass(classId: number, updateClassDTO: CreateClassDTO): Promise<ISuccessResponse> {
     const classEntity: Class = await this.classRepository.findById(classId);
     if (!classEntity) throw new NotFoundError('Turma não encontrada.');
 
@@ -81,7 +81,7 @@ export class ClassService {
     if (!classEntity) throw new NotFoundError('Turma não encontrada.');
 
     if (classEntity.students?.length > 0 || classEntity.teacherClasses?.length > 0) {
-      throw new ConflictError('Turma está associada à professores ou estudantes. Remova para prosseguir na exclusão da turma');
+      throw new ConflictError('Turma está associada à psicólogos ou estudantes. Remova para prosseguir na exclusão da turma');
     }
 
     await this.classRepository.deleteClass(classEntity);
@@ -106,7 +106,13 @@ export class ClassService {
    * @param filters - Filtros opcionais para listar as turmas.
    * @returns Uma lista de turmas que atendem aos filtros fornecidos.
    */
-  public async listClasses(filters: { schoolYear?: string; educationType?: string; schoolShift?: string; schoolId: number }): Promise<Class[]> {
+  public async listClasses(filters: {
+    schoolYear?: string;
+    educationType?: string;
+    schoolShift?: string;
+    name?: string;
+    schoolId: number;
+  }): Promise<Class[]> {
     return await this.classRepository.findClassesWithFilters(filters);
   }
 

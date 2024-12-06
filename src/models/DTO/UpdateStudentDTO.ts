@@ -1,10 +1,11 @@
-import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsAlphanumeric, IsNotEmpty, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 import { IsCPF, IsDocumentValid, IsValidClass } from '../../utils';
 
 export class UpdateStudentDTO {
   @IsOptional()
   @IsNotEmpty({ message: 'O campo nome é obrigatório.' })
   @IsString({ message: 'O campo nome deve ser uma string.' })
+  @Matches(/^[a-zA-ZÀ-ÿ\s]+$/, { message: 'Por favor, insira um nome válido' })
   @MaxLength(50, { message: 'O campo nome deve ter no máximo 50 caracteres.' })
   readonly fullName?: string;
 
@@ -15,6 +16,7 @@ export class UpdateStudentDTO {
   readonly document?: string;
 
   @IsOptional()
+  @IsAlphanumeric(undefined, { message: 'O campo número de matrícula deve conter apenas letras e números.' })
   @IsNotEmpty({ message: 'O campo número de matrícula é obrigatório.' })
   @IsString({ message: 'O campo nome deve ser uma string.' })
   @MaxLength(20, { message: 'O campo número de matrícula deve ter no máximo 20 caracteres.' })

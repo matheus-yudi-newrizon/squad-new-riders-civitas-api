@@ -52,8 +52,8 @@ export class StudentRepository {
    * @param registrationNumber - O número de matrícula do estudante.
    * @returns Uma instância de `Student` se encontrada, ou `undefined` caso contrário.
    */
-  public async findByRegistrationNumber(registrationNumber: string): Promise<Student | undefined> {
-    return await this.repository.findOne({ where: { registrationNumber } });
+  public findByRegistrationNumber(registrationNumber: string): Promise<Student | undefined> {
+    return this.repository.findOne({ where: { registrationNumber } });
   }
 
   /**
@@ -82,7 +82,7 @@ export class StudentRepository {
       .innerJoin('student.studentClass', 'class')
       .innerJoin('class.school', 'school')
       .where('school.id = :schoolId', { schoolId })
-      .select(['student', 'class.name'])
+      .select(['student', 'class.id', 'class.name'])
       .orderBy('student.fullName', 'ASC');
 
     if (fullName) {
