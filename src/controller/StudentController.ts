@@ -647,15 +647,11 @@ export class StudentController {
 
     const evaluations = await this.studentService.getStudentEvaluations(studentId);
 
-    if (evaluations.length === 0) {
-      return res.status(200).json({ studentInfo, evaluations: [], latestEvaluation: null });
-    }
-
     const latestEvaluation = evaluations.length > 0 ? await this.studentService.getLatestEvaluation(studentId) : null;
     return res.status(200).json({
-      studentInfo,
-      evaluations,
-      latestEvaluation
+      studentInfo: studentInfo,
+      evaluations: evaluations || [],
+      latestEvaluation: latestEvaluation || {}
     });
   }
 
