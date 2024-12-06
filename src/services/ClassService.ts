@@ -81,7 +81,7 @@ export class ClassService {
     if (!classEntity) throw new NotFoundError('Turma não encontrada.');
 
     if (classEntity.students?.length > 0 || classEntity.teacherClasses?.length > 0) {
-      throw new ConflictError('Turma está associada à professores ou estudantes. Remova para prosseguir na exclusão da turma');
+      throw new ConflictError('Turma está associada à psicólogos ou estudantes. Remova para prosseguir na exclusão da turma');
     }
 
     await this.classRepository.deleteClass(classEntity);

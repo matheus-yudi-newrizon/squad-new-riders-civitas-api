@@ -233,7 +233,6 @@ export class StudentService {
    *
    * @param studentId - ID do estudante.
    * @returns Uma lista de avaliações associadas ao estudante, com a data formatada.
-   * @throws {NotFoundError} Se nenhuma avaliação for encontrada para o estudante.
    */
   public async getStudentEvaluations(studentId: number): Promise<Array<{ id: number; date: string }>> {
     const student: Student = await this.verifyStudentId(studentId);

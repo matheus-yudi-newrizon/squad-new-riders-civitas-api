@@ -627,7 +627,7 @@ export class StudentController {
    *                   type: string
    *                   example: "Token não consta na requisição."
    *       404:
-   *         description: Estudante ou avaliações não encontrados
+   *         description: Estudante não encontrado
    *         content:
    *           application/json:
    *             schema:
